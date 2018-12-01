@@ -1,6 +1,6 @@
 ### 项目层次说明
 
-> Sodao.Core.Grpc v1.0.6.10
+> Sodao.Core.Grpc v1.0.0
 
 #### 1. 项目目录
 
@@ -27,7 +27,7 @@
 
 #### 2. 版本及支持
 
-> * Nuget版本：V 1.0.6.10
+> * Nuget版本：V 1.0.0
 > * 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
 
@@ -57,7 +57,7 @@ Grpc 1.16.0
 #### 1. Nuget包引用
 
 ```
-Install-Package Sodao.Core.Grpc -Version 1.0.6.10
+Install-Package Sodao.Core.Grpc -Version 1.0.0
 ```
 
 
@@ -365,56 +365,6 @@ namespace Sodao.GrpcService.Generate
 ClientManager.Instance.[Method]
 ```
 
-
-
-#### 5. 更新说明
-
-* 2018-11-13 v 1.0.6.10 (**==重要内容请看下面！！！==**)
-
-> 1. 添加IServerTracer作为服务端拦截器接口，实现即可拦截
-> 2. 添加IClientTracer作为客户端拦截器接口，实现即可拦截
-> 3. 升级Google.Protobuf v 3.6.1
-> 4. ==升级需发布如下代码**重要**，以及升级所有对应服务的客户端驱动，因为更改了获取单例Instance的代码，配合驱动工具：VS.Menu v1.6.1.7 ([下载地址](http://10.0.60.89:8082/))==
-
-```
-Sodao.Core.Grpc.dll
-Consul.dll
-Grpc.Core.dll
-Google.Protobuf.dll
-runtime/*
-libgrpc_*
-grpc_csharp_*
-App.config/Web.config 
-```
-
-* 2018-11-10 v 1.0.6.9
-
-> 1. 升级Grpc v1.16.0 支持Intercept
-
-* 2018-09-07 v 1.0.6.6
-
-> 1. 影响服务端驱动
-> 2. 更改ServciceHost获取以环境变量优先
-
-* 2018-08-24 v 1.0.6.5
-
-> 1. 影响客户端驱动
-> 2. 修复发布过程中异常加入黑名单后，连接全部丢失问题
-
-* 2018-08-21 v 1.0.6.4
-
-> 1. 添加服务与Consul自检功能，升级Consul v0.7.2.6 / Grpc v1.14.1.0  
-> 2. 升级该版本需要同时发布**以下内容**
-```
-Sodao.Core.Grpc.dll
-Consul.dll
-Grpc.Core.dll
-Google.Protobuf.dll
-runtime/*
-libgrpc_*
-grpc_csharp_*
-App.config/Web.config
-```
 
 
 ---
