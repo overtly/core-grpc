@@ -1,0 +1,23 @@
+{
+  "GrpcClient": {
+    "Service": {
+      "Name": "SodaoGrpcExampleService",
+      "MaxRetry": 0,
+      "Discovery": {
+        "Consul": {
+          "Path": "dllconfigs/consulsettings.json"
+        }
+        //"EndPoints": [
+        //  {
+        //    "Host": "yf.g.lan",
+        //    "Port": 10004
+        //  },
+        //  {
+        //    "Host": "yf1.g.lan",
+        //    "Port": 10005
+        //  }
+        //]
+      }
+    }
+  }
+}

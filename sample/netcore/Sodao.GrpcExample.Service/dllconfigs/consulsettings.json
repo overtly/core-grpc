@@ -1,0 +1,7 @@
+﻿{
+  "ConsulServer": {
+    "Service": {
+      "Address": "http://consul.g.lan"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "GrpcClient": {
+    "Service": {
+      "Name": "",
+      "MaxRetry":  0,
+      "Discovery": {
+        "EndPoints": [
+          {
+            "Host": "127.0.0.1",
+            "Port": 0
+          }
+        ],
+        "Consul": {
+          "Path": "consulsettings.json"
+        }
+      }
+    }
+  }
+}

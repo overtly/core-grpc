@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  sodao.grpcexample.service:
+    image: sodao.grpcexample.service
+    build:
+      context: .
+      dockerfile: src/Sodao.GrpcExample.Service/Dockerfile

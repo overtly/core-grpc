@@ -1,0 +1,12 @@
+{
+  "GrpcServer": {
+    "Service": {
+      "Name": "grpcservice",
+      "Host": "",
+      "Port": 10001,
+      "Consul": {
+        "Path": "dllconfigs/consulsettings.json"
+      }
+    }
+  }
+}

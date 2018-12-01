@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="Sodao.GrpcExample.Service.Grpc" Version="1.0.2018021013" />
+    <PackageReference Include="Sodao.Juketool.ClientProxy.Service.Grpc" Version="1.0.2018091820" />
+    <PackageReference Include="Sodao.Juketool.WeChat.CloudStorage.Service.Grpc" Version="1.0.2018051611-preview1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Sodao.Core.Grpc\Sodao.Core.Grpc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="dllconfigs\consulsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="dllconfigs\Sodao.GrpcExample.Service.Grpc.dll.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="dllconfigs\Sodao.Juketool.ClientProxy.Service.Grpc.dll.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="dllconfigs\Sodao.Juketool.WeChat.CloudStorage.Service.Grpc.dll.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
+</Project>

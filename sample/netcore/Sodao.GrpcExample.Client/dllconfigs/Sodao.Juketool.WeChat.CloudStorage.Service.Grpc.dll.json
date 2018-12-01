@@ -1,0 +1,19 @@
+{
+  "GrpcClient": {
+    "Service": {
+      "Name": "SodaoJuketoolWeChatCloudStorageService",
+      "MaxRetry": 0,
+      "Discovery": {
+        "EndPoints": [
+          {
+            "Host": "10.0.20.21",
+            "Port": 18201
+          }
+        ]
+        //"Consul": {
+        //  "Path": "dllconfigs/consulsettings.json"
+        //}
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+﻿syntax = "proto3";
+package Sodao.GrpcExample.Service.Grpc;
+
+message RequestModel{
+	string key = 1;
+}
+
+message ResponseModel{
+	string name = 1;
+}
+
+
+message AskRequest{
+	int32 Cate = 1;
+	string Key = 2;
+	repeated int32 samples = 3;
+}
+
+message AskResponse{
+	string Content = 1;
+}
+
+service GrpcExampleService {
+
+	rpc GetName(RequestModel) returns (ResponseModel){}
+
+	rpc Ask(AskRequest) returns (AskResponse){}
+
+}
+

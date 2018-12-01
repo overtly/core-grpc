@@ -1,0 +1,6 @@
+﻿工具地址：packages\Grpc.Tools.1.0.0\tools\windows_x86\protoc.exe								
+csharp模型文件存储目录：--csharp_out [grpc类文件的目录]  [Grpc协议文件路径] 
+csharp服务类文件存储目录：--grpc_out [grpc服务文件的目录] 
+csharp插件路径：--plugin=protoc-gen-grpc=packages\Grpc.Tools.1.0.0\tools\windows_x86\grpc_csharp_plugin.exe
+
+
