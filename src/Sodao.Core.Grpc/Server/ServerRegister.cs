@@ -165,6 +165,7 @@ namespace Sodao.Core.Grpc
                 Name = checkName,
                 TCP = $"{dnsEndPoint.Host}:{dnsEndPoint.Port}",
                 Interval = ConsulTimespan.CheckInterval,
+                Status = HealthStatus.Passing,
                 DeregisterCriticalServiceAfter = ConsulTimespan.CriticalInterval,
             };
             var asr = new AgentServiceRegistration
@@ -213,10 +214,10 @@ namespace Sodao.Core.Grpc
 
             try
             {
-                var response = _client.Health.Checks(serviceName).Result;
-                var checkName = GenCheckName(serviceName, dnsEndPoint);
-                var healthCheck = response?.Response?.FirstOrDefault(oo => oo.Name == checkName);
-                if (healthCheck == null)
+                var response = _client.Health.Service(serviceName, "", true).Result;
+                var servcieId = GenServiceId(serviceName, dnsEndPoint);
+                var serviceEntry = response?.Response?.FirstOrDefault(oo => oo?.Service?.ID == servcieId);
+                if (serviceEntry == null)
                 {
                     RegisterService(serviceName, dnsEndPoint);
                 }

@@ -112,14 +112,14 @@ namespace Sodao.Core.Grpc
                 _invokers.AddOrUpdate(serviceName, callInvokers, (key, value) => callInvokers);
 
                 // channels
-                if (_channels.TryGetValue(failedChannel.Target, out Channel channel) && ReferenceEquals(channel, failedChannel))
+                if (_channels.TryGetValue(failedChannel.Target, out Channel channel) &&
+                    ReferenceEquals(channel, failedChannel))
                 {
                     _channels.TryRemove(failedChannel.Target, out failedChannel);
-
-                    // add black
-                    ServiceBlackPlicy.Add(failedChannel.Target);
                 }
 
+                // add black
+                ServiceBlackPlicy.Add(failedChannel.Target);
                 failedChannel.ShutdownAsync();
 
                 // if not exist invoker， call init method
@@ -183,6 +183,15 @@ namespace Sodao.Core.Grpc
                 var callInvoker = new ServerCallInvoker(channel);
                 callInvokers.Add(callInvoker);
             }
+
+            // 移除已经销毁的callInvokers
+            var destroyInvokers = callInvokers.Where(oo => !targets.Contains(oo.Channel.Target)).ToList();
+            foreach (var invoker in destroyInvokers)
+            {
+                _channels.TryRemove(invoker.Channel.Target, out Channel channel);
+                callInvokers.Remove(invoker);
+            }
+
             _invokers.AddOrUpdate(serviceName, callInvokers, (key, value) => callInvokers);
             return callInvokers;
         }

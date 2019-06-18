@@ -15,8 +15,8 @@ namespace Sodao.Core.Grpc
         public static readonly TimeSpan SelfCheckInterval = TimeSpan.FromSeconds(30);
 
         /// <summary>
-        /// 移除服务的时效 30s
+        /// 移除服务的时效 15s
         /// </summary>
-        public static readonly TimeSpan CriticalInterval = TimeSpan.FromSeconds(30);
+        public static readonly TimeSpan CriticalInterval = TimeSpan.FromSeconds(20);
     }
 }

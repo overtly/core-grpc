@@ -17,6 +17,7 @@ namespace Sodao.Core.Grpc
 
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
+            options = options.Headers == null ? options.WithHeaders(new Metadata()) : options;
             var _context = new ClientInterceptorContext<TRequest, TResponse>(method, host, options);
             try
             {
@@ -35,6 +36,7 @@ namespace Sodao.Core.Grpc
 
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
+            options = options.Headers == null ? options.WithHeaders(new Metadata()) : options;
             var _context = new ClientInterceptorContext<TRequest, TResponse>(method, host, options);
             _tracer.Request(request, _context);
             var rspCnt = Calls.AsyncUnaryCall(CreateCall(method, host, options), request);
@@ -58,6 +60,7 @@ namespace Sodao.Core.Grpc
 
         public override AsyncServerStreamingCall<TResponse> AsyncServerStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
+            options = options.Headers == null ? options.WithHeaders(new Metadata()) : options;
             var _context = new ClientInterceptorContext<TRequest, TResponse>(method, host, options);
             _tracer.Request(request, _context);
             var rspCnt = Calls.AsyncServerStreamingCall(CreateCall(method, host, options), request);
@@ -67,6 +70,7 @@ namespace Sodao.Core.Grpc
 
         public override AsyncClientStreamingCall<TRequest, TResponse> AsyncClientStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options)
         {
+            options = options.Headers == null ? options.WithHeaders(new Metadata()) : options;
             var _context = new ClientInterceptorContext<TRequest, TResponse>(method, host, options);
             var rspCnt = Calls.AsyncClientStreamingCall(CreateCall(method, host, options));
             var tracingRequestStream = new TracingClientStreamWriter<TRequest, TResponse>(rspCnt.RequestStream, _context, _tracer.Request);
@@ -90,6 +94,7 @@ namespace Sodao.Core.Grpc
 
         public override AsyncDuplexStreamingCall<TRequest, TResponse> AsyncDuplexStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options)
         {
+            options = options.Headers == null ? options.WithHeaders(new Metadata()) : options;
             var _context = new ClientInterceptorContext<TRequest, TResponse>(method, host, options);
             var rspCnt = Calls.AsyncDuplexStreamingCall(CreateCall(method, host, options));
             var tracingRequestStream = new TracingClientStreamWriter<TRequest, TResponse>(rspCnt.RequestStream, _context, _tracer.Request);

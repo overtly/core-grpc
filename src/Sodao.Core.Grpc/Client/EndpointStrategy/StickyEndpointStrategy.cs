@@ -105,24 +105,23 @@ namespace Sodao.Core.Grpc
                     callInvokers.All(x => !ReferenceEquals(failedChannel, x.Channel)))
                     return;
 
-                callInvokers.RemoveAt(callInvokers.FindIndex(x=> ReferenceEquals(failedChannel, x.Channel)));
+                callInvokers.RemoveAt(callInvokers.FindIndex(x => ReferenceEquals(failedChannel, x.Channel)));
                 _invokers.AddOrUpdate(serviceName, callInvokers, (key, value) => callInvokers);
 
                 // channels
-                if (_channels.TryGetValue(failedChannel.Target, out Channel channel) && 
+                if (_channels.TryGetValue(failedChannel.Target, out Channel channel) &&
                     ReferenceEquals(channel, failedChannel))
                 {
                     _channels.TryRemove(failedChannel.Target, out failedChannel);
-
-                    // add black
-                    ServiceBlackPlicy.Add(failedChannel.Target);
                 }
+
+                // add black
+                ServiceBlackPlicy.Add(failedChannel.Target);
 
                 failedChannel.ShutdownAsync();
 
-                // if not exist invoker， call init method
-                if (callInvokers.Count <= 0)
-                    InitCallInvoker(serviceName, false);
+                // reinit callinvoker
+                InitCallInvoker(serviceName, false);
             }
         }
 
@@ -162,11 +161,10 @@ namespace Sodao.Core.Grpc
 
             _invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers);
             callInvokers = callInvokers ?? new List<ServerCallInvoker>();
-
             var targets = discovery.FindServiceEndpoints(filterBlack);
-            // 如果consul 取不到 暂时直接使用本地缓存的连接（注册中心数据清空的情况--异常）
             if ((targets?.Count ?? 0) <= 0)
             {
+                // 如果consul 取不到 暂时直接使用本地缓存的连接（注册中心数据清空的情况--异常）
                 _invokers.TryGetValue(serviceName, out callInvokers);
                 return callInvokers;
             }
@@ -189,6 +187,15 @@ namespace Sodao.Core.Grpc
                 var callInvoker = new ServerCallInvoker(channel);
                 callInvokers.Add(callInvoker);
             }
+
+            // 移除已经销毁的callInvokers
+            var destroyInvokers = callInvokers.Where(oo => !targets.Contains(oo.Channel.Target)).ToList();
+            foreach (var invoker in destroyInvokers)
+            {
+                _channels.TryRemove(invoker.Channel.Target, out Channel channel);
+                callInvokers.Remove(invoker);
+            }
+
             _invokers.AddOrUpdate(serviceName, callInvokers, (key, value) => callInvokers);
             return callInvokers;
         }

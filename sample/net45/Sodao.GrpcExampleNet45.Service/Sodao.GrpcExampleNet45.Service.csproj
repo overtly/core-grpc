@@ -11,6 +11,8 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,13 +37,21 @@
     <Reference Include="Autofac, Version=4.8.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Autofac.4.8.0\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Google.Protobuf, Version=3.8.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Google.Protobuf.3.8.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="Grpc.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Sodao.GrpcExampleNet45.Service.Grpc\bin\Debug\Grpc.Core.dll</HintPath>
+      <HintPath>..\..\..\packages\Grpc.Core.1.21.0\lib\net45\Grpc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Core.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Grpc.Core.Api.1.21.0\lib\net45\Grpc.Core.Api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -85,6 +95,17 @@
       <Project>{90fab530-0847-46e1-bce1-73b8854b58fc}</Project>
       <Name>Sodao.Core.Grpc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sodao.GrpcExampleNet45.Service.Grpc\Sodao.GrpcExampleNet45.Service.Grpc.csproj">
+      <Project>{44F0037D-C0B5-432E-BE8F-841CDE96D40D}</Project>
+      <Name>Sodao.GrpcExampleNet45.Service.Grpc</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets" Condition="Exists('..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets'))" />
+  </Target>
 </Project>

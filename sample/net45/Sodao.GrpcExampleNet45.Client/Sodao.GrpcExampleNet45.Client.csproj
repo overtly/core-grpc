@@ -54,32 +54,24 @@
       <HintPath>..\..\..\packages\Consul.0.7.2.6\lib\net45\Consul.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Google.Protobuf.3.6.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Google.Protobuf, Version=3.8.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Google.Protobuf.3.8.0\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Grpc.Core.1.16.0\lib\net45\Grpc.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\packages\Grpc.Core.1.21.0\lib\net45\Grpc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Core.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Grpc.Core.Api.1.21.0\lib\net45\Grpc.Core.Api.dll</HintPath>
     </Reference>
     <Reference Include="Sodao.Core.Grpc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Sodao.Core.Grpc.1.0.6.10\lib\net45\Sodao.Core.Grpc.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Sodao.Juketool.ClientProxy.Service.Grpc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Sodao.Juketool.ClientProxy.Service.Grpc.1.0.2018020515\lib\net45\Sodao.Juketool.ClientProxy.Service.Grpc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Sodao.Juketool.WeChat.CloudStorage.Service.Grpc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Sodao.Juketool.WeChat.CloudStorage.Service.Grpc.1.0.2018071116\lib\net45\Sodao.Juketool.WeChat.CloudStorage.Service.Grpc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Interactive.Async, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\System.Interactive.Async.3.1.1\lib\net45\System.Interactive.Async.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Interactive.Async.3.2.0\lib\net45\System.Interactive.Async.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Xml.Linq" />
@@ -124,5 +116,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\..\packages\Grpc.Core.1.16.0\build\net45\Grpc.Core.targets" Condition="Exists('..\..\..\packages\Grpc.Core.1.16.0\build\net45\Grpc.Core.targets')" />
+  <Import Project="..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets" Condition="Exists('..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Grpc.Core.1.21.0\build\net45\Grpc.Core.targets'))" />
+  </Target>
 </Project>

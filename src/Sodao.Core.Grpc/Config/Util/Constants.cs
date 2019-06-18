@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sodao.Core.Grpc
 {
-    public class Constants
+    internal class Constants
     {
 #if NET45 || NET46 || NET47
         /// <summary>

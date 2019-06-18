@@ -11,7 +11,7 @@ namespace Sodao.Core.Grpc
     /// <summary>
     /// 配置文件读取
     /// </summary>
-    public class ConfigHelper
+    internal class ConfigHelper
     {
         /// <summary>
         /// 获取Server配置对象
@@ -54,6 +54,7 @@ namespace Sodao.Core.Grpc
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile(configPath)
+                .AddEnvironmentVariables()
                 .Build();
 
             configuration.GetSection(sectionName).Bind(section);

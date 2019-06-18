@@ -34,11 +34,15 @@ namespace Sodao.Core.Grpc
                 {
                     callInvoker = _strategy.Get(_serviceName);
                     if (callInvoker == null)
-                        throw new ArgumentNullException("无任何可用连接");
+                    {
+                        throw new ArgumentNullException($"Consul中无可用节点：{_serviceName}");
+                    }
 
                     var channel = callInvoker.Channel;
                     if (channel == null || channel.State == ChannelState.TransientFailure)
-                        throw new RpcException(new Status(StatusCode.Unavailable, "Channel Failure"));
+                    {
+                        throw new RpcException(new Status(StatusCode.Unavailable, $"Channel Failure"));
+                    }
 
                     var response = default(TResponse);
                     if (_tracer != null)
@@ -53,7 +57,9 @@ namespace Sodao.Core.Grpc
                         _strategy.Revoke(_serviceName, callInvoker);
 
                     if (0 > --retryLeft)
-                        throw;
+                    {
+                        throw new Exception($"status: {ex.StatusCode.ToString()}, node: {callInvoker?.Channel?.Target}, message: {ex.Message}", ex);
+                    }
                 }
             }
         }
