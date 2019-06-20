@@ -1,5 +1,5 @@
 ﻿using Sodao.Core.Grpc.Client;
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
 using System.Configuration;
 #endif
 
@@ -16,18 +16,18 @@ namespace Sodao.Core.Grpc
     ///   </grpcServer>
     /// </summary>
     public class GrpcClientSection
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         : ConfigurationSection
 #endif
     {        /// <summary>
              /// grpc配置
              /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("service", IsRequired = true)]
 #endif
         public GrpcServiceElement Service
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return this["service"] as GrpcServiceElement; }
 #else
         get; set;

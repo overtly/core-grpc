@@ -1,4 +1,4 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System.Configuration;
 #else
 using Microsoft.Extensions.Configuration;
@@ -20,14 +20,14 @@ namespace Sodao.Core.Grpc
         /// <param name="configPath"></param>
         /// <returns></returns>
         public static T Get<T>(string sectionName, string configPath = "") where T :
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             ConfigurationSection
 #else
             class, new()
 #endif
         {
             T section = null;
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             if (string.IsNullOrEmpty(configPath))
                 section = ConfigurationManager.GetSection(sectionName) as T;
 

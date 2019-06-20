@@ -101,7 +101,7 @@ namespace Sodao.Core.Grpc
             var discovery = serviceElement.Discovery;
 
             List<Tuple<string, int>> ipEndPoints = null;
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             ipEndPoints = discovery.EndPoints.ToList();
 #else
             ipEndPoints = discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();

@@ -1,4 +1,4 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System.Configuration;
 #endif
 using System.Collections.Generic;
@@ -9,14 +9,14 @@ namespace Sodao.Core.Grpc
     /// 服务发现
     /// </summary>
     public class GrpcDiscoveryElement
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         : ConfigurationElement
 #endif
     {
         /// <summary>
         /// 服务器集合。
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("server", IsRequired = false)]
         public GrpcEndpointElementCollection EndPoints { get { return this["server"] as GrpcEndpointElementCollection; } }
 #else
@@ -26,12 +26,12 @@ namespace Sodao.Core.Grpc
         /// <summary>
         /// 注册配置
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("consul", IsRequired = false)]
 #endif
         public ConsulElement Consul
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return this["consul"] as ConsulElement; }
 #else
         get; set;

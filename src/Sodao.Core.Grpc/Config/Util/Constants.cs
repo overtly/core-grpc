@@ -8,7 +8,7 @@ namespace Sodao.Core.Grpc
 {
     internal class Constants
     {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         /// <summary>
         /// Grpc Server 节点名称
         /// </summary>

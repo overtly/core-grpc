@@ -1,23 +1,23 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System.Configuration;
 #endif
 
 namespace Sodao.Core.Grpc.Client
 {
     public class GrpcServiceElement
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         : ConfigurationElement
 #endif
     {
         /// <summary>
         /// 服务名称
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("name", IsRequired = true)]
 #endif
         public string Name
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (string)this["name"]; }
 #else
         get; set;
@@ -27,12 +27,12 @@ namespace Sodao.Core.Grpc.Client
         /// <summary>
         /// 服务名称
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("maxRetry", IsRequired = false)]
 #endif
         public int MaxRetry
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (int)this["maxRetry"]; }
 #else
         get; set;
@@ -42,12 +42,12 @@ namespace Sodao.Core.Grpc.Client
         /// <summary>
         /// 服务发现
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("discovery", IsRequired = true)]
 #endif
         public GrpcDiscoveryElement Discovery
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return this["discovery"] as GrpcDiscoveryElement; }
 #else
         get; set;

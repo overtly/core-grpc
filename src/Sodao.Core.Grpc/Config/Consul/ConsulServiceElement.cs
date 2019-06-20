@@ -1,4 +1,4 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System.Configuration;
 #endif
 
@@ -8,19 +8,19 @@ namespace Sodao.Core.Grpc
     /// 
     /// </summary>
     public class ConsulServiceElement
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         : ConfigurationElement
 #endif
     {
         /// <summary>
         /// consul地址
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("address", IsRequired = true)]
 #endif
         public string Address
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (string)this["address"]; }
 #else
             get;set;

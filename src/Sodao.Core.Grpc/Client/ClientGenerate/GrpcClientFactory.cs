@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
 using Sodao.Core.Grpc.Intercept;
-#if NETSTANDARD2_0
+#if ASP_NET_CORE
 using Microsoft.Extensions.Options;
 #endif
 using System;
@@ -15,7 +15,7 @@ namespace Sodao.Core.Grpc
         private readonly GrpcClientOptions<T> _options;
         private readonly IClientTracer _tracer;
 
-#if NETSTANDARD2_0
+#if ASP_NET_CORE
         public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null, IClientTracer tracer = null)
         {
             _options = options?.Value;

@@ -1,23 +1,23 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System.Configuration;
 #endif
 
 namespace Sodao.Core.Grpc.Service
 {
     public class ServiceElement
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         : ConfigurationElement
 #endif
     {
         /// <summary>
         /// 服务名称
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("name", IsRequired = true)]
 #endif
         public string Name
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (string)this["name"]; }
 #else
             get; set;
@@ -29,14 +29,14 @@ namespace Sodao.Core.Grpc.Service
         /// 优先级1
         /// </summary>
 
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("host", IsRequired = false, DefaultValue = "")]
 #else
         public string _Host;
 #endif
         public string Host
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (string)this["host"]; }
 #else
             get { return _Host; }
@@ -47,12 +47,12 @@ namespace Sodao.Core.Grpc.Service
         /// <summary>
         /// 端口号
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("port", IsRequired = true)]
 #endif
         public int Port
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (int)this["port"]; }
 #else
             get; set;
@@ -63,14 +63,14 @@ namespace Sodao.Core.Grpc.Service
         /// host环境变量名称
         /// 优先级2
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("hostEnv", IsRequired = false, DefaultValue = "")]
 #else
         public string _HostEnv;
 #endif
         public string HostEnv
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (string)this["hostEnv"]; }
 #else
             get { return _HostEnv; }
@@ -81,7 +81,7 @@ namespace Sodao.Core.Grpc.Service
         /// <summary>
         /// 注册配置
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("registry", IsRequired = false)]
         public GrpcRegistryElement Registry { get { return this["registry"] as GrpcRegistryElement; } }
 #else

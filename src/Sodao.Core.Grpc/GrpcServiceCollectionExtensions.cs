@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD2_0
+﻿#if ASP_NET_CORE
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sodao.Core.Grpc.Intercept;
@@ -7,7 +7,7 @@ using System;
 
 namespace Sodao.Core.Grpc
 {
-#if NETSTANDARD2_0
+#if ASP_NET_CORE
     /// <summary>
     /// Grpc服务注入
     /// </summary>

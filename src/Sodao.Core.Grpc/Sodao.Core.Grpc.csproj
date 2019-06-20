@@ -23,9 +23,13 @@
     <PackageReference Include="Grpc" Version="1.21.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Configuration" Condition="'$(TargetFramework)'=='NET45' or '$(TargetFramework)'=='NET46' or '$(TargetFramework)'=='NET47'" />
-    
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <Title>ASP.NET Core 2 integration for Sodao.Core.Grpc - .NET Standard 2</Title>
+    <DefineConstants>$(DefineConstants);ASP_NET_CORE;ASP_NET_CORE2</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='NET45' or '$(TargetFramework)'=='NET46' or '$(TargetFramework)'=='NET47'">
+    <Reference Include="System.Configuration" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

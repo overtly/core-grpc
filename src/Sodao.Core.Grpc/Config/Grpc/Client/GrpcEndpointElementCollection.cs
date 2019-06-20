@@ -1,4 +1,4 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,7 +8,7 @@ using System.Net;
 
 namespace Sodao.Core.Grpc
 {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
     /// <summary>
     /// GrpcEndpoint
     /// </summary>

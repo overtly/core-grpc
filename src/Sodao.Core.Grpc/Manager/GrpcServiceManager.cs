@@ -118,7 +118,7 @@ namespace Sodao.Core.Grpc
         private static string ResolveConsulConfiguration(Service.ServiceElement service)
         {
             var configPath = string.Empty;
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             configPath = service.Registry?.Consul?.Path;
 #else
             configPath = service.Consul?.Path;

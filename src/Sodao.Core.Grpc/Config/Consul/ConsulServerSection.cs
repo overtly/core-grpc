@@ -1,4 +1,4 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System.Configuration;
 #endif
 
@@ -10,11 +10,11 @@ namespace Sodao.Core.Grpc
     ///   </consulSettings>
     /// </summary>
     public class ConsulServerSection
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         : ConfigurationSection
 #endif
     {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         /// <summary>
         /// grpc配置
         /// </summary>
@@ -22,7 +22,7 @@ namespace Sodao.Core.Grpc
 #endif
         public ConsulServiceElement Service
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return this["service"] as ConsulServiceElement; }
 #else
             get; set;

@@ -1,4 +1,4 @@
-﻿#if NET45 || NET46 || NET47
+﻿#if !ASP_NET_CORE
 using System.Configuration;
 #endif
 
@@ -8,19 +8,19 @@ namespace Sodao.Core.Grpc
     /// IP地址
     /// </summary>
     public class GrpcEndpointElement
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         : ConfigurationElement
 #endif
     {
         /// <summary>
         /// 服务IP
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("host", IsRequired = true)]
 #endif
         public string Host
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (string)this["host"]; }
 #else
         get; set;
@@ -29,12 +29,12 @@ namespace Sodao.Core.Grpc
         /// <summary>
         /// 端口
         /// </summary>
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
         [ConfigurationProperty("port", IsRequired = true)]
 #endif
         public int Port
         {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
             get { return (int)this["port"]; }
 #else
         get; set;

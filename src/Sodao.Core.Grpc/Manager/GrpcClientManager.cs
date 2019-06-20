@@ -2,14 +2,14 @@
 using Sodao.Core.Grpc.Intercept;
 using System;
 using System.Collections.Concurrent;
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
 using System.Configuration;
 using System.Linq;
 #endif
 
 namespace Sodao.Core.Grpc
 {
-#if NET45 || NET46 || NET47
+#if !ASP_NET_CORE
     /// <summary>
     /// Grpc客户端管理类
     /// </summary>
