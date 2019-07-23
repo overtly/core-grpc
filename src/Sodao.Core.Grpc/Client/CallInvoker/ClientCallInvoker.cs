@@ -35,7 +35,7 @@ namespace Sodao.Core.Grpc
                     callInvoker = _strategy.Get(_serviceName);
                     if (callInvoker == null)
                     {
-                        throw new ArgumentNullException($"Consul中无可用节点：{_serviceName}");
+                        throw new ArgumentNullException($"{_serviceName}无可用节点");
                     }
 
                     var channel = callInvoker.Channel;
@@ -53,6 +53,7 @@ namespace Sodao.Core.Grpc
                 }
                 catch (RpcException ex)
                 {
+                    // 服务不可用，拉入黑名单
                     if (ex.Status.StatusCode == StatusCode.Unavailable)
                         _strategy.Revoke(_serviceName, callInvoker);
 

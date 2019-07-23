@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace Sodao.Core.Grpc
 {
@@ -14,10 +15,11 @@ namespace Sodao.Core.Grpc
         /// 黑名单
         /// </summary>
         /// <param name="target"></param>
-        public static void Add(string target)
+        public static void Add(string serviceName, string target)
         {
+            var key = $"{serviceName}_{target}";
             var now = DateTime.UtcNow;
-            _blacklist.AddOrUpdate(target, k => now, (k, old) => now);
+            _blacklist.AddOrUpdate(key, k => now, (k, old) => now);
         }
 
         /// <summary>
@@ -25,18 +27,27 @@ namespace Sodao.Core.Grpc
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static bool In(string target)
+        public static bool In(string serviceName, string target)
         {
-            if (_blacklist.TryGetValue(target, out DateTime lastFailure))
+            var key = $"{serviceName}_{target}";
+            if (_blacklist.TryGetValue(key, out DateTime lastFailure))
             {
-                // within blacklist period ?
                 if (DateTime.UtcNow - lastFailure < ClientTimespan.BlacklistPeriod)
                     return true;
 
-                _blacklist.TryRemove(target, out lastFailure);
+                _blacklist.TryRemove(key, out lastFailure);
             }
-
             return false;
+        }
+
+        /// <summary>
+        /// 服务是否有节点存在黑名单
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        public static bool Exist(string serviceName)
+        {
+            return _blacklist.Keys.Any(oo => oo.StartsWith(serviceName));
         }
     }
 }

@@ -88,7 +88,10 @@ namespace Sodao.Core.Grpc
                     callInvokers.Count > 0)
                     return ServicePollingPlicy.Random(callInvokers);
 
-                callInvokers = InitCallInvoker(serviceName);
+                callInvokers = SetCallInvokers(serviceName);
+                if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPlicy.Exist(serviceName))
+                    callInvokers = SetCallInvokers(serviceName, false);
+
                 return ServicePollingPlicy.Random(callInvokers);
             }
         }
@@ -119,12 +122,12 @@ namespace Sodao.Core.Grpc
                 }
 
                 // add black
-                ServiceBlackPlicy.Add(failedChannel.Target);
+                ServiceBlackPlicy.Add(serviceName, failedChannel.Target);
                 failedChannel.ShutdownAsync();
 
                 // if not exist invoker， call init method
                 if (callInvokers.Count <= 0)
-                    InitCallInvoker(serviceName, false);
+                    SetCallInvokers(serviceName, false);
             }
         }
 
@@ -140,7 +143,7 @@ namespace Sodao.Core.Grpc
                     _timer.Stop();
                     foreach (var item in _invokers)
                     {
-                        InitCallInvoker(item.Key);
+                        SetCallInvokers(item.Key);
                     }
                     _timer.Start();
                 }
@@ -151,12 +154,12 @@ namespace Sodao.Core.Grpc
 
         #region Private Method
         /// <summary>
-        /// InitCallInvoker
+        /// SetCallInvokers
         /// </summary>
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
         /// <returns></returns>
-        private List<ServerCallInvoker> InitCallInvoker(string serviceName, bool filterBlack = true)
+        private List<ServerCallInvoker> SetCallInvokers(string serviceName, bool filterBlack = true)
         {
             if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
                 return null;

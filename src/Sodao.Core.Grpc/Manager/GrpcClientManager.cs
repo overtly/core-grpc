@@ -29,25 +29,5 @@ namespace Sodao.Core.Grpc
             return _clientCache.GetOrAdd(typeof(T), key => factory.Get(configPath));
         }
     }
-
-    /// <summary>
-    /// Grpc客户端管理类原来的
-    /// </summary>
-    [Obsolete("use GrpcClientManager<T>")]
-    public class GrpcClientManager
-    {
-        /// <summary>
-        /// 获取客户端
-        /// </summary>
-        /// <param name="sectionName"></param>
-        /// <param name="configPath"></param>
-        /// <returns></returns>
-        public static T Get<T>(string sectionName = "grpcClient", string configPath = "")
-            where T : ClientBase
-        {
-            var factory = new GrpcClientFactory<T>();
-            return factory.Get(configPath);
-        }
-    }
 #endif
 }

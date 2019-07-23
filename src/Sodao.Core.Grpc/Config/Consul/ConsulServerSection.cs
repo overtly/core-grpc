@@ -14,10 +14,10 @@ namespace Sodao.Core.Grpc
         : ConfigurationSection
 #endif
     {
-#if !ASP_NET_CORE
         /// <summary>
         /// grpc配置
         /// </summary>
+#if !ASP_NET_CORE
         [ConfigurationProperty("service", IsRequired = true)]
 #endif
         public ConsulServiceElement Service

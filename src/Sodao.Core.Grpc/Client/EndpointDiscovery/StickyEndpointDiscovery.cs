@@ -42,7 +42,7 @@ namespace Sodao.Core.Grpc
 
                 targets = r.Response
                            .Select(x => $"{x.Service.Address}:{x.Service.Port}")
-                           .Where(x => !ServiceBlackPlicy.In(x) || !filterBlack)
+                           .Where(target => !ServiceBlackPlicy.In(ServiceName, target) || !filterBlack)
                            .ToList();
 
                 //var res = _client.Catalog.Service(ServiceName).Result;

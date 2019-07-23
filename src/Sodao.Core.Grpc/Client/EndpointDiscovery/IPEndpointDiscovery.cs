@@ -27,7 +27,7 @@ namespace Sodao.Core.Grpc
                 throw new ArgumentOutOfRangeException("endpoint not provide");
 
             var targets = _ipEndPoints.Select(x => $"{x.Item1}:{x.Item2}")
-                                      .Where(x => !ServiceBlackPlicy.In(x) || !filterBlack)
+                                      .Where(target => !ServiceBlackPlicy.In(ServiceName, target) || !filterBlack)
                                       .ToList();
             return targets;
         }

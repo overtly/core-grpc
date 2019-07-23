@@ -85,7 +85,7 @@ namespace Sodao.Core.Grpc
                     callInvokers?.Count > 0)
                     return ServicePollingPlicy.Random(callInvokers);
 
-                callInvokers = InitCallInvoker(serviceName);
+                callInvokers = SetCallInvokers(serviceName);
                 return ServicePollingPlicy.Random(callInvokers);
             }
         }
@@ -99,6 +99,9 @@ namespace Sodao.Core.Grpc
         {
             lock (_lock)
             {
+                if (failedCallInvoker == null)
+                    return;
+
                 // invokers
                 var failedChannel = failedCallInvoker.Channel;
                 if (!_invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers) ||
@@ -116,12 +119,13 @@ namespace Sodao.Core.Grpc
                 }
 
                 // add black
-                ServiceBlackPlicy.Add(failedChannel.Target);
+                ServiceBlackPlicy.Add(serviceName, failedChannel.Target);
 
                 failedChannel.ShutdownAsync();
 
                 // reinit callinvoker
-                InitCallInvoker(serviceName, false);
+                if (callInvokers.Count <= 0)
+                    SetCallInvokers(serviceName, false);
             }
         }
 
@@ -138,7 +142,7 @@ namespace Sodao.Core.Grpc
 
                     foreach (var item in _invokers)
                     {
-                        InitCallInvoker(item.Key);
+                        SetCallInvokers(item.Key);
                     }
                     _timer.Start();
                 }
@@ -154,7 +158,7 @@ namespace Sodao.Core.Grpc
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
         /// <returns></returns>
-        private List<ServerCallInvoker> InitCallInvoker(string serviceName, bool filterBlack = true)
+        private List<ServerCallInvoker> SetCallInvokers(string serviceName, bool filterBlack = true)
         {
             if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
                 return null;
