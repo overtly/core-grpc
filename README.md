@@ -90,9 +90,9 @@ Install-Package Sodao.Core.Grpc -Version 1.0.10.2
   "GrpcServer": {
     "Service": {
       "Name": "SodaoGrpcServiceApp",                    // 服务名称使用服务名称去除点：SodaoGrpcServiceApp
-      "Host": "service.g.lan",                          // 专用注册的域名 （可选）ip[:port=default]
-      "HostEnv": "serviceaddress",                      // 环境变量配置（可选，优先）ip[:port=default]
-      "Port": 10001,                                    // 端口：与端田申请
+      "Host": "service.g.lan",                          // 专用注册的域名 （可选）格式：ip[:port=default]
+      "HostEnv": "serviceaddress",                      // 获取注册地址的环境变量名字（可选，优先）环境变量值格式：ip[:port=default]
+      "Port": 10001,                                    // 端口自定义
       "Consul": {
         "Path": "dllconfigs/consulsettings.json"        // Consul路径
       }
@@ -109,7 +109,7 @@ Install-Package Sodao.Core.Grpc -Version 1.0.10.2
 
 // 添加节点
 <grpcServer>
-  <service name="SodaoGrpcServiceApp" port="10005" host="专用注册的域名 （可选）" hostEnv="环境变量配置（可选，同上）">
+  <service name="SodaoGrpcServiceApp" port="10005" host="专用注册的域名（可选）格式：ip[:port=default]" hostEnv="获取注册地址的环境变量名字（可选）环境变量值格式：ip[:port=default]">
     <registry>
       <consul path="dllconfigs/Consul.config" />
     </registry>
