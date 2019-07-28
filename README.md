@@ -3,7 +3,7 @@
 <a name="4lctkm"></a>
 ### [](#4lctkm)项目层次说明
 
-> Sodao.Core.Grpc v1.0.9.1
+> Sodao.Core.Grpc v1.0.10.2
 
 
 <a name="ihwcmc"></a>
@@ -32,7 +32,7 @@
 <a name="bzwnno"></a>
 #### [](#bzwnno)2. 版本及支持
 
-> - Nuget版本：V 1.0.9.1
+> - Nuget版本：V 1.0.10.2
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -47,8 +47,8 @@
 
 ```csharp
 Consul 0.7.2.6  
-Google.Protobuf 3.6.1
-Grpc 1.19.0
+Google.Protobuf 3.8.0
+Grpc 1.21.0
 Microsoft.Extensions.Configuration.Json 2.0.0
 Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
 ```
@@ -59,8 +59,8 @@ Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
 
 ```csharp
 Consul 0.7.2.6  
-Google.Protobuf 3.6.1
-Grpc 1.19.0
+Google.Protobuf 3.8.0
+Grpc 1.21.0
 ```
 
 <a name="m947ei"></a>
@@ -70,13 +70,13 @@ Grpc 1.19.0
 #### [](#5cglzl)1. Nuget包引用
 
 ```csharp
-Install-Package Sodao.Core.Grpc -Version 1.0.9.1
+Install-Package Sodao.Core.Grpc -Version 1.0.10.2
 ```
 
 <a name="dhmwfy"></a>
 #### [](#dhmwfy)2. 配置信息
 
-优先级：环境变量 > Host内部配置 > 自动取IP
+优先级：环境变量 > Host内部配置 > 自动取IP**内网**
 
 <a name="6vgvrv"></a>
 ##### [](#6vgvrv)（1）服务端配置信息
@@ -90,8 +90,8 @@ Install-Package Sodao.Core.Grpc -Version 1.0.9.1
   "GrpcServer": {
     "Service": {
       "Name": "SodaoGrpcServiceApp",                    // 服务名称使用服务名称去除点：SodaoGrpcServiceApp
-      "Host": "service.g.lan",                          // 专用注册的域名 （可选）
-      "HostEnv": "serviceaddress",                      // 环境变量配置（可选，同上）
+      "Host": "service.g.lan",                          // 专用注册的域名 （可选）ip[:port=default]
+      "HostEnv": "serviceaddress",                      // 环境变量配置（可选，优先）ip[:port=default]
       "Port": 10001,                                    // 端口：与端田申请
       "Consul": {
         "Path": "dllconfigs/consulsettings.json"        // Consul路径
@@ -352,7 +352,7 @@ var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 <a name="4tuqar"></a>
 #### [](#4tuqar)（2）Framework
 
-> - 客户端代理类，编译在Dll中，类似于ThriftProxy，源码如下，可忽略
+> - 客户端代理类，编译在Dll中，源码如下，可忽略
 
 
 
@@ -408,6 +408,9 @@ ClientManager.Instance.[Method]
 <a name="ut52ry"></a>
 #### [](#ut52ry)5. 更新说明
 
+- 2019-06-05 v 1.0.10.2
+
+> 1. 客户端优化连接服务失败的情况下，拉入黑名单，导致节点不存在的问题
 
 - 2019-06-05 v 1.0.10
 
