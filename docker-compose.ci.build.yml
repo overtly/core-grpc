@@ -6,4 +6,4 @@ services:
     volumes:
       - .:/src
     working_dir: /src
-    command: /bin/bash -c "dotnet restore ./Sodao.GrpcService.Core.sln && dotnet publish ./Sodao.GrpcService.Core.sln -c Release -o ./obj/Docker/publish"
+    command: /bin/bash -c "dotnet restore ./Overt.GrpcService.Core.sln && dotnet publish ./Overt.GrpcService.Core.sln -c Release -o ./obj/Docker/publish"

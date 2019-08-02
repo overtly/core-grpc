@@ -21,6 +21,6 @@ cd /d %~dp0
 
 set TOOLS_PATH=C:\Users\Administrator\.nuget\packages\grpc.tools\1.7.1\tools\windows_x64
 
-%TOOLS_PATH%\protoc.exe --csharp_out "src/2. DotNetCore/Sodao.GrpcService.Library/Generate" "src/2. DotNetCore/Sodao.GrpcService.Library/GrpcService.proto" --grpc_out "src/2. DotNetCore/Sodao.GrpcService.Library/Generate" --plugin=protoc-gen-grpc=%TOOLS_PATH%\grpc_csharp_plugin.exe
+%TOOLS_PATH%\protoc.exe --csharp_out "src/2. DotNetCore/Overt.GrpcService.Library/Generate" "src/2. DotNetCore/Overt.GrpcService.Library/GrpcService.proto" --grpc_out "src/2. DotNetCore/Overt.GrpcService.Library/Generate" --plugin=protoc-gen-grpc=%TOOLS_PATH%\grpc_csharp_plugin.exe
 
 endlocal

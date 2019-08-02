@@ -21,6 +21,6 @@ cd /d %~dp0
 
 set TOOLS_PATH=packages\Grpc.Tools.1.6.1\tools\windows_x64
 
-%TOOLS_PATH%\protoc.exe --csharp_out src/Sodao.GrpcService.Library/Generate src/Sodao.GrpcService.Library/GrpcService.proto --grpc_out src/Sodao.GrpcService.Library/Generate --plugin=protoc-gen-grpc=%TOOLS_PATH%\grpc_csharp_plugin.exe
+%TOOLS_PATH%\protoc.exe --csharp_out src/Overt.GrpcService.Library/Generate src/Overt.GrpcService.Library/GrpcService.proto --grpc_out src/Overt.GrpcService.Library/Generate --plugin=protoc-gen-grpc=%TOOLS_PATH%\grpc_csharp_plugin.exe
 
 endlocal

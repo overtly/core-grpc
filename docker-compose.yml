@@ -5,4 +5,4 @@ services:
     image: sodao.grpcexample.service
     build:
       context: .
-      dockerfile: src/Sodao.GrpcExample.Service/Dockerfile
+      dockerfile: src/Overt.GrpcExample.Service/Dockerfile

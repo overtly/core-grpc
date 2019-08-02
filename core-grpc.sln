@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".gen", ".gen", "{8A88A7E4-7
 		.gen\generate_remark.txt = .gen\generate_remark.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.Core.Grpc", "src\Sodao.Core.Grpc\Sodao.Core.Grpc.csproj", "{90FAB530-0847-46E1-BCE1-73B8854B58FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.Core.Grpc", "src\Overt.Core.Grpc\Overt.Core.Grpc.csproj", "{90FAB530-0847-46E1-BCE1-73B8854B58FC}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{94ACF970-0768-4411-9BF4-8CA2EFD73A3C}"
 EndProject
@@ -23,25 +23,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net45", "net45", "{03381DFA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "netcore", "netcore", "{A302B636-1888-4B74-AF93-B0C43C648084}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExampleCrossPlat.Service", "sample\cross\Sodao.GrpcExampleCrossPlat.Service\Sodao.GrpcExampleCrossPlat.Service.csproj", "{9D5D72AE-8269-4D37-A0EE-123760A45870}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExampleCrossPlat.Service", "sample\cross\Overt.GrpcExampleCrossPlat.Service\Overt.GrpcExampleCrossPlat.Service.csproj", "{9D5D72AE-8269-4D37-A0EE-123760A45870}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExampleCrossPlat.Service.Grpc", "sample\cross\Sodao.GrpcExampleCrossPlat.Service.Grpc\Sodao.GrpcExampleCrossPlat.Service.Grpc.csproj", "{8AC26D12-10F6-417C-A036-D6C3153BA957}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExampleCrossPlat.Service.Grpc", "sample\cross\Overt.GrpcExampleCrossPlat.Service.Grpc\Overt.GrpcExampleCrossPlat.Service.Grpc.csproj", "{8AC26D12-10F6-417C-A036-D6C3153BA957}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodao.GrpcExampleNet45.Client", "sample\net45\Sodao.GrpcExampleNet45.Client\Sodao.GrpcExampleNet45.Client.csproj", "{DA35362D-AE25-4D26-96FE-1C2CA471E802}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overt.GrpcExampleNet45.Client", "sample\net45\Overt.GrpcExampleNet45.Client\Overt.GrpcExampleNet45.Client.csproj", "{DA35362D-AE25-4D26-96FE-1C2CA471E802}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sodao.GrpcExampleNet45.Service", "sample\net45\Sodao.GrpcExampleNet45.Service\Sodao.GrpcExampleNet45.Service.csproj", "{348BF984-BF6C-4020-86A8-F9866D85FF6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overt.GrpcExampleNet45.Service", "sample\net45\Overt.GrpcExampleNet45.Service\Overt.GrpcExampleNet45.Service.csproj", "{348BF984-BF6C-4020-86A8-F9866D85FF6F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExample.Application", "sample\netcore\Sodao.GrpcExample.Application\Sodao.GrpcExample.Application.csproj", "{94E10B90-C29D-4622-852F-C6192071491B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Application", "sample\netcore\Overt.GrpcExample.Application\Overt.GrpcExample.Application.csproj", "{94E10B90-C29D-4622-852F-C6192071491B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExample.Client", "sample\netcore\Sodao.GrpcExample.Client\Sodao.GrpcExample.Client.csproj", "{288F5AA2-408E-442B-814F-3BF304A3ED12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Client", "sample\netcore\Overt.GrpcExample.Client\Overt.GrpcExample.Client.csproj", "{288F5AA2-408E-442B-814F-3BF304A3ED12}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExample.Domain", "sample\netcore\Sodao.GrpcExample.Domain\Sodao.GrpcExample.Domain.csproj", "{99D46238-A40E-4497-B4FC-4F60029FCE3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Domain", "sample\netcore\Overt.GrpcExample.Domain\Overt.GrpcExample.Domain.csproj", "{99D46238-A40E-4497-B4FC-4F60029FCE3B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExample.Service", "sample\netcore\Sodao.GrpcExample.Service\Sodao.GrpcExample.Service.csproj", "{A5675046-8CED-40EA-AF49-7924F0C64B1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Service", "sample\netcore\Overt.GrpcExample.Service\Overt.GrpcExample.Service.csproj", "{A5675046-8CED-40EA-AF49-7924F0C64B1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExample.Service.Grpc", "sample\netcore\Sodao.GrpcExample.Service.Grpc\Sodao.GrpcExample.Service.Grpc.csproj", "{46742A21-4BD1-4EAA-8CDB-2B10C0FF244B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Service.Grpc", "sample\netcore\Overt.GrpcExample.Service.Grpc\Overt.GrpcExample.Service.Grpc.csproj", "{46742A21-4BD1-4EAA-8CDB-2B10C0FF244B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodao.GrpcExampleNet45.Service.Grpc", "sample\net45\Sodao.GrpcExampleNet45.Service.Grpc\Sodao.GrpcExampleNet45.Service.Grpc.csproj", "{44F0037D-C0B5-432E-BE8F-841CDE96D40D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExampleNet45.Service.Grpc", "sample\net45\Overt.GrpcExampleNet45.Service.Grpc\Overt.GrpcExampleNet45.Service.Grpc.csproj", "{44F0037D-C0B5-432E-BE8F-841CDE96D40D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
