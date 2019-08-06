@@ -1,9 +1,9 @@
-# Sodao.Core.Grpc
+# Overt.Core.Grpc
 
 <a name="4lctkm"></a>
 ### [](#4lctkm)项目层次说明
 
-> Sodao.Core.Grpc v1.0.10.2
+> Overt.Core.Grpc v1.0.10.2
 
 
 <a name="ihwcmc"></a>
@@ -70,7 +70,7 @@ Grpc 1.21.0
 #### [](#5cglzl)1. Nuget包引用
 
 ```csharp
-Install-Package Sodao.Core.Grpc -Version 1.0.10.2
+Install-Package Overt.Core.Grpc -Version 1.0.10.2
 ```
 
 <a name="dhmwfy"></a>
@@ -89,7 +89,7 @@ Install-Package Sodao.Core.Grpc -Version 1.0.10.2
 {
   "GrpcServer": {
     "Service": {
-      "Name": "SodaoGrpcServiceApp",                    // 服务名称使用服务名称去除点：SodaoGrpcServiceApp
+      "Name": "OvertGrpcServiceApp",                    // 服务名称使用服务名称去除点：OvertGrpcServiceApp
       "Host": "service.g.lan",                          // 专用注册的域名 （可选）格式：ip[:port=default]
       "HostEnv": "serviceaddress",                      // 获取注册地址的环境变量名字（可选，优先）环境变量值格式：ip[:port=default]
       "Port": 10001,                                    // 端口自定义
@@ -104,12 +104,12 @@ Install-Package Sodao.Core.Grpc -Version 1.0.10.2
 ```xml
 // 添加section
 <configSections>
-  <section name="grpcServer" type="Sodao.Core.Grpc.GrpcServerSection, Sodao.Core.Grpc" />
+  <section name="grpcServer" type="Overt.Core.Grpc.GrpcServerSection, Overt.Core.Grpc" />
 </configSections>
 
 // 添加节点
 <grpcServer>
-  <service name="SodaoGrpcServiceApp" port="10005" host="专用注册的域名（可选）格式：ip[:port=default]" hostEnv="获取注册地址的环境变量名字（可选）环境变量值格式：ip[:port=default]">
+  <service name="OvertGrpcServiceApp" port="10005" host="专用注册的域名（可选）格式：ip[:port=default]" hostEnv="获取注册地址的环境变量名字（可选）环境变量值格式：ip[:port=default]">
     <registry>
       <consul path="dllconfigs/Consul.config" />
     </registry>
@@ -150,7 +150,7 @@ Install-Package Sodao.Core.Grpc -Version 1.0.10.2
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="grpcClient" type="Sodao.Core.Grpc.GrpcClientSection, Sodao.Core.Grpc"/>
+    <section name="grpcClient" type="Overt.Core.Grpc.GrpcClientSection, Overt.Core.Grpc"/>
   </configSections>
 
   <grpcClient>
@@ -188,7 +188,7 @@ Install-Package Sodao.Core.Grpc -Version 1.0.10.2
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="consulServer" type="Sodao.Core.Grpc.ConsulServerSection, Sodao.Core.Grpc"/>
+    <section name="consulServer" type="Overt.Core.Grpc.ConsulServerSection, Overt.Core.Grpc"/>
   </configSections>
   <consulServer>
     <service address="http://consul.g.lan"></service>
@@ -214,12 +214,12 @@ services.AddGrpcTracer<ConsoleTracer>();                                        
 
 ```csharp
 using Microsoft.Extensions.Hosting;
-using Sodao.Core.Grpc;
-using Sodao.GrpcExample.Service.Grpc;
+using Overt.Core.Grpc;
+using Overt.GrpcExample.Service.Grpc;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sodao.GrpcService.App
+namespace Overt.GrpcService.App
 {
     public class GrpcService : IHostedService
     {
@@ -281,11 +281,11 @@ using(var scope = _provider.CreateSocpe())
 
 ```csharp
 using Grpc.Core;
-using Sodao.Core.Grpc;
-using Sodao.Log;
+using Overt.Core.Grpc;
+using Overt.Log;
 using System;
 
-namespace Sodao.GrpcService
+namespace Overt.GrpcService
 {
     public class MainService
     {
@@ -334,7 +334,7 @@ services.AddGrpcClient();
 // 自定义配置文件 / 默认使用命名空间.dll.json
 services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>((cfg) =>
 {
-    cfg.JsonFile = "dllconfig/Sodao.GrpcExample.Service.Grpc.dll.json";  // 可不传递
+    cfg.JsonFile = "dllconfig/Overt.GrpcExample.Service.Grpc.dll.json";  // 可不传递
 });
 
 
@@ -357,11 +357,11 @@ var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 
 
 ```csharp
-using Sodao.Core.Grpc;
+using Overt.Core.Grpc;
 using System;
 using System.IO;
 
-namespace Sodao.GrpcService.Generate
+namespace Overt.GrpcService.Generate
 {
     public class ClientManager
     {
@@ -381,7 +381,7 @@ namespace Sodao.GrpcService.Generate
                     {
                         try
                         {
-                            var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dllconfigs/Sodao.GrpcService.Library.dll.config");
+                            var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dllconfigs/Overt.GrpcService.Library.dll.config");
                             _Client = GrpcClientManager<GrpcService.GrpcServiceClient>.Get(configPath, Tracer);
                         }
                         catch (Exception ex)
@@ -442,7 +442,7 @@ ClientManager.Instance.[Method]
 > 4. **重要**[下载地址](http://10.0.60.89:8082/)
 
 ```csharp
-Sodao.Core.Grpc.dll
+Overt.Core.Grpc.dll
 Consul.dll
 Grpc.Core.dll
 Google.Protobuf.dll
@@ -480,7 +480,7 @@ App.config/Web.config
 > 2. 升级该版本需要同时发布**以下内容**
 
 ```csharp
-Sodao.Core.Grpc.dll
+Overt.Core.Grpc.dll
 Consul.dll
 Grpc.Core.dll
 Google.Protobuf.dll
