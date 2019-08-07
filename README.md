@@ -3,7 +3,7 @@
 <a name="4lctkm"></a>
 ### [](#4lctkm)项目层次说明
 
-> Overt.Core.Grpc v1.0.10.2
+> Overt.Core.Grpc v1.0.0
 
 
 <a name="ihwcmc"></a>
@@ -32,7 +32,7 @@
 <a name="bzwnno"></a>
 #### [](#bzwnno)2. 版本及支持
 
-> - Nuget版本：V 1.0.10.2
+> - Nuget版本：V 1.0.0
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -70,7 +70,7 @@ Grpc 1.21.0
 #### [](#5cglzl)1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.10.2
+Install-Package Overt.Core.Grpc -Version 1.0.0
 ```
 
 <a name="dhmwfy"></a>
@@ -407,6 +407,10 @@ ClientManager.Instance.[Method]
 
 <a name="ut52ry"></a>
 #### [](#ut52ry)5. 更新说明
+
+- 2019-08-01 v 1.0.0
+
+> 1. 修改命名空间，更新nuget包为Overt.Core.Grpc
 
 - 2019-06-05 v 1.0.10.2
 
