@@ -13,6 +13,7 @@ namespace Overt.Core.Grpc.Intercept
         public InterceptedClientHandler(IClientTracer tracer, ClientInterceptorContext<TRequest, TResponse> context)
         {
             _tracer = tracer;
+            _context = context;
         }
 
         public TResponse BlockingUnaryCall(TRequest request, Interceptor.BlockingUnaryCallContinuation<TRequest, TResponse> continuation)

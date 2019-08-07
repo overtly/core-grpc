@@ -12,10 +12,10 @@ namespace Overt.Core.Grpc
     /// </summary>
     public class GrpcClientFactory<T> : IGrpcClientFactory<T> where T : ClientBase
     {
-        private readonly GrpcClientOptions<T> _options;
         private readonly IClientTracer _tracer;
 
 #if ASP_NET_CORE
+        private readonly GrpcClientOptions<T> _options;
         public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null, IClientTracer tracer = null)
         {
             _options = options?.Value;
@@ -58,13 +58,15 @@ namespace Overt.Core.Grpc
         /// <returns></returns>
         private string GetConfigPath(string configPath = "")
         {
+#if ASP_NET_CORE
             if (string.IsNullOrEmpty(configPath))
                 configPath = _options?.JsonFile;
+#endif
             if (string.IsNullOrEmpty(configPath))
                 configPath = $"dllconfigs/{typeof(T).Namespace}.dll.json";
 
             return configPath;
         }
-        #endregion
+#endregion
     }
 }

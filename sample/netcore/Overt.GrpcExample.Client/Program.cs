@@ -27,7 +27,7 @@ namespace Overt.GrpcExample.Client
             services.AddOptions();
 
             // 注入GrpcClient
-            services.AddGrpcClient();
+            services.AddGrpcClient<ConsoleTracer>();
 
             provider = services.BuildServiceProvider();
         }
