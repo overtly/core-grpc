@@ -12,8 +12,8 @@ namespace Overt.Core.Grpc
     public class GrpcServiceManager
     {
         static Server server;
-        static ServerRegister serverRegister;
         static Entry discoveryEntry;
+        static ServerRegister serverRegister;
 
         #region Public Method
         /// <summary>
@@ -22,16 +22,37 @@ namespace Overt.Core.Grpc
         /// <param name="service">grpc service definition</param>
         /// <param name="tracer">拦截器记录</param>
         /// <param name="interceptors">其他拦截器</param>
-        /// <param name="configPath">配置文件路径 default: dllconfig/{namespace}.dll.[config/json]</param>
         /// <param name="channelOptions">Channel配置</param>
         /// <param name="whenException">==null => throw</param>
+        /// <param name="configPath">配置文件路径 default: dllconfig/{namespace}.dll.[config/json]</param>
         public static void Start(
             ServerServiceDefinition service,
             IServerTracer tracer = null,
             List<Interceptor> interceptors = null,
-            string configPath = "",
             List<ChannelOption> channelOptions = null,
-            Action<Exception> whenException = null)
+            Action<Exception> whenException = null,
+            string configPath = "")
+        {
+            var services = new List<ServerServiceDefinition>() { service };
+            Start(services, tracer, interceptors, channelOptions, whenException, configPath);
+        }
+
+        /// <summary>
+        /// Grpc服务启动，注册多个服务实现
+        /// </summary>
+        /// <param name="services">grpc service definition</param>
+        /// <param name="tracer">拦截器记录</param>
+        /// <param name="interceptors">其他拦截器</param>
+        /// <param name="channelOptions">Channel配置</param>
+        /// <param name="whenException">==null => throw</param>
+        /// <param name="configPath">配置文件路径 default: dllconfig/{namespace}.dll.[config/json]</param>
+        public static void Start(
+            IEnumerable<ServerServiceDefinition> services,
+            IServerTracer tracer = null,
+            List<Interceptor> interceptors = null,
+            List<ChannelOption> channelOptions = null,
+            Action<Exception> whenException = null,
+            string configPath = "")
         {
             try
             {
@@ -43,13 +64,17 @@ namespace Overt.Core.Grpc
                     interceptors = interceptors ?? new List<Interceptor>();
                     interceptors.Add(new ServerTracerInterceptor(tracer));
                 }
-                if (interceptors?.Count > 0)
-                    service = service.Intercept(interceptors.ToArray());
                 server = new Server(channelOptions)
                 {
-                    Services = { service },
                     Ports = { new ServerPort("0.0.0.0", serviceElement.Port, ServerCredentials.Insecure) }
                 };
+                foreach (var service in services)
+                {
+                    if (interceptors?.Count > 0)
+                        server.Services.Add(service.Intercept(interceptors.ToArray()));
+                    else
+                        server.Services.Add(service);
+                }
                 server.Start();
                 #endregion
 
