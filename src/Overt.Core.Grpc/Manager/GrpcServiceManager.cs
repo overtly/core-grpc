@@ -31,13 +31,13 @@ namespace Overt.Core.Grpc
             List<Interceptor> interceptors = null,
             List<ChannelOption> channelOptions = null,
             Action<Exception> whenException = null,
-            string configPath = "")
+            Action<GrpcOptions> grpcConfigAction = null)
         {
             if (service == null)
                 throw new ArgumentNullException("service");
 
             var services = new List<ServerServiceDefinition>() { service };
-            Start(services, tracer, interceptors, channelOptions, whenException, configPath);
+            Start(services, tracer, interceptors, channelOptions, whenException, grpcConfigAction);
         }
 
         /// <summary>
@@ -55,12 +55,12 @@ namespace Overt.Core.Grpc
             List<Interceptor> interceptors = null,
             List<ChannelOption> channelOptions = null,
             Action<Exception> whenException = null,
-            string configPath = "")
+            Action<GrpcOptions> grpcConfigAction = null)
         {
             try
             {
                 #region 启动服务
-                var serviceElement = ResolveServiceConfiguration(configPath);
+                var serviceElement = ResolveServiceConfiguration(grpcConfigAction);
                 if (tracer != null)
                 {
                     tracer.ServiceName = serviceElement.Name;
@@ -119,10 +119,13 @@ namespace Overt.Core.Grpc
         /// 解析配置
         /// </summary>
         /// <param name="configPath"></param>
-        private static Service.ServiceElement ResolveServiceConfiguration(string configPath = "")
+        private static Service.ServiceElement ResolveServiceConfiguration(Action<GrpcOptions> grpcConfigAction = null)
         {
+            var grpcOptions = new GrpcOptions();
+            grpcConfigAction?.Invoke(grpcOptions);
+
             var sectionName = Constants.GrpcServerSectionName;
-            var grpcSection = ConfigHelper.Get<GrpcServerSection>(sectionName, configPath);
+            var grpcSection = ConfigHelper.Get<GrpcServerSection>(sectionName, grpcOptions?.ConfigPath);
             if (grpcSection == null)
                 throw new ArgumentNullException(sectionName);
 
