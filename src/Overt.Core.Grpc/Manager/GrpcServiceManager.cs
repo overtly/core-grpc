@@ -33,6 +33,9 @@ namespace Overt.Core.Grpc
             Action<Exception> whenException = null,
             string configPath = "")
         {
+            if (service == null)
+                throw new ArgumentNullException("service");
+
             var services = new List<ServerServiceDefinition>() { service };
             Start(services, tracer, interceptors, channelOptions, whenException, configPath);
         }
