@@ -3,7 +3,7 @@
 <a name="4lctkm"></a>
 ### [](#4lctkm)项目层次说明
 
-> Overt.Core.Grpc v1.0.0
+> Overt.Core.Grpc v1.0.1
 
 
 <a name="ihwcmc"></a>
@@ -32,7 +32,7 @@
 <a name="bzwnno"></a>
 #### [](#bzwnno)2. 版本及支持
 
-> - Nuget版本：V 1.0.0
+> - Nuget版本：V 1.0.1
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -70,7 +70,7 @@ Grpc 1.21.0
 #### [](#5cglzl)1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.0
+Install-Package Overt.Core.Grpc -Version 1.0.1
 ```
 
 <a name="dhmwfy"></a>
@@ -209,7 +209,7 @@ Install-Package Overt.Core.Grpc -Version 1.0.0
 ```csharp
 services.AddSingleton<GrpcExampleService.GrpcExampleServiceBase, GrpcExampleServiceImpl>();          // Grpc服务的实现
 services.AddSingleton<IHostedService, GrpcExampleHostedService>();                                   // Grpc服务启动服务类：如下
-services.AddGrpcTracer<ConsoleTracer>();                                                             // Grpc注入拦截器，继承IServerTracer
+services.AddGrpcTracer<ConsoleTracer>();                                                             // Grpc注入拦截器，继承IServerTracer（可选）
 ```
 
 ```csharp
@@ -295,7 +295,7 @@ namespace Overt.GrpcService
         }
         public void Start(string serviceName)               // 启动服务
         {
-            GrpcServiceManager.Start(Library.GrpcService.BindService(new GrpcServiceImpl()), new ConsoleTracer(), (ex) =>
+            GrpcServiceManager.Start(Library.GrpcService.BindService(new GrpcServiceImpl()), tracer: new ConsoleTracer(), whenException: (ex) =>
             {
                 LogHelper.Info("", ex);
             });
@@ -334,7 +334,7 @@ services.AddGrpcClient();
 // 自定义配置文件 / 默认使用命名空间.dll.json
 services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>((cfg) =>
 {
-    cfg.JsonFile = "dllconfig/Overt.GrpcExample.Service.Grpc.dll.json";  // 可不传递
+    cfg.ConfigPath = "dllconfig/Overt.GrpcExample.Service.Grpc.dll.json";  // 可不传递
 });
 
 

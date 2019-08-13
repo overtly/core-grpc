@@ -60,7 +60,7 @@ namespace Overt.Core.Grpc
         {
 #if ASP_NET_CORE
             if (string.IsNullOrEmpty(configPath))
-                configPath = _options?.JsonFile;
+                configPath = _options?.ConfigPath;
 #endif
             if (string.IsNullOrEmpty(configPath))
                 configPath = $"dllconfigs/{typeof(T).Namespace}.dll.json";

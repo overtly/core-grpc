@@ -11,6 +11,6 @@ namespace Overt.Core.Grpc
         /// Json文件
         /// defaultValue: dllconfigs/clientsettings.json 
         /// </summary>
-        public string JsonFile { get; set; }
+        public string ConfigPath { get; set; }
     }
 }
