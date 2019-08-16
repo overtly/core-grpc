@@ -8,8 +8,9 @@ namespace Overt.GrpcExample.Service.Grpc
 #if NET45 || NET46 || NET47
 public class ClientManager {
 public static IClientTracer Tracer { get; set; } = default(IClientTracer);
+public static string ConfigPath { get; set; } = "dllconfigs/Overt.GrpcExample.Service.Grpc.dll.config";
 public static __GrpcService.GrpcExampleServiceClient Instance{get{
-var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dllconfigs/Overt.GrpcExample.Service.Grpc.dll.config");
+var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigPath);
 return GrpcClientManager<__GrpcService.GrpcExampleServiceClient>.Get(configPath, Tracer);
 } }
 }

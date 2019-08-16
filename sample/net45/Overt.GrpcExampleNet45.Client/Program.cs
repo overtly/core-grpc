@@ -19,6 +19,7 @@ namespace Overt.GrpcExampleNet45.Client
 
                 try
                 {
+                    Overt.GrpcExample.Service.Grpc.ClientManager.ConfigPath = "dllconfigs/aa.config";
                     var res = Overt.GrpcExample.Service.Grpc.ClientManager.Instance.Ask(new GrpcExample.Service.Grpc.AskRequest() { Key = "abc" });
                     Console.WriteLine("例子：" + res?.Content ?? "abc");
                 }
