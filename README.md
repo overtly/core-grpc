@@ -122,8 +122,6 @@ Install-Package Overt.Core.Grpc -Version 1.0.1
 
 > - 命名：[命名空间].dll.json 文件夹(dllconfigs)
 
-
-
 ```json
 {
   "GrpcClient": {
@@ -171,8 +169,6 @@ Install-Package Overt.Core.Grpc -Version 1.0.1
 ##### [](#wt0bso)（3）Consul配置文件
 
 > - 命名：consulsettings.json 不要改动
-
-
 
 ```json
 {
@@ -253,8 +249,6 @@ namespace Overt.GrpcService.App
 
 > - 实现类写法
 
-
-
 ```csharp
 原因：服务启动的时候是一个单例，那么所有服务之下的全部是单实例，而数据层需要使用多实例
 
@@ -324,7 +318,6 @@ namespace Overt.GrpcService
 > - 配置文件默认使用    [命名空间].dll.json     可通过vs.menu工具生成nuget包
 
 > - 注入中直接调用如下
-
 
 
 ```csharp
@@ -400,12 +393,13 @@ namespace Overt.GrpcExample.Service.Grpc
 
 
 ```
+// 自定义配置文件 / 默认使用命名空间.dll.json / 在主进程入口进行配置T为服务Client
+ClientManger.Configure<T>("dllconfig/abc.config");
+
 ClientManager.Instance.[Method]
 
-ClientManager<T>.Instanct.[Method]
-
-// 配置文件更改
-ClientManger.Configure<T>(""); 
+// T为服务Client
+ClientManager<T>.Instance.[Method]
 ```
 
 <a name="ut52ry"></a>
@@ -413,7 +407,7 @@ ClientManger.Configure<T>("");
 
 - 2019-08-01 v 1.0.0
 
-> 1. 修改命名空间，更新nuget包为Overt.Core.Grpc
+> 1. 修改命名空间，更新nuget包为Overt.Core.Grpc 更新默认版本为1.0.0
 
 - 2019-06-05 v 1.0.10.2
 
