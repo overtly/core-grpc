@@ -354,55 +354,58 @@ var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 
 > - 客户端代理类，编译在Dll中，源码如下，可忽略
 
-
-
 ```csharp
+using Grpc.Core;
 using Overt.Core.Grpc;
+using Overt.Core.Grpc.Intercept;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
-
-namespace Overt.GrpcService.Generate
+using __GrpcService = Overt.GrpcExample.Service.Grpc.GrpcExampleService;
+namespace Overt.GrpcExample.Service.Grpc
 {
+#if NET45 || NET46 || NET47
     public class ClientManager
     {
-        private volatile static GrpcService.GrpcServiceClient _Client = null;
-        private static readonly object lockHelper = new object();
         public static IClientTracer Tracer { get; set; } = default(IClientTracer);
-        /// <summary>
-        /// 单例实例
-        /// </summary>
-        public static GrpcService.GrpcServiceClient Instance
+        private static string DefaultConfigPath { get; set; } = "dllconfigs/Overt.GrpcExample.Service.Grpc.dll.config";
+        public static __GrpcService.GrpcExampleServiceClient Instance
         {
             get
             {
-                if (_Client == null)
-                {
-                    lock (lockHelper)
-                    {
-                        try
-                        {
-                            var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dllconfigs/Overt.GrpcService.Library.dll.config");
-                            _Client = GrpcClientManager<GrpcService.GrpcServiceClient>.Get(configPath, Tracer);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception($"{ex.InnerException?.InnerException?.Message}");
-                        }
-                    }
-                }
-                return _Client;
+                return ClientManager<__GrpcService.GrpcExampleServiceClient>.Instance;
+            }
+        }
+        private static readonly ConcurrentDictionary<Type, string> configMap = new ConcurrentDictionary<Type, string>();
+        public static void Configure<T>(string configPath) { configMap.AddOrUpdate(typeof(T), configPath, (t, s) => configPath); }
+        public static string GetConfigure<T>() { if (configMap.TryGetValue(typeof(T), out string configPath)) return configPath; return DefaultConfigPath; }
+    }
+    public class ClientManager<T> : ClientManager where T : ClientBase
+    {
+        public static new T Instance
+        {
+            get
+            {
+                var configPath = GetConfigure<T>();
+                var abConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configPath);
+                return GrpcClientManager<T>.Get(abConfigPath, Tracer);
             }
         }
     }
+#endif
 }
 ```
 
 > - 使用代理类执行
 
 
-
 ```
 ClientManager.Instance.[Method]
+
+ClientManager<T>.Instanct.[Method]
+
+// 配置文件更改
+ClientManger.Configure<T>(""); 
 ```
 
 <a name="ut52ry"></a>
