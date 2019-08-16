@@ -125,5 +125,121 @@ namespace Overt.GrpcExample.Service.Grpc {
     }
 
   }
+  public static partial class GrpcExampleService1
+  {
+    static readonly string __ServiceName = "Overt.GrpcExample.Service.Grpc.GrpcExampleService1";
+
+    static readonly grpc::Marshaller<global::Overt.GrpcExample.Service.Grpc.RequestModel> __Marshaller_RequestModel = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Overt.GrpcExample.Service.Grpc.RequestModel.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::Overt.GrpcExample.Service.Grpc.ResponseModel> __Marshaller_ResponseModel = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Overt.GrpcExample.Service.Grpc.ResponseModel.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::Overt.GrpcExample.Service.Grpc.AskRequest> __Marshaller_AskRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Overt.GrpcExample.Service.Grpc.AskRequest.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::Overt.GrpcExample.Service.Grpc.AskResponse> __Marshaller_AskResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Overt.GrpcExample.Service.Grpc.AskResponse.Parser.ParseFrom);
+
+    static readonly grpc::Method<global::Overt.GrpcExample.Service.Grpc.RequestModel, global::Overt.GrpcExample.Service.Grpc.ResponseModel> __Method_GetName = new grpc::Method<global::Overt.GrpcExample.Service.Grpc.RequestModel, global::Overt.GrpcExample.Service.Grpc.ResponseModel>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "GetName",
+        __Marshaller_RequestModel,
+        __Marshaller_ResponseModel);
+
+    static readonly grpc::Method<global::Overt.GrpcExample.Service.Grpc.AskRequest, global::Overt.GrpcExample.Service.Grpc.AskResponse> __Method_Ask = new grpc::Method<global::Overt.GrpcExample.Service.Grpc.AskRequest, global::Overt.GrpcExample.Service.Grpc.AskResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "Ask",
+        __Marshaller_AskRequest,
+        __Marshaller_AskResponse);
+
+    /// <summary>Service descriptor</summary>
+    public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
+    {
+      get { return global::Overt.GrpcExample.Service.Grpc.GrpcExampleReflection.Descriptor.Services[1]; }
+    }
+
+    /// <summary>Base class for server-side implementations of GrpcExampleService1</summary>
+    public abstract partial class GrpcExampleService1Base
+    {
+      public virtual global::System.Threading.Tasks.Task<global::Overt.GrpcExample.Service.Grpc.ResponseModel> GetName(global::Overt.GrpcExample.Service.Grpc.RequestModel request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      public virtual global::System.Threading.Tasks.Task<global::Overt.GrpcExample.Service.Grpc.AskResponse> Ask(global::Overt.GrpcExample.Service.Grpc.AskRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+    }
+
+    /// <summary>Client for GrpcExampleService1</summary>
+    public partial class GrpcExampleService1Client : grpc::ClientBase<GrpcExampleService1Client>
+    {
+      /// <summary>Creates a new client for GrpcExampleService1</summary>
+      /// <param name="channel">The channel to use to make remote calls.</param>
+      public GrpcExampleService1Client(grpc::Channel channel) : base(channel)
+      {
+      }
+      /// <summary>Creates a new client for GrpcExampleService1 that uses a custom <c>CallInvoker</c>.</summary>
+      /// <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+      public GrpcExampleService1Client(grpc::CallInvoker callInvoker) : base(callInvoker)
+      {
+      }
+      /// <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+      protected GrpcExampleService1Client() : base()
+      {
+      }
+      /// <summary>Protected constructor to allow creation of configured clients.</summary>
+      /// <param name="configuration">The client configuration.</param>
+      protected GrpcExampleService1Client(ClientBaseConfiguration configuration) : base(configuration)
+      {
+      }
+
+      public virtual global::Overt.GrpcExample.Service.Grpc.ResponseModel GetName(global::Overt.GrpcExample.Service.Grpc.RequestModel request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+      {
+        return GetName(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      public virtual global::Overt.GrpcExample.Service.Grpc.ResponseModel GetName(global::Overt.GrpcExample.Service.Grpc.RequestModel request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_GetName, null, options, request);
+      }
+      public virtual grpc::AsyncUnaryCall<global::Overt.GrpcExample.Service.Grpc.ResponseModel> GetNameAsync(global::Overt.GrpcExample.Service.Grpc.RequestModel request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+      {
+        return GetNameAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      public virtual grpc::AsyncUnaryCall<global::Overt.GrpcExample.Service.Grpc.ResponseModel> GetNameAsync(global::Overt.GrpcExample.Service.Grpc.RequestModel request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_GetName, null, options, request);
+      }
+      public virtual global::Overt.GrpcExample.Service.Grpc.AskResponse Ask(global::Overt.GrpcExample.Service.Grpc.AskRequest request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+      {
+        return Ask(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      public virtual global::Overt.GrpcExample.Service.Grpc.AskResponse Ask(global::Overt.GrpcExample.Service.Grpc.AskRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_Ask, null, options, request);
+      }
+      public virtual grpc::AsyncUnaryCall<global::Overt.GrpcExample.Service.Grpc.AskResponse> AskAsync(global::Overt.GrpcExample.Service.Grpc.AskRequest request, grpc::Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+      {
+        return AskAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      public virtual grpc::AsyncUnaryCall<global::Overt.GrpcExample.Service.Grpc.AskResponse> AskAsync(global::Overt.GrpcExample.Service.Grpc.AskRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_Ask, null, options, request);
+      }
+      /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+      protected override GrpcExampleService1Client NewInstance(ClientBaseConfiguration configuration)
+      {
+        return new GrpcExampleService1Client(configuration);
+      }
+    }
+
+    /// <summary>Creates service definition that can be registered with a server</summary>
+    /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+    public static grpc::ServerServiceDefinition BindService(GrpcExampleService1Base serviceImpl)
+    {
+      return grpc::ServerServiceDefinition.CreateBuilder()
+          .AddMethod(__Method_GetName, serviceImpl.GetName)
+          .AddMethod(__Method_Ask, serviceImpl.Ask).Build();
+    }
+
+  }
 }
 #endregion

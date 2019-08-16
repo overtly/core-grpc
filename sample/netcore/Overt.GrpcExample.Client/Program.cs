@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
 
 namespace Overt.GrpcExample.Client
 {
@@ -28,6 +29,10 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient<ConsoleTracer>();
+            services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
+            {
+                cfg.ConfigPath = "";
+            });
 
             provider = services.BuildServiceProvider();
         }

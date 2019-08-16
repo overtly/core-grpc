@@ -11,7 +11,7 @@
           }
         ],
         "Consul": {
-          "Path": "consulsettings.json"
+          "Path": "dllconfigs/consulsettings.json"
         }
       }
     }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
+using static Overt.GrpcExample.Service.Grpc.GrpcExampleService1;
 
 namespace Overt.GrpcExampleNet45.Client
 {
@@ -19,9 +21,13 @@ namespace Overt.GrpcExampleNet45.Client
 
                 try
                 {
-                    Overt.GrpcExample.Service.Grpc.ClientManager.ConfigPath = "dllconfigs/aa.config";
+                    //Overt.GrpcExample.Service.Grpc.ClientManager.ConfigPath = "dllconfigs/aa.config";
                     var res = Overt.GrpcExample.Service.Grpc.ClientManager.Instance.Ask(new GrpcExample.Service.Grpc.AskRequest() { Key = "abc" });
                     Console.WriteLine("例子：" + res?.Content ?? "abc");
+
+                    Overt.GrpcExample.Service.Grpc.ClientManager.Configure<GrpcExampleService1Client>("dllconfigs/Overt.GrpcExample.Service.Grpc.1.dll.config");
+                    var res1 = GrpcExample.Service.Grpc.ClientManager<GrpcExampleService1Client>.Instance.Ask(new GrpcExample.Service.Grpc.AskRequest() { Key = "ccc" });
+                    Console.WriteLine("例子：" + res1?.Content ?? "abc");
                 }
                 catch (Exception ex)
                 {

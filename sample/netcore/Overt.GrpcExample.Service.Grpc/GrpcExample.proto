@@ -28,3 +28,11 @@ service GrpcExampleService {
 
 }
 
+service GrpcExampleService1 {
+
+	rpc GetName(RequestModel) returns (ResponseModel){}
+
+	rpc Ask(AskRequest) returns (AskResponse){}
+
+}
+
