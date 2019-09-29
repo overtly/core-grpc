@@ -11,13 +11,13 @@ namespace Overt.Core.Grpc
     /// </summary>
     internal class IPEndpointStrategy : IEndpointStrategy
     {
+        #region Constructor
         private readonly object _lock = new object();
         private readonly Timer _timer;
         private readonly ConcurrentDictionary<string, IEndpointDiscovery> _discoveries = new ConcurrentDictionary<string, IEndpointDiscovery>();
         private readonly ConcurrentDictionary<string, List<ServerCallInvoker>> _invokers = new ConcurrentDictionary<string, List<ServerCallInvoker>>();
         private readonly ConcurrentDictionary<string, Channel> _channels = new ConcurrentDictionary<string, Channel>();
 
-        #region 构造函数
         IPEndpointStrategy()
         {
             _timer = new Timer(ClientTimespan.ResetInterval.TotalSeconds * 1000);
@@ -25,7 +25,7 @@ namespace Overt.Core.Grpc
         }
         #endregion
 
-        #region 析构函数
+        #region Destructor
         ~IPEndpointStrategy()
         {
             _timer?.Stop();

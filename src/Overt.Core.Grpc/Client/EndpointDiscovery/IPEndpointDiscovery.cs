@@ -9,6 +9,7 @@ namespace Overt.Core.Grpc
     /// </summary>
     internal class IPEndpointDiscovery : IEndpointDiscovery
     {
+        #region Constructor
         private readonly List<Tuple<string, int>> _ipEndPoints;
         public IPEndpointDiscovery(string serviceName, List<Tuple<string, int>> ipEndPoints)
         {
@@ -18,9 +19,15 @@ namespace Overt.Core.Grpc
             _ipEndPoints = ipEndPoints;
             ServiceName = serviceName;
         }
+        #endregion
 
+        #region Public Property
         public string ServiceName { get; set; }
 
+        public Action Watched { get; set; }
+        #endregion
+
+        #region Public Method
         public List<string> FindServiceEndpoints(bool filterBlack = true)
         {
             if ((_ipEndPoints?.Count ?? 0) <= 0)
@@ -31,5 +38,6 @@ namespace Overt.Core.Grpc
                                       .ToList();
             return targets;
         }
+        #endregion
     }
 }

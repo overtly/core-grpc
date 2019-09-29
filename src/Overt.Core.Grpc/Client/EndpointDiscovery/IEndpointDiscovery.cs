@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
@@ -11,6 +12,11 @@ namespace Overt.Core.Grpc
         /// 服务名称
         /// </summary>
         string ServiceName { get; set; }
+
+        /// <summary>
+        /// 监听变动的方法
+        /// </summary>
+        Action Watched { get; set; }
 
         /// <summary>
         /// 获取服务可连接终结点

@@ -8,13 +8,13 @@ namespace Overt.Core.Grpc
 {
     internal class StickyEndpointStrategy : IEndpointStrategy
     {
+        #region Constructor
         private readonly object _lock = new object();
         private readonly Timer _timer;
         private readonly ConcurrentDictionary<string, IEndpointDiscovery> _discoveries = new ConcurrentDictionary<string, IEndpointDiscovery>();
         private readonly ConcurrentDictionary<string, List<ServerCallInvoker>> _invokers = new ConcurrentDictionary<string, List<ServerCallInvoker>>();
         private readonly ConcurrentDictionary<string, Channel> _channels = new ConcurrentDictionary<string, Channel>();
 
-        #region 构造函数
         StickyEndpointStrategy()
         {
             _timer = new Timer(ClientTimespan.ResetInterval.TotalSeconds * 1000);
@@ -22,7 +22,7 @@ namespace Overt.Core.Grpc
         }
         #endregion
 
-        #region 析构函数
+        #region Destructor
         ~StickyEndpointStrategy()
         {
             _timer?.Stop();
@@ -65,6 +65,10 @@ namespace Overt.Core.Grpc
         /// <param name="serviceDiscovery"></param>
         public void AddServiceDiscovery(IEndpointDiscovery serviceDiscovery)
         {
+            if (serviceDiscovery == null)
+                return;
+
+            serviceDiscovery.Watched = () => SetCallInvokers(serviceDiscovery.ServiceName);
             _discoveries.AddOrUpdate(serviceDiscovery.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
         }
 
@@ -140,10 +144,15 @@ namespace Overt.Core.Grpc
                 {
                     _timer.Stop();
 
-                    foreach (var item in _invokers)
+                    try
                     {
-                        SetCallInvokers(item.Key);
+                        foreach (var item in _invokers)
+                        {
+                            SetCallInvokers(item.Key);
+                        }
                     }
+                    catch { }
+
                     _timer.Start();
                 }
             };

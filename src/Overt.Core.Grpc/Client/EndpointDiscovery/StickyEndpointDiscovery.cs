@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Overt.Core.Grpc
 {
@@ -11,8 +12,9 @@ namespace Overt.Core.Grpc
     /// </summary>
     internal sealed class StickyEndpointDiscovery : IEndpointDiscovery
     {
+        #region 构造函数
         private readonly ConsulClient _client;
-        public StickyEndpointDiscovery(string serviceName, string address)
+        public StickyEndpointDiscovery(string serviceName, string address, bool startWatch = true)
         {
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException("consul address");
@@ -24,10 +26,19 @@ namespace Overt.Core.Grpc
             });
 
             ServiceName = serviceName;
-        }
 
+            if (startWatch)
+                StartWatchService();
+        }
+        #endregion
+
+        #region Public Property
         public string ServiceName { get; set; }
 
+        public Action Watched { get; set; }
+        #endregion
+
+        #region Public Method
         public List<string> FindServiceEndpoints(bool filterBlack = true)
         {
             if (_client == null)
@@ -44,19 +55,49 @@ namespace Overt.Core.Grpc
                            .Select(x => $"{x.Service.Address}:{x.Service.Port}")
                            .Where(target => !ServiceBlackPlicy.In(ServiceName, target) || !filterBlack)
                            .ToList();
-
-                //var res = _client.Catalog.Service(ServiceName).Result;
-                //if (res.StatusCode != HttpStatusCode.OK)
-                //    throw new ApplicationException($"Failed to query services");
-
-                //targets = res.Response
-                //             .Select(x => $"{x.ServiceAddress}:{x.ServicePort}")
-                //             .Where(x => !ServiceBlackPlicy.In(x) || !filterBlack)
-                //             .ToList();
-                //return targets;
             }
             catch { }
             return targets;
         }
+        #endregion
+
+        #region Private Method
+        /// <summary>
+        /// 开始监听服务变动
+        /// </summary>
+        private void StartWatchService()
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                ulong lastWaitIndex = 0;
+                do
+                {
+                    try
+                    {
+                        var serviceQueryResult = await _client.Catalog.Service(ServiceName, "", new QueryOptions()
+                        {
+                            WaitTime = TimeSpan.FromSeconds(30),
+                            WaitIndex = lastWaitIndex
+                        });
+                        var waitIndex = serviceQueryResult.LastIndex;
+                        if (lastWaitIndex <= 0)
+                        {
+                            lastWaitIndex = waitIndex;
+                            continue;
+                        }
+                        if (waitIndex == lastWaitIndex)
+                            continue;
+
+                        // 重置服务
+                        lastWaitIndex = waitIndex;
+                        if (Watched != null)
+                            Watched.Invoke();
+                    }
+                    catch { }
+
+                } while (true);
+            });
+        }
+        #endregion
     }
 }
