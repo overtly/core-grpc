@@ -6,7 +6,7 @@
     <Authors>Overt</Authors>
     <Description>Overt.Core.Grpc</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>客户端使用配置中心，支持服务变动监听，新注册服务或者服务挂掉，更加实时</PackageReleaseNotes>
     <Copyright>Overt</Copyright>
     <PackageTags></PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
