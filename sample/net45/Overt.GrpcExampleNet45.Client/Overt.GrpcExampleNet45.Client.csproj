@@ -86,9 +86,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="dllconfigs\Overt.GrpcExample.Service.Grpc.1.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="dllconfigs\Overt.GrpcExample.Service.Grpc.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
