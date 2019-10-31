@@ -67,7 +67,7 @@ namespace Overt.Core.Grpc
         /// <returns></returns>
         private static Client.GrpcServiceElement ResolveServiceConfiguration(string configFile)
         {
-            var grpcSection = ConfigHelper.Get<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
+            var grpcSection = ConfigBuilder.Build<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
             if (grpcSection == null || grpcSection.Service == null)
                 throw new ArgumentNullException($"service config error");
 
@@ -126,7 +126,7 @@ namespace Overt.Core.Grpc
             if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, discovery.Consul.Path)))
                 throw new Exception($"[{discovery.Consul.Path}] not exist at [{AppDomain.CurrentDomain.BaseDirectory}]");
 
-            var consulSection = ConfigHelper.Get<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
+            var consulSection = ConfigBuilder.Build<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
             address = consulSection?.Service?.Address;
             if (string.IsNullOrEmpty(address))
                 return false;

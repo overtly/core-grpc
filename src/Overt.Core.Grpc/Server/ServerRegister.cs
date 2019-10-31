@@ -50,7 +50,7 @@ namespace Overt.Core.Grpc
             var dnsEndPoint = GenServiceAddress(serviceElement);
             var registerResult = RegisterService(serviceName, dnsEndPoint, registered);
             if (!registerResult)
-                throw new Exception($"sodao: failed to register service {serviceName} on host:port {dnsEndPoint.ToString()}");
+                throw new Exception($"overt: failed to register service {serviceName} on host:port {dnsEndPoint.ToString()}");
             #endregion
 
             #region InitIntervalReport

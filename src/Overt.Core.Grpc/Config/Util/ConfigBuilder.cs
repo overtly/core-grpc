@@ -11,7 +11,7 @@ namespace Overt.Core.Grpc
     /// <summary>
     /// 配置文件读取
     /// </summary>
-    internal class ConfigHelper
+    internal class ConfigBuilder
     {
         /// <summary>
         /// 获取Server配置对象
@@ -19,7 +19,7 @@ namespace Overt.Core.Grpc
         /// <param name="sectionName">节点名称</param>
         /// <param name="configPath"></param>
         /// <returns></returns>
-        public static T Get<T>(string sectionName, string configPath = "") where T :
+        public static T Build<T>(string sectionName, string configPath = "") where T :
 #if !ASP_NET_CORE
             ConfigurationSection
 #else
@@ -35,7 +35,7 @@ namespace Overt.Core.Grpc
             {
                 configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configPath);
                 if (!File.Exists(configPath))
-                    throw new ConfigurationErrorsException($"sodao: when resolve configpath, configpath file is not exist...[{configPath}]");
+                    throw new ConfigurationErrorsException($"overt: when resolve configpath, configpath file is not exist...[{configPath}]");
 
                 section = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap
                 {
@@ -48,7 +48,7 @@ namespace Overt.Core.Grpc
 
             configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configPath);
             if (!File.Exists(configPath))
-                throw new Exception($"sodao: when resolve configpath, configpath file is not exist... [{configPath}]");
+                throw new Exception($"overt: when resolve configpath, configpath file is not exist... [{configPath}]");
 
             section = new T();
             var configuration = new ConfigurationBuilder()

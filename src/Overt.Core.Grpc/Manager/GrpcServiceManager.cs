@@ -125,7 +125,7 @@ namespace Overt.Core.Grpc
             grpcConfigAction?.Invoke(grpcOptions);
 
             var sectionName = Constants.GrpcServerSectionName;
-            var grpcSection = ConfigHelper.Get<GrpcServerSection>(sectionName, grpcOptions?.ConfigPath);
+            var grpcSection = ConfigBuilder.Build<GrpcServerSection>(sectionName, grpcOptions?.ConfigPath);
             if (grpcSection == null)
                 throw new ArgumentNullException(sectionName);
 
@@ -157,7 +157,7 @@ namespace Overt.Core.Grpc
             if (string.IsNullOrEmpty(configPath))
                 return string.Empty;
 
-            var consulSection = ConfigHelper.Get<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
+            var consulSection = ConfigBuilder.Build<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
             return consulSection?.Service?.Address;
         }
 
