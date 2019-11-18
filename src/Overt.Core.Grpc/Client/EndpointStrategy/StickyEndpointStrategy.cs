@@ -68,7 +68,7 @@ namespace Overt.Core.Grpc
             if (serviceDiscovery == null)
                 return;
 
-            serviceDiscovery.Watched = () => SetCallInvokers(serviceDiscovery.ServiceName);
+            serviceDiscovery.Watched = () => SetCallInvokers(serviceDiscovery.ServiceName, false);
             _discoveries.AddOrUpdate(serviceDiscovery.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
         }
 
@@ -90,6 +90,9 @@ namespace Overt.Core.Grpc
                     return ServicePollingPlicy.Random(callInvokers);
 
                 callInvokers = SetCallInvokers(serviceName);
+                if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPlicy.Exist(serviceName))
+                    callInvokers = SetCallInvokers(serviceName, false);
+
                 return ServicePollingPlicy.Random(callInvokers);
             }
         }
