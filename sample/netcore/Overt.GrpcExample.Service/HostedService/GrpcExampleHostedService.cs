@@ -23,7 +23,7 @@ namespace Overt.GrpcExample.Service
         {
             return Task.Factory.StartNew(() =>
             {
-                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase));
+                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase), _tracer);
             }, cancellationToken);
         }
 
