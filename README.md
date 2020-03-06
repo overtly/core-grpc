@@ -3,8 +3,8 @@
 <a name="4lctkm"></a>
 ### [](#4lctkm)项目层次说明
 
-> Overt.Core.Grpc v1.0.1
-
+> Overt.Core.Grpc v1.0.3  
+> 如有疑问可直接加QQ：2292709323，微信：mojinxin_2012，联系
 
 <a name="ihwcmc"></a>
 #### [](#ihwcmc)1. 项目目录
@@ -32,7 +32,7 @@
 <a name="bzwnno"></a>
 #### [](#bzwnno)2. 版本及支持
 
-> - Nuget版本：V 1.0.1
+> - Nuget版本：V 1.0.3
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -70,7 +70,7 @@ Grpc 1.21.0
 #### [](#5cglzl)1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.1
+Install-Package Overt.Core.Grpc -Version 1.0.3
 ```
 
 <a name="dhmwfy"></a>
@@ -405,21 +405,35 @@ ClientManager<T>.Instance.[Method]
 <a name="ut52ry"></a>
 #### [](#ut52ry)5. 更新说明
 
+- 2019-11-28 v 1.0.3
+
+> 1. 注册中心监听到变动后，忽略黑名单，本地连接全部重置
+
+
+
 - 2019-09-29 v 1.0.2
 
-> 1. 客户端使用配置中心，支持服务变动监听，新注册服务或者服务挂掉，更加实时
+> 1. 客户端使用Consul注册中心，支持单服务变动监听，新注册服务或者服务挂掉，更加实时
+
+
 
 - 2019-08-16 v 1.0.1
 
 > 1. 支持多服务模式
 
+
+
 - 2019-08-01 v 1.0.0
 
 > 1. 修改命名空间，更新nuget包为Overt.Core.Grpc 更新默认版本为1.0.0
 
+
+
 - 2019-06-05 v 1.0.10.2
 
 > 1. 客户端优化连接服务失败的情况下，拉入黑名单，导致节点不存在的问题
+
+
 
 - 2019-06-05 v 1.0.10
 
