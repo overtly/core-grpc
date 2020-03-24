@@ -133,7 +133,7 @@ namespace Overt.Core.Grpc
         /// <returns></returns>
         private string GenCheckId(string serviceName, DnsEndPoint dnsEndPoint)
         {
-            return $"{serviceName}-{dnsEndPoint.Host}:{dnsEndPoint.Port}";
+            return $"Check:{serviceName}-{dnsEndPoint.Host}:{dnsEndPoint.Port}";
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Overt.Core.Grpc
         /// <returns></returns>
         private string GenCheckName(string serviceName, DnsEndPoint dnsEndPoint)
         {
-            return $"{serviceName}-{dnsEndPoint.Host}:{dnsEndPoint.Port}";
+            return $"Check:{serviceName}-{dnsEndPoint.Host}:{dnsEndPoint.Port}";
         }
 
         /// <summary>
@@ -161,12 +161,13 @@ namespace Overt.Core.Grpc
             var checkName = GenCheckName(serviceName, dnsEndPoint);
             var acr = new AgentCheckRegistration
             {
-                ID = checkId,
+                //ID = checkId,
                 Name = checkName,
                 TCP = $"{dnsEndPoint.Host}:{dnsEndPoint.Port}",
                 Interval = ConsulTimespan.CheckInterval,
                 Status = HealthStatus.Passing,
                 DeregisterCriticalServiceAfter = ConsulTimespan.CriticalInterval,
+                ServiceID = serviceId,
             };
             var asr = new AgentServiceRegistration
             {

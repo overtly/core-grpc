@@ -6,13 +6,13 @@
     <Authors>yaofeng</Authors>
     <Description>基于Grpc/Consul实现的微服务框架</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>客户端使用配置中心，支持服务变动监听，新注册服务或者服务挂掉，更加实时</PackageReleaseNotes>
+    <PackageReleaseNotes>优化对Consul新版本的支持</PackageReleaseNotes>
     <Copyright>yaofeng</Copyright>
     <PackageTags></PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.3</Version>
+    <Version>1.0.3.1</Version>
     <RepositoryUrl>https://github.com/overtly/core-grpc.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/overtly/core-grpc.git</PackageProjectUrl>
     <Company />
