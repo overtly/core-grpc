@@ -1,12 +1,9 @@
-﻿using Overt.Core.Grpc;
-using System;
-using Microsoft.Extensions.Hosting;
-using Autofac;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Com.Ctrip.Framework.Apollo;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Overt.Core.Grpc;
 using Overt.GrpcExample.Service.Grpc;
-using SkyWalking.AspNetCore;
-using Overt.Core.Grpc.Intercept;
 using Overt.GrpcExample.Service.Tracer;
 
 namespace Overt.GrpcExample.Service
@@ -21,6 +18,7 @@ namespace Overt.GrpcExample.Service
                 {
                     configurationBuilder
                         .AddJsonFile("appsettings.json", optional: true);    //约定使用appsettings.json作为应用程序配置文件
+                    configurationBuilder.AddApollo(configurationBuilder.Build().GetSection("apollo")).AddDefault();
                 })
                 .ConfigureServices(ConfigureServices)
                 .Build();
@@ -40,6 +38,10 @@ namespace Overt.GrpcExample.Service
 
             // tracer
             services.AddGrpcTracer<ConsoleTracer>();
+            services.ConfigureGrpcConfiguration(configurationBuilder =>
+            {
+                configurationBuilder.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+            });
         }
     }
 }

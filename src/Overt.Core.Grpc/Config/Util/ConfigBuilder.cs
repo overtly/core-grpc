@@ -13,6 +13,10 @@ namespace Overt.Core.Grpc
     /// </summary>
     internal class ConfigBuilder
     {
+#if ASP_NET_CORE
+        public static Action<IConfigurationBuilder> ConfigureDelegate;
+#endif
+
         /// <summary>
         /// 获取Server配置对象
         /// </summary>
@@ -51,12 +55,12 @@ namespace Overt.Core.Grpc
                 throw new Exception($"overt: when resolve configpath, configpath file is not exist... [{configPath}]");
 
             section = new T();
-            var configuration = new ConfigurationBuilder()
+            var builder = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile(configPath)
-                .AddEnvironmentVariables()
-                .Build();
-
+                .AddEnvironmentVariables();
+            ConfigureDelegate?.Invoke(builder);
+            var configuration = builder.Build();
             configuration.GetSection(sectionName).Bind(section);
 #endif
             return section;

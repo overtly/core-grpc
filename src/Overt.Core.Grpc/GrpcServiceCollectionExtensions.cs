@@ -1,4 +1,5 @@
 ﻿#if ASP_NET_CORE
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Overt.Core.Grpc.Intercept;
@@ -62,6 +63,16 @@ namespace Overt.Core.Grpc
 
             services.TryAddTransient(typeof(IServerTracer), typeof(T));
             return services;
+        }
+
+        /// <summary>
+        /// 配置 可用于第三方配置
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configureDelegate"></param>
+        public static void ConfigureGrpcConfiguration(this IServiceCollection services, Action<IConfigurationBuilder> configureDelegate)
+        {
+            ConfigBuilder.ConfigureDelegate = configureDelegate;
         }
     }
 #endif

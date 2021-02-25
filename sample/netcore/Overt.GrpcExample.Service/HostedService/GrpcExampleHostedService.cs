@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Overt.Core.Grpc;
 using Overt.Core.Grpc.Intercept;
 using Overt.GrpcExample.Service.Grpc;
@@ -11,12 +12,15 @@ namespace Overt.GrpcExample.Service
     {
         readonly IServerTracer _tracer;
         readonly GrpcExampleService.GrpcExampleServiceBase _grpcServiceBase;
+        IConfiguration _configuration;
         public GrpcExampleHostedService(
             IServerTracer tracer,
-            GrpcExampleService.GrpcExampleServiceBase grpcServiceBase)
+            GrpcExampleService.GrpcExampleServiceBase grpcServiceBase,
+            IConfiguration configuration)
         {
             _tracer = tracer;
             _grpcServiceBase = grpcServiceBase;
+            _configuration = configuration;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
