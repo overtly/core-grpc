@@ -70,7 +70,7 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configureDelegate"></param>
-        public static void ConfigureGrpcConfiguration(this IServiceCollection services, Action<IConfigurationBuilder> configureDelegate)
+        public static void AddGrpcConfig(this IServiceCollection services, Action<IConfigurationBuilder> configureDelegate)
         {
             ConfigBuilder.ConfigureDelegate = configureDelegate;
         }

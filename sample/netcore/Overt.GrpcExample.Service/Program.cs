@@ -38,9 +38,9 @@ namespace Overt.GrpcExample.Service
 
             // tracer
             services.AddGrpcTracer<ConsoleTracer>();
-            services.ConfigureGrpcConfiguration(configurationBuilder =>
+            services.AddGrpcConfig(config =>
             {
-                configurationBuilder.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+                config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
             });
         }
     }

@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using Com.Ctrip.Framework.Apollo;
+using Grpc.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -29,10 +30,14 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient<ConsoleTracer>();
-            services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
+            services.AddGrpcConfig(config =>
             {
-                cfg.ConfigPath = "";
+                config.AddApollo(configuration.GetSection("apollo")).AddDefault();
             });
+            //services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
+            //{
+            //    cfg.ConfigPath = "";
+            //});
 
             provider = services.BuildServiceProvider();
         }

@@ -4,15 +4,15 @@
       "Name": "OvertGrpcExampleService",
       "MaxRetry": 0,
       "Discovery": {
-        //"Consul": {
-        //  "Path": "dllconfigs/consulsettings.json"
-        //}
-        "EndPoints": [
-          {
-            "Host": "127.0.0.1",
-            "Port": 10004
-          }
-        ]
+        "Consul": {
+          "Path": "dllconfigs/consulsettings.json"
+        }
+        //"EndPoints": [
+        //  {
+        //    "Host": "127.0.0.1",
+        //    "Port": 10004
+        //  }
+        //]
       }
     }
   }
