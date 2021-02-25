@@ -3,8 +3,8 @@
 <a name="4lctkm"></a>
 ### [](#4lctkm)项目层次说明
 
-> Overt.Core.Grpc v1.0.3  
-> 如有疑问可直接加QQ：2292709323，微信：mojinxin_2012，联系
+> Overt.Core.Grpc v1.0.3.1  
+> 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
 
 <a name="ihwcmc"></a>
 #### [](#ihwcmc)1. 项目目录
@@ -32,7 +32,7 @@
 <a name="bzwnno"></a>
 #### [](#bzwnno)2. 版本及支持
 
-> - Nuget版本：V 1.0.3
+> - Nuget版本：V 1.0.3.1
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -70,7 +70,7 @@ Grpc 1.21.0
 #### [](#5cglzl)1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.3
+Install-Package Overt.Core.Grpc -Version 1.0.3.1
 ```
 
 <a name="dhmwfy"></a>
@@ -404,6 +404,12 @@ ClientManager<T>.Instance.[Method]
 
 <a name="ut52ry"></a>
 #### [](#ut52ry)5. 更新说明
+
+- 2019-11-28 v 1.0.3.1
+
+> 1. 优化对Consul新版本的支持
+
+
 
 - 2019-11-28 v 1.0.3
 
