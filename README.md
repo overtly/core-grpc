@@ -1,13 +1,11 @@
 # Overt.Core.Grpc
 
-<a name="4lctkm"></a>
-### [](#4lctkm)项目层次说明
+### 项目层次说明
 
-> Overt.Core.Grpc v1.0.3.1  
+> Overt.Core.Grpc v1.0.4 
 > 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
 
-<a name="ihwcmc"></a>
-#### [](#ihwcmc)1. 项目目录
+#### 1. 项目目录
 
 ```
 |-Config                                        配置模型
@@ -29,8 +27,7 @@
 |-GrpcServiceCollectionExtensions.cs            netcore注入
 ```
 
-<a name="bzwnno"></a>
-#### [](#bzwnno)2. 版本及支持
+#### 2. 版本及支持
 
 > - Nuget版本：V 1.0.3.1
 
@@ -38,8 +35,7 @@
 
 
 
-<a name="q8zoqr"></a>
-#### [](#q8zoqr)3. 项目依赖
+#### 3. 项目依赖
 
 > - NetStandard 2.0
 
@@ -63,26 +59,22 @@ Google.Protobuf 3.8.0
 Grpc 1.21.0
 ```
 
-<a name="m947ei"></a>
-### [](#m947ei)使用
+### 使用
 
-<a name="5cglzl"></a>
-#### [](#5cglzl)1. Nuget包引用
+#### 1. Nuget包引用
 
 ```csharp
 Install-Package Overt.Core.Grpc -Version 1.0.3.1
 ```
 
 <a name="dhmwfy"></a>
-#### [](#dhmwfy)2. 配置信息
+#### 2. 配置信息
 
-优先级：环境变量 > Host内部配置 > 自动取IP**内网**
+优先级：环境变量 > {第三方配置中心} >  Host内部配置 > 自动取IP**内网**
 
-<a name="6vgvrv"></a>
-##### [](#6vgvrv)（1）服务端配置信息
+##### （1）服务端配置信息
 
 > - 支持默认配置文件appsettings.json [Consul节点可不要，如无则不是集群]
-
 
 
 ```json
@@ -117,8 +109,7 @@ Install-Package Overt.Core.Grpc -Version 1.0.3.1
 </grpcServer>
 ```
 
-<a name="qqukmp"></a>
-##### [](#qqukmp)（2）客户端配置信息
+##### （2）客户端配置信息
 
 > - 命名：[命名空间].dll.json 文件夹(dllconfigs)
 
@@ -165,8 +156,7 @@ Install-Package Overt.Core.Grpc -Version 1.0.3.1
 </configuration>
 ```
 
-<a name="wt0bso"></a>
-##### [](#wt0bso)（3）Consul配置文件
+##### （3）Consul配置文件
 
 > - 命名：consulsettings.json 不要改动
 
@@ -192,20 +182,23 @@ Install-Package Overt.Core.Grpc -Version 1.0.3.1
 </configuration>
 ```
 
-<a name="meoyxy"></a>
-#### [](#meoyxy)3. 服务端的使用
+#### 3. 服务端的使用
 
-<a name="4n4nah"></a>
-#### [](#4n4nah)（1）NetCore
+#### （1）NetCore
 
 > - 强制依赖注入模式
-
-
 
 ```csharp
 services.AddSingleton<GrpcExampleService.GrpcExampleServiceBase, GrpcExampleServiceImpl>();          // Grpc服务的实现
 services.AddSingleton<IHostedService, GrpcExampleHostedService>();                                   // Grpc服务启动服务类：如下
 services.AddGrpcTracer<ConsoleTracer>();                                                             // Grpc注入拦截器，继承IServerTracer（可选）
+
+// 使用第三方配置
+services.AddGrpcConfig(config => 
+{
+    // 以配置中心apollo为例
+    config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+});
 ```
 
 ```csharp
@@ -266,8 +259,7 @@ using(var scope = _provider.CreateSocpe())
 }
 ```
 
-<a name="q9v0og"></a>
-#### [](#q9v0og)（2）Framework 4.6
+#### （2）Framework 4.6
 
 > - 直接调用GrpcServiceManager来启动
 
@@ -307,11 +299,9 @@ namespace Overt.GrpcService
 }
 ```
 
-<a name="zxcgny"></a>
-#### [](#zxcgny)4. 客户端使用
+#### 4. 客户端使用
 
-<a name="egbtce"></a>
-#### [](#egbtce)（1）NetCore
+#### （1）NetCore
 
 > - 强制依赖注入模式
 
@@ -330,6 +320,13 @@ services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>((cfg) =>
     cfg.ConfigPath = "dllconfig/Overt.GrpcExample.Service.Grpc.dll.json";  // 可不传递
 });
 
+// 使用第三方配置
+services.AddGrpcConfig(config => 
+{
+    // 以配置中心apollo为例
+    config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+});
+
 
 // 获取注入的对象
 IGrpcClient<GrpcExampleServiceClient> _grpcClient;
@@ -342,8 +339,7 @@ public IndexModel(IGrpcClient<GrpcExampleServiceClient> grpcClient)
 var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 ```
 
-<a name="4tuqar"></a>
-#### [](#4tuqar)（2）Framework
+#### （2）Framework
 
 > - 客户端代理类，编译在Dll中，源码如下，可忽略
 
@@ -402,55 +398,59 @@ ClientManager.Instance.[Method]
 ClientManager<T>.Instance.[Method]
 ```
 
-<a name="ut52ry"></a>
-#### [](#ut52ry)5. 更新说明
+#### 5. 更新说明
+
+
+- 2021-02-25 v 1.0.4.1
+- 
+> 1. 增加第三方配置的支持，比如apollo，可使用services.AddGrpcConfig进行扩展(目前仅支持dotnetcore)
+
 
 - 2019-11-28 v 1.0.3.1
-
+- 
 > 1. 优化对Consul新版本的支持
 
 
 
 - 2019-11-28 v 1.0.3
-
+- 
 > 1. 注册中心监听到变动后，忽略黑名单，本地连接全部重置
 
 
 
 - 2019-09-29 v 1.0.2
-
 > 1. 客户端使用Consul注册中心，支持单服务变动监听，新注册服务或者服务挂掉，更加实时
 
 
 
 - 2019-08-16 v 1.0.1
-
+- 
 > 1. 支持多服务模式
 
 
 
 - 2019-08-01 v 1.0.0
-
+- 
 > 1. 修改命名空间，更新nuget包为Overt.Core.Grpc 更新默认版本为1.0.0
 
 
 
 - 2019-06-05 v 1.0.10.2
-
+- 
 > 1. 客户端优化连接服务失败的情况下，拉入黑名单，导致节点不存在的问题
 
 
 
 - 2019-06-05 v 1.0.10
-
+- 
 > 1. 升级Grpc版本为 1.21.0
 > 2. 升级Google.Protobuf版本为3.8.0
 
 
 
-- 2019-03-06 v 1.0.9<br />
+- 2019-03-06 v 1.0.9
 
-> 1. 升级Grpc版本为 1.19.0<br />
+> 1. 升级Grpc版本为 1.19.0
 > 2. Consul节点默认Passing
 > 3. ConsulSettings添加环境变量支持
 
