@@ -2,7 +2,7 @@
 
 ### 项目层次说明
 
-> Overt.Core.Grpc v1.0.4.1
+> Overt.Core.Grpc v1.0.4.1  
 > 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
 
 #### 1. 项目目录
