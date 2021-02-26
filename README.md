@@ -2,7 +2,7 @@
 
 ### 项目层次说明
 
-> Overt.Core.Grpc v1.0.4 
+> Overt.Core.Grpc v1.0.4.1
 > 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
 
 #### 1. 项目目录
@@ -29,7 +29,7 @@
 
 #### 2. 版本及支持
 
-> - Nuget版本：V 1.0.3.1
+> - Nuget版本：V 1.0.4.1
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -64,13 +64,13 @@ Grpc 1.21.0
 #### 1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.3.1
+Install-Package Overt.Core.Grpc -Version 1.0.4.1
 ```
 
 <a name="dhmwfy"></a>
 #### 2. 配置信息
 
-优先级：环境变量 > {第三方配置中心} >  Host内部配置 > 自动取IP**内网**
+优先级：{第三方配置中心} > 环境变量 >  Host内部配置 > 自动取IP**内网**
 
 ##### （1）服务端配置信息
 
