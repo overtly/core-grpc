@@ -32,13 +32,13 @@ namespace Overt.Core.Grpc
                 var callInvoker = default(ServerCallInvoker);
                 try
                 {
-                    callInvoker = _strategy.Get(_serviceName);
+                    callInvoker = _strategy.GetCallInvoker(_serviceName);
                     if (callInvoker == null)
                     {
                         throw new ArgumentNullException($"{_serviceName}无可用节点");
                     }
 
-                    var channel = callInvoker.Channel;
+                    var channel = callInvoker.CurrentChannel;
                     if (channel == null || channel.State == ChannelState.TransientFailure)
                     {
                         throw new RpcException(new Status(StatusCode.Unavailable, $"Channel Failure"));
@@ -46,7 +46,10 @@ namespace Overt.Core.Grpc
 
                     var response = default(TResponse);
                     if (_tracer != null)
+                    {
+                        _tracer.CallInvokers = _strategy.GetCallInvokers(_serviceName);
                         response = call(callInvoker.ClientIntercept(_tracer));
+                    }
                     else
                         response = call(callInvoker);
                     return response;
@@ -59,7 +62,7 @@ namespace Overt.Core.Grpc
 
                     if (0 > --retryLeft)
                     {
-                        throw new Exception($"status: {ex.StatusCode.ToString()}, node: {callInvoker?.Channel?.Target}, message: {ex.Message}", ex);
+                        throw new Exception($"status: {ex.StatusCode}, node: {callInvoker?.CurrentChannel?.Target}, message: {ex.Message}", ex);
                     }
                 }
             }

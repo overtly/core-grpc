@@ -52,7 +52,7 @@ namespace Overt.Core.Grpc
             var maxRetry = serviceElement.MaxRetry;
             var serviceName = serviceElement.Name;
             var discovery = serviceElement.Discovery;
-            IEndpointStrategy endpointStrategy = default(IEndpointStrategy);
+            IEndpointStrategy endpointStrategy;
             if (EnableConsul(discovery, out string address))
                 endpointStrategy = ResolveStickyConfiguration(serviceElement, address);
             else
@@ -82,7 +82,6 @@ namespace Overt.Core.Grpc
         private static IEndpointStrategy ResolveStickyConfiguration(Client.GrpcServiceElement serviceElement, string address)
         {
             var serviceName = serviceElement.Name;
-            var discovery = serviceElement.Discovery;
 
             // consul
             var stickyEndpointDiscovery = new StickyEndpointDiscovery(serviceName, address);

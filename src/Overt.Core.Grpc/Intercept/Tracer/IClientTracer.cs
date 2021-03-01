@@ -1,11 +1,14 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.Intercept
 {
     public interface IClientTracer
     {
+        IEnumerable<CallInvoker> CallInvokers { get; set; }
+
         void Request<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context)
             where TRequest : class
             where TResponse : class;

@@ -1,4 +1,6 @@
-﻿namespace Overt.Core.Grpc
+﻿using System.Collections.Generic;
+
+namespace Overt.Core.Grpc
 {
     /// <summary>
     /// 单例使用
@@ -12,11 +14,18 @@
         void AddServiceDiscovery(IEndpointDiscovery serviceDiscovery);
 
         /// <summary>
+        /// 获取所有可用节点
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        List<ServerCallInvoker> GetCallInvokers(string serviceName);
+
+        /// <summary>
         /// 获取
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        ServerCallInvoker Get(string serviceName);
+        ServerCallInvoker GetCallInvoker(string serviceName);
 
         /// <summary>
         /// 移除

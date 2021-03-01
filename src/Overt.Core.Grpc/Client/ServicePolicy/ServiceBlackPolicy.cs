@@ -7,7 +7,7 @@ namespace Overt.Core.Grpc
     /// <summary>
     /// 服务黑名单策略
     /// </summary>
-    public class ServiceBlackPlicy
+    public class ServiceBlackPolicy
     {
         public readonly static ConcurrentDictionary<string, DateTime> _blacklist = new ConcurrentDictionary<string, DateTime>();
 

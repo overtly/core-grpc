@@ -68,33 +68,45 @@ namespace Overt.Core.Grpc
             if (serviceDiscovery == null)
                 return;
 
-            serviceDiscovery.Watched = () => SetCallInvokers(serviceDiscovery.ServiceName, false);
+            serviceDiscovery.Watched = () => GetAndUpdateCallInvokers(serviceDiscovery.ServiceName, false);
             _discoveries.AddOrUpdate(serviceDiscovery.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
         }
 
         /// <summary>
-        /// 获取callinvoker
+        /// 获取所有
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        public ServerCallInvoker Get(string serviceName)
+        public List<ServerCallInvoker> GetCallInvokers(string serviceName)
         {
             if (_invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers) &&
-                callInvokers?.Count > 0)
-                return ServicePollingPlicy.Random(callInvokers);
+                callInvokers.Count > 0)
+                return callInvokers;
 
             lock (_lock)
             {
                 if (_invokers.TryGetValue(serviceName, out callInvokers) &&
-                    callInvokers?.Count > 0)
-                    return ServicePollingPlicy.Random(callInvokers);
+                    callInvokers.Count > 0)
+                    return callInvokers;
 
-                callInvokers = SetCallInvokers(serviceName);
-                if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPlicy.Exist(serviceName))
-                    callInvokers = SetCallInvokers(serviceName, false);
+                callInvokers = GetAndUpdateCallInvokers(serviceName);
+                if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPolicy.Exist(serviceName))
+                    callInvokers = GetAndUpdateCallInvokers(serviceName, false);
 
-                return ServicePollingPlicy.Random(callInvokers);
+                return callInvokers;
             }
+        }
+
+        /// <summary>
+        /// 获取callinvoker
+        /// 随机获取
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        public ServerCallInvoker GetCallInvoker(string serviceName)
+        {
+            var callInvokers = GetCallInvokers(serviceName);
+            return ServicePollingPolicy.Random(callInvokers);
         }
 
         /// <summary>
@@ -110,12 +122,12 @@ namespace Overt.Core.Grpc
                     return;
 
                 // invokers
-                var failedChannel = failedCallInvoker.Channel;
+                var failedChannel = failedCallInvoker.CurrentChannel;
                 if (!_invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers) ||
-                    callInvokers.All(x => !ReferenceEquals(failedChannel, x.Channel)))
+                    callInvokers.All(x => !ReferenceEquals(failedChannel, x.CurrentChannel)))
                     return;
 
-                callInvokers.RemoveAt(callInvokers.FindIndex(x => ReferenceEquals(failedChannel, x.Channel)));
+                callInvokers.RemoveAt(callInvokers.FindIndex(x => ReferenceEquals(failedChannel, x.CurrentChannel)));
                 _invokers.AddOrUpdate(serviceName, callInvokers, (key, value) => callInvokers);
 
                 // channels
@@ -126,13 +138,13 @@ namespace Overt.Core.Grpc
                 }
 
                 // add black
-                ServiceBlackPlicy.Add(serviceName, failedChannel.Target);
+                ServiceBlackPolicy.Add(serviceName, failedChannel.Target);
 
                 failedChannel.ShutdownAsync();
 
                 // reinit callinvoker
                 if (callInvokers.Count <= 0)
-                    SetCallInvokers(serviceName, false);
+                    GetAndUpdateCallInvokers(serviceName, false);
             }
         }
 
@@ -151,7 +163,7 @@ namespace Overt.Core.Grpc
                     {
                         foreach (var item in _invokers)
                         {
-                            SetCallInvokers(item.Key);
+                            GetAndUpdateCallInvokers(item.Key);
                         }
                     }
                     catch { }
@@ -170,7 +182,7 @@ namespace Overt.Core.Grpc
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
         /// <returns></returns>
-        private List<ServerCallInvoker> SetCallInvokers(string serviceName, bool filterBlack = true)
+        private List<ServerCallInvoker> GetAndUpdateCallInvokers(string serviceName, bool filterBlack = true)
         {
             if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
                 return null;
@@ -185,19 +197,14 @@ namespace Overt.Core.Grpc
                 return callInvokers;
             }
 
-            var channelOptions = new List<ChannelOption>()
-            {
-                new ChannelOption(ChannelOptions.MaxReceiveMessageLength, int.MaxValue),
-                new ChannelOption(ChannelOptions.MaxSendMessageLength, int.MaxValue),
-            };
             foreach (var target in targets)
             {
                 if (!_channels.TryGetValue(target, out Channel channel))
                 {
-                    channel = new Channel(target, ChannelCredentials.Insecure, channelOptions);
+                    channel = new Channel(target, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
                     _channels.AddOrUpdate(target, channel, (key, value) => channel);
                 }
-                if (callInvokers.Any(x => ReferenceEquals(x.Channel, channel)))
+                if (callInvokers.Any(x => ReferenceEquals(x.CurrentChannel, channel)))
                     continue;
 
                 var callInvoker = new ServerCallInvoker(channel);
@@ -205,10 +212,10 @@ namespace Overt.Core.Grpc
             }
 
             // 移除已经销毁的callInvokers
-            var destroyInvokers = callInvokers.Where(oo => !targets.Contains(oo.Channel.Target)).ToList();
+            var destroyInvokers = callInvokers.Where(oo => !targets.Contains(oo.CurrentChannel.Target)).ToList();
             foreach (var invoker in destroyInvokers)
             {
-                _channels.TryRemove(invoker.Channel.Target, out Channel channel);
+                _channels.TryRemove(invoker.CurrentChannel.Target, out Channel channel);
                 callInvokers.Remove(invoker);
             }
 

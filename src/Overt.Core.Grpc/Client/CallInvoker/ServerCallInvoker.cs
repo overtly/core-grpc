@@ -1,14 +1,16 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Utils;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Overt.Core.Grpc
 {
     public class ServerCallInvoker : CallInvoker
     {
-        public readonly Channel Channel;
+        public readonly Channel CurrentChannel;
         public ServerCallInvoker(Channel channel)
         {
-            Channel = GrpcPreconditions.CheckNotNull(channel); 
+            CurrentChannel = GrpcPreconditions.CheckNotNull(channel);
         }
 
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
@@ -37,10 +39,16 @@ namespace Overt.Core.Grpc
         }
 
         protected virtual CallInvocationDetails<TRequest, TResponse> CreateCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options)
-            where TRequest : class 
+            where TRequest : class
             where TResponse : class
         {
-            return new CallInvocationDetails<TRequest, TResponse>(Channel, method, host, options);
+            var channel = CurrentChannel;
+            if (options.Headers?.Any(oo => oo.Key == Constants.MetadataKey_Target) ?? false)
+            {
+                var entry = options.Headers.First(oo => oo.Key == Constants.MetadataKey_Target);
+                channel = new Channel(entry.Value, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
+            }
+            return new CallInvocationDetails<TRequest, TResponse>(channel, method, host, options);
         }
     }
 }
