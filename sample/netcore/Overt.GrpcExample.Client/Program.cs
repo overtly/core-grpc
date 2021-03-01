@@ -1,15 +1,10 @@
 ﻿using Com.Ctrip.Framework.Apollo;
-using Grpc.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Overt.Core.Grpc;
 using Overt.GrpcExample.Client.Tracer;
 using System;
-using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
-using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
 
 namespace Overt.GrpcExample.Client
 {

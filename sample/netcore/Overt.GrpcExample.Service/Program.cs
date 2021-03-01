@@ -18,7 +18,9 @@ namespace Overt.GrpcExample.Service
                 {
                     configurationBuilder
                         .AddJsonFile("appsettings.json", optional: true);    //约定使用appsettings.json作为应用程序配置文件
-                    configurationBuilder.AddApollo(configurationBuilder.Build().GetSection("apollo")).AddDefault();
+
+                    // apollo 启动可用
+                    //configurationBuilder.AddApollo(configurationBuilder.Build().GetSection("apollo")).AddDefault();
                 })
                 .ConfigureServices(ConfigureServices)
                 .Build();
@@ -38,10 +40,12 @@ namespace Overt.GrpcExample.Service
 
             // tracer
             services.AddGrpcTracer<ConsoleTracer>();
-            services.AddGrpcConfig(config =>
-            {
-                config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
-            });
+
+            // apollo 第三方配置启动可用
+            //services.AddGrpcConfig(config =>
+            //{
+            //    config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+            //});
         }
     }
 }
