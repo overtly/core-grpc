@@ -41,7 +41,7 @@ namespace Overt.Core.Grpc
         /// <param name="serviceElement">节点</param>
         /// <param name="registered">注册完回调</param>
         /// <returns></returns>
-        public void Register(Service.ServiceElement serviceElement, Action<Entry> registered, string serviceSuffix="")
+        public void Register(Service.ServiceElement serviceElement, Action<Entry> registered, string serviceIdSuffix="")
         {
             #region RegisterService
             if (_client == null)
@@ -49,7 +49,7 @@ namespace Overt.Core.Grpc
 
             var serviceName = serviceElement.Name;
             var dnsEndPoint = GenServiceAddress(serviceElement);
-            var registerResult = RegisterService(serviceName, dnsEndPoint, serviceSuffix, registered);
+            var registerResult = RegisterService(serviceName, dnsEndPoint, serviceIdSuffix, registered);
             if (!registerResult)
                 throw new Exception($"overt: failed to register service {serviceName} on host:port {dnsEndPoint.ToString()}");
             #endregion
