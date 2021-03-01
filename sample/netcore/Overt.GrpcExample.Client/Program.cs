@@ -25,10 +25,12 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient<ConsoleTracer>();
-            services.AddGrpcConfig(config =>
-            {
-                config.AddApollo(configuration.GetSection("apollo")).AddDefault();
-            });
+
+            // 第三方配置，启动可用
+            //services.AddGrpcConfig(config =>
+            //{
+            //    config.AddApollo(configuration.GetSection("apollo")).AddDefault();
+            //});
             //services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
             //{
             //    cfg.ConfigPath = "";
