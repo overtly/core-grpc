@@ -12,8 +12,8 @@ namespace Overt.Core.Grpc
     /// </summary>
     internal class StrategyFactory
     {
-        private readonly static ConcurrentDictionary<Type, Exitus> _endpointStrategys = new ConcurrentDictionary<Type, Exitus>();
-        private static readonly object _lockHelper = new object();
+        private readonly static object _lockHelper = new object();
+        private readonly static ConcurrentDictionary<Type, Exitus> _exitusMap = new ConcurrentDictionary<Type, Exitus>();
 
         /// <summary>
         /// 获取EndpointStrategy
@@ -24,18 +24,18 @@ namespace Overt.Core.Grpc
         public static Exitus Get<T>(string configFile)
             where T : ClientBase
         {
-            if (_endpointStrategys.TryGetValue(typeof(T), out Exitus exitus) &&
+            if (_exitusMap.TryGetValue(typeof(T), out Exitus exitus) &&
                 exitus?.EndpointStrategy != null)
                 return exitus;
 
             lock (_lockHelper)
             {
-                if (_endpointStrategys.TryGetValue(typeof(T), out exitus) &&
+                if (_exitusMap.TryGetValue(typeof(T), out exitus) &&
                     exitus?.EndpointStrategy != null)
                     return exitus;
 
                 exitus = ResolveConfiguration(configFile);
-                _endpointStrategys.AddOrUpdate(typeof(T), exitus, (k, v) => exitus);
+                _exitusMap.AddOrUpdate(typeof(T), exitus, (k, v) => exitus);
                 return exitus;
             }
         }

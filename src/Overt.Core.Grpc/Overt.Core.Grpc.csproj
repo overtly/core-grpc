@@ -20,8 +20,8 @@
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="0.7.2.6" />
-    <PackageReference Include="Google.Protobuf" Version="3.8.0" />
-    <PackageReference Include="Grpc" Version="1.21.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.3" />
+    <PackageReference Include="Grpc" Version="2.36.0" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

@@ -31,7 +31,7 @@ namespace Overt.GrpcExample.Client.Tracer
             where TResponse : class
         {
             // 修改Channel
-            // context.Options.Headers.Add(Constants.MetadataKey_ChannelTarget, "127.0.0.1:10004");
+            //context.Options.Headers.Add(Constants.MetadataKey_ChannelTarget, "127.0.0.1:10003");
 
             Console.WriteLine("start request");
         }
