@@ -68,7 +68,7 @@ namespace Overt.Core.Grpc
             if (serviceDiscovery == null)
                 return;
 
-            serviceDiscovery.Watched = () => GetAndUpdateCallInvokers(serviceDiscovery.ServiceName, false);
+            serviceDiscovery.Watched = () => GetSetCallInvokers(serviceDiscovery.ServiceName, false);
             _discoveries.AddOrUpdate(serviceDiscovery.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
         }
 
@@ -89,9 +89,9 @@ namespace Overt.Core.Grpc
                     callInvokers.Count > 0)
                     return callInvokers;
 
-                callInvokers = GetAndUpdateCallInvokers(serviceName);
+                callInvokers = GetSetCallInvokers(serviceName);
                 if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPolicy.Exist(serviceName))
-                    callInvokers = GetAndUpdateCallInvokers(serviceName, false);
+                    callInvokers = GetSetCallInvokers(serviceName, false);
 
                 return callInvokers;
             }
@@ -144,7 +144,7 @@ namespace Overt.Core.Grpc
 
                 // reinit callinvoker
                 if (callInvokers.Count <= 0)
-                    GetAndUpdateCallInvokers(serviceName, false);
+                    GetSetCallInvokers(serviceName, false);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Overt.Core.Grpc
                     {
                         foreach (var item in _invokers)
                         {
-                            GetAndUpdateCallInvokers(item.Key);
+                            GetSetCallInvokers(item.Key);
                         }
                     }
                     catch { }
@@ -182,7 +182,7 @@ namespace Overt.Core.Grpc
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
         /// <returns></returns>
-        private List<ServerCallInvoker> GetAndUpdateCallInvokers(string serviceName, bool filterBlack = true)
+        private List<ServerCallInvoker> GetSetCallInvokers(string serviceName, bool filterBlack = true)
         {
             if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
                 return null;

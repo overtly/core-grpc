@@ -7,7 +7,7 @@ namespace Overt.Core.Grpc
 {
     public class ServerCallInvoker : CallInvoker
     {
-        public readonly Channel Channel;
+        public Channel Channel;
         public ServerCallInvoker(Channel channel)
         {
             Channel = GrpcPreconditions.CheckNotNull(channel);
@@ -42,13 +42,12 @@ namespace Overt.Core.Grpc
             where TRequest : class
             where TResponse : class
         {
-            var channel = Channel;
             if (options.Headers?.Any(oo => oo.Key == Constants.MetadataKey_ChannelTarget) ?? false)
             {
                 var entry = options.Headers.First(oo => oo.Key == Constants.MetadataKey_ChannelTarget);
-                channel = new Channel(entry.Value, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
+                Channel = new Channel(entry.Value, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
             }
-            return new CallInvocationDetails<TRequest, TResponse>(channel, method, host, options);
+            return new CallInvocationDetails<TRequest, TResponse>(Channel, method, host, options);
         }
     }
 }

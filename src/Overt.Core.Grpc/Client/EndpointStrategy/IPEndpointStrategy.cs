@@ -88,9 +88,9 @@ namespace Overt.Core.Grpc
                     callInvokers.Count > 0)
                     return callInvokers;
 
-                callInvokers = GetAndUpdateCallInvokers(serviceName);
+                callInvokers = GetSetCallInvokers(serviceName);
                 if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPolicy.Exist(serviceName))
-                    callInvokers = GetAndUpdateCallInvokers(serviceName, false);
+                    callInvokers = GetSetCallInvokers(serviceName, false);
 
                 return callInvokers;
             }
@@ -138,7 +138,7 @@ namespace Overt.Core.Grpc
 
                 // if not exist invoker， call init method
                 if (callInvokers.Count <= 0)
-                    GetAndUpdateCallInvokers(serviceName, false);
+                    GetSetCallInvokers(serviceName, false);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Overt.Core.Grpc
                     _timer.Stop();
                     foreach (var item in _invokers)
                     {
-                        GetAndUpdateCallInvokers(item.Key);
+                        GetSetCallInvokers(item.Key);
                     }
                     _timer.Start();
                 }
@@ -170,7 +170,7 @@ namespace Overt.Core.Grpc
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
         /// <returns></returns>
-        private List<ServerCallInvoker> GetAndUpdateCallInvokers(string serviceName, bool filterBlack = true)
+        private List<ServerCallInvoker> GetSetCallInvokers(string serviceName, bool filterBlack = true)
         {
             if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
                 return null;

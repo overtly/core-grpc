@@ -75,12 +75,9 @@ namespace Overt.Core.Grpc
                     if (_tracer != null)
                     {
                         _tracer.CallInvokers = _strategy.GetCallInvokers(_serviceName);
-                        response = call(callInvoker.ClientIntercept(_tracer));
+                        callInvoker = callInvoker.ClientIntercept(_tracer);
                     }
-                    else
-                    {
-                        response = call(callInvoker);
-                    }
+                    response = call(callInvoker);
                     return response;
                 }
                 catch (RpcException ex)
