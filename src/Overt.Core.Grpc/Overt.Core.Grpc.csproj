@@ -6,13 +6,13 @@
     <Authors>yaofeng</Authors>
     <Description>基于Grpc/Consul实现的微服务框架</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>增加第三方配置的支持，比如apollo，可使用services.AddGrpcConfig进行扩展</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Tracer提供修改Channel Target能力，可供外部自定义选择节点；2. 升级底层驱动为最新版本</PackageReleaseNotes>
     <Copyright>yaofeng</Copyright>
     <PackageTags></PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.4.1</Version>
+    <Version>1.0.5-alpha</Version>
     <RepositoryUrl>https://github.com/overtly/core-grpc.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/overtly/core-grpc.git</PackageProjectUrl>
     <Company />
