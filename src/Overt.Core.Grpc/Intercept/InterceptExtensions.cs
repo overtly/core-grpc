@@ -13,7 +13,7 @@
             if (callInvoker == null)
                 return callInvoker;
 
-            return new InterceptedServerCallInvoker(callInvoker.CurrentChannel, tracer);
+            return new InterceptedServerCallInvoker(callInvoker.Channel, tracer);
         }
     }
 }

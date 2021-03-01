@@ -122,12 +122,12 @@ namespace Overt.Core.Grpc
                     return;
 
                 // invokers
-                var failedChannel = failedCallInvoker.CurrentChannel;
+                var failedChannel = failedCallInvoker.Channel;
                 if (!_invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers) ||
-                    callInvokers.All(x => !ReferenceEquals(failedChannel, x.CurrentChannel)))
+                    callInvokers.All(x => !ReferenceEquals(failedChannel, x.Channel)))
                     return;
 
-                callInvokers.RemoveAt(callInvokers.FindIndex(x => ReferenceEquals(failedChannel, x.CurrentChannel)));
+                callInvokers.RemoveAt(callInvokers.FindIndex(x => ReferenceEquals(failedChannel, x.Channel)));
                 _invokers.AddOrUpdate(serviceName, callInvokers, (key, value) => callInvokers);
 
                 // channels
@@ -204,7 +204,7 @@ namespace Overt.Core.Grpc
                     channel = new Channel(target, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
                     _channels.AddOrUpdate(target, channel, (key, value) => channel);
                 }
-                if (callInvokers.Any(x => ReferenceEquals(x.CurrentChannel, channel)))
+                if (callInvokers.Any(x => ReferenceEquals(x.Channel, channel)))
                     continue;
 
                 var callInvoker = new ServerCallInvoker(channel);
@@ -212,10 +212,10 @@ namespace Overt.Core.Grpc
             }
 
             // 移除已经销毁的callInvokers
-            var destroyInvokers = callInvokers.Where(oo => !targets.Contains(oo.CurrentChannel.Target)).ToList();
+            var destroyInvokers = callInvokers.Where(oo => !targets.Contains(oo.Channel.Target)).ToList();
             foreach (var invoker in destroyInvokers)
             {
-                _channels.TryRemove(invoker.CurrentChannel.Target, out Channel channel);
+                _channels.TryRemove(invoker.Channel.Target, out Channel channel);
                 callInvokers.Remove(invoker);
             }
 
