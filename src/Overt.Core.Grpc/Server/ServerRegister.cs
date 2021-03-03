@@ -131,7 +131,7 @@ namespace Overt.Core.Grpc
             if (string.IsNullOrWhiteSpace(suffix))
                 return GenServiceId(serviceName, dnsEndPoint);
 
-            return $"{serviceName}-{dnsEndPoint.Host}:{dnsEndPoint.Port}-{suffix}";
+            return $"{serviceName}-{suffix}";
         }
 
         /// <summary>
