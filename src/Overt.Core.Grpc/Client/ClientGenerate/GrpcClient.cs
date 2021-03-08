@@ -31,8 +31,7 @@ namespace Overt.Core.Grpc
 
         public T CreateClient(Func<List<ServerCallInvoker>, ServerCallInvoker> action)
         {
-            var client = _factory.Get(action: action);
-            return client;
+            return _factory.Get(action: action);
         }
     }
 }

@@ -84,6 +84,13 @@ namespace Overt.GrpcExample.Client
 
     public static class GrpcClientExtensions
     {
+        /// <summary>
+        /// 扩展一
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public static T Client<T>(this IGrpcClient<T> data, long userId) where T : ClientBase
         {
             return data.CreateClient((servercallInvokers) =>
@@ -93,7 +100,14 @@ namespace Overt.GrpcExample.Client
             });
         }
 
-        public static Service.Grpc.GrpcExampleService.GrpcExampleServiceClient Client(this IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient> data, long userId) where T : ClientBase
+
+        /// <summary>
+        /// 扩展测试二，明确
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static Service.Grpc.GrpcExampleService.GrpcExampleServiceClient Client(this IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient> data, long userId)
         {
              return data.CreateClient((servercallInvokers) =>
              {
