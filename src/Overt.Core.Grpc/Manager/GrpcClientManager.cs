@@ -1,11 +1,9 @@
 ﻿using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Overt.Core.Grpc.Intercept;
 using System;
 using System.Collections.Concurrent;
-#if !ASP_NET_CORE
-using System.Configuration;
-using System.Linq;
-#endif
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
@@ -20,12 +18,13 @@ namespace Overt.Core.Grpc
         /// <summary>
         /// 获取客户端
         /// </summary>
-        /// <param name="configPath"></param>
-        /// <param name="tracer"></param>
+        /// <param name="configPath">配置文件路径</param>
+        /// <param name="tracer">tracer拦截器</param>
+        /// <param name="interceptors">自定义拦截器</param>
         /// <returns></returns>
-        public static T Get(string configPath = "", IClientTracer tracer = null)
+        public static T Get(string configPath = "", IClientTracer tracer = null, List<Interceptor> interceptors = null)
         {
-            var factory = new GrpcClientFactory<T>(tracer);
+            var factory = new GrpcClientFactory<T>(tracer, interceptors);
             return _clientCache.GetOrAdd(typeof(T), key => factory.Get(configPath));
         }
     }
