@@ -1,6 +1,5 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Overt.Core.Grpc.Intercept;
 using System;
 using System.Collections.Generic;
 
@@ -8,17 +7,23 @@ namespace Overt.Core.Grpc
 {
     internal sealed class ClientCallInvoker : CallInvoker
     {
-        private readonly int _maxRetry;
         private readonly IEndpointStrategy _strategy;
-        private readonly GrpcClientOptions _options;
-        public ClientCallInvoker(IEndpointStrategy strategy, GrpcClientOptions options)
+        private readonly int _maxRetry;
+        private readonly string _serviceName;
+        private readonly List<Interceptor> _interceptors;
+        private readonly Func<List<ServerCallInvoker>, ServerCallInvoker> _getInvoker;
+        public ClientCallInvoker(
+            IEndpointStrategy strategy,
+            string serviceName, 
+            int maxRetry, 
+            List<Interceptor> interceptors = default, 
+            Func<List<ServerCallInvoker>, ServerCallInvoker> getInvoker = default)
         {
-            if (strategy == null || options == null)
-                throw new ArgumentNullException($"参数strategy/options不能为空");
-
             _strategy = strategy;
-            _options = options;
-            _maxRetry = _options.MaxRetry;
+            _serviceName = serviceName;
+            _maxRetry = maxRetry;
+            _interceptors = interceptors;
+            _getInvoker = getInvoker;
         }
 
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
@@ -62,27 +67,27 @@ namespace Overt.Core.Grpc
                 var callInvoker = default(ServerCallInvoker);
                 try
                 {
-                    if (_options?.GetInvoker != null)
+                    if (_getInvoker != null)
                     {
-                        var invokers = _strategy.GetCallInvokers(_options.ServiceName);
-                        callInvoker = _options.GetInvoker(invokers);
+                        var invokers = _strategy.GetCallInvokers(_serviceName);
+                        callInvoker = _getInvoker(invokers);
                     }
                     else
-                        callInvoker = _strategy.GetCallInvoker(_options.ServiceName);
+                        callInvoker = _strategy.GetCallInvoker(_serviceName);
 
 
                     if (callInvoker == null)
                     {
-                        throw new ArgumentNullException($"{_options.ServiceName}无可用节点");
+                        throw new ArgumentNullException($"{_serviceName}无可用节点");
                     }
                     if (callInvoker.Channel == null || callInvoker.Channel.State == ChannelState.TransientFailure)
                     {
                         throw new RpcException(new Status(StatusCode.Unavailable, $"Channel Failure"));
                     }
 
-                    if (_options.Interceptors?.Count > 0)
+                    if (_interceptors?.Count > 0)
                     {
-                        return call(callInvoker.Intercept(_options.Interceptors.ToArray()));
+                        return call(callInvoker.Intercept(_interceptors.ToArray()));
                     }
                     return call(callInvoker);
                 }
@@ -90,7 +95,7 @@ namespace Overt.Core.Grpc
                 {
                     // 服务不可用，拉入黑名单
                     if (ex.Status.StatusCode == StatusCode.Unavailable)
-                        _strategy.Revoke(_options.ServiceName, callInvoker);
+                        _strategy.Revoke(_serviceName, callInvoker);
 
                     if (0 > --retryLeft)
                     {
