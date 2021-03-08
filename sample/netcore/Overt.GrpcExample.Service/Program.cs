@@ -42,11 +42,11 @@ namespace Overt.GrpcExample.Service
             services.AddGrpcTracer<ConsoleTracer>();
 
 
-            services.AddGrpcConfig(configurationBuilder =>
-            {
-                //configurationBuilder.AddYallaConfiguration(consulEnvironmentKey: EnvironmentModel.CONSUL_CLIENT_ADDR);
-                //configurationBuilder.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
-            });
+            //services.AddGrpcConfig(configurationBuilder =>
+            //{
+            //    //configurationBuilder.AddYallaConfiguration(consulEnvironmentKey: EnvironmentModel.CONSUL_CLIENT_ADDR);
+            //    //configurationBuilder.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+            //});
             // apollo 第三方配置启动可用
             //services.AddGrpcConfig(config =>
             //{

@@ -41,15 +41,16 @@ namespace Overt.Core.Grpc
         /// <param name="serviceElement">节点</param>
         /// <param name="registered">注册完回调</param>
         /// <returns></returns>
-        public void Register(Service.ServiceElement serviceElement, Action<Entry> registered, string serviceIdSuffix="")
+        public void Register(Service.ServiceElement serviceElement, Action<Entry> registered, string serviceIdSuffix = "")
         {
+            this._serviceIdSuffix = serviceIdSuffix;
             #region RegisterService
             if (_client == null)
                 throw new ArgumentNullException($"consul client");
 
             var serviceName = serviceElement.Name;
             var dnsEndPoint = GenServiceAddress(serviceElement);
-            var registerResult = RegisterService(serviceName, dnsEndPoint, serviceIdSuffix, registered);
+            var registerResult = RegisterService(serviceName, dnsEndPoint, registered);
             if (!registerResult)
                 throw new Exception($"overt: failed to register service {serviceName} on host:port {dnsEndPoint.ToString()}");
             #endregion
@@ -126,12 +127,12 @@ namespace Overt.Core.Grpc
             return $"{serviceName}-{dnsEndPoint.Host}:{dnsEndPoint.Port}";
         }
 
-        private string GenServiceId(string serviceName, DnsEndPoint dnsEndPoint, string suffix)
+        private string GenServiceId(string serviceName, DnsEndPoint dnsEndPoint, string serviceIdSuffix = "")
         {
-            if (string.IsNullOrWhiteSpace(suffix))
+            if (string.IsNullOrWhiteSpace(serviceIdSuffix))
                 return GenServiceId(serviceName, dnsEndPoint);
 
-            return $"{serviceName}{suffix}";
+            return $"{serviceName}{serviceIdSuffix}";
         }
 
         /// <summary>
@@ -163,10 +164,9 @@ namespace Overt.Core.Grpc
         /// <param name="dnsEndPoint"></param>
         /// <param name="registered">注册成功后执行</param>
         /// <returns></returns>
-        private bool RegisterService(string serviceName, DnsEndPoint dnsEndPoint, string serviceIdSuffix = "", Action<Entry> registered = null)
+        private bool RegisterService(string serviceName, DnsEndPoint dnsEndPoint,Action<Entry> registered = null)
         {
-            this._serviceIdSuffix = serviceIdSuffix;
-            var serviceId = GenServiceId(serviceName, dnsEndPoint,serviceIdSuffix);
+            var serviceId = GenServiceId(serviceName, dnsEndPoint,this._serviceIdSuffix);
 
             var checkId = GenCheckId(serviceName, dnsEndPoint);
             var checkName = GenCheckName(serviceName, dnsEndPoint);
