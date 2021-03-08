@@ -54,7 +54,6 @@ namespace Overt.Core.Grpc
                 if (grpcOptions?.Tracer != null)
                 {
                     grpcOptions.Tracer.ServiceName = serviceElement.Name;
-                    grpcOptions.Interceptors = grpcOptions.Interceptors ?? new List<Interceptor>();
                     grpcOptions.Interceptors.Add(new ServerTracerInterceptor(grpcOptions.Tracer));
                 }
                 server = new Server(grpcOptions.ChannelOptions)

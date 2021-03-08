@@ -16,7 +16,7 @@ namespace Overt.Core.Grpc
         /// <summary>
         /// Gets a list of <see cref="Interceptor"/> instances used to configure a gRPC client pipeline.
         /// </summary>
-        public List<Interceptor> Interceptors { get; set; } = new List<Interceptor>();
+        public List<Interceptor> Interceptors { get; } = new List<Interceptor>();
 
         /// <summary>
         /// 服务名称

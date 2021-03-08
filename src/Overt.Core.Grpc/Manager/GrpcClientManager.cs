@@ -39,8 +39,9 @@ namespace Overt.Core.Grpc
             var options = new GrpcClientOptions()
             {
                 Tracer = tracer,
-                Interceptors = interceptors,
             };
+            if (interceptors?.Count > 0)
+                options.Interceptors.AddRange(interceptors);
             var factory = new GrpcClientFactory<T>(options);
             return _clientCache.GetOrAdd(typeof(T), key => factory.Get(configPath));
         }
