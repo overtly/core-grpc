@@ -4,6 +4,7 @@ using Overt.Core.Grpc.Intercept;
 using Microsoft.Extensions.Options;
 #endif
 using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
@@ -33,12 +34,14 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Get(string configPath = "")
+        public T Get(string configPath = "", Func<List<ServerCallInvoker>, ServerCallInvoker> action = null)
         {
             var _callInvoker = GetCallInvoker(configPath);
+            _callInvoker.CustomAction = action;
             var client = (T)Activator.CreateInstance(typeof(T), _callInvoker);
             return client;
         }
+
 
         #region Private Method
         /// <summary>

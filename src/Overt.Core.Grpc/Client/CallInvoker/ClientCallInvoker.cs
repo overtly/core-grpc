@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Overt.Core.Grpc.Intercept;
 using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
@@ -10,6 +11,8 @@ namespace Overt.Core.Grpc
         private readonly string _serviceName;
         private readonly IEndpointStrategy _strategy;
         private readonly IClientTracer _tracer;
+        public Func<List<ServerCallInvoker>, ServerCallInvoker> CustomAction;
+
         public ClientCallInvoker(IEndpointStrategy strategy, string serviceName, int maxRetry = 0, IClientTracer tracer = null)
         {
             _strategy = strategy;
@@ -45,6 +48,12 @@ namespace Overt.Core.Grpc
 
 
         #region Private Method
+
+        private ServerCallInvoker GetCallInvokery(string serviceName)
+        {
+            return _strategy.GetCallInvoker(_serviceName, CustomAction);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -59,7 +68,7 @@ namespace Overt.Core.Grpc
                 var callInvoker = default(ServerCallInvoker);
                 try
                 {
-                    callInvoker = _strategy.GetCallInvoker(_serviceName);
+                    callInvoker = GetCallInvokery(_serviceName);
                     if (callInvoker == null)
                     {
                         throw new ArgumentNullException($"{_serviceName}无可用节点");

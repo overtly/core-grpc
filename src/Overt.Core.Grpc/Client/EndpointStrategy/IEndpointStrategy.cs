@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
@@ -7,6 +8,7 @@ namespace Overt.Core.Grpc
     /// </summary>
     public interface IEndpointStrategy
     {
+        
         /// <summary>
         /// 添加服务发现
         /// </summary>
@@ -25,7 +27,7 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        ServerCallInvoker GetCallInvoker(string serviceName);
+        ServerCallInvoker GetCallInvoker(string serviceName, Func<List<ServerCallInvoker>, ServerCallInvoker> function);
 
         /// <summary>
         /// 移除

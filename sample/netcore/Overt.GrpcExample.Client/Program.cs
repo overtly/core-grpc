@@ -1,4 +1,5 @@
 ﻿using Com.Ctrip.Framework.Apollo;
+using Grpc.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Overt.Core.Grpc;
@@ -46,15 +47,26 @@ namespace Overt.GrpcExample.Client
                 var key = Console.ReadKey();
                 if (key.Key == ConsoleKey.A)
                     break;
+                var service = provider.GetService<IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient>>();
 
                 try
                 {
-                    var client = provider.GetService<IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient>>();
-                    var res = client.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
-                    Console.WriteLine(DateTime.Now + " - " + res.Content ?? "abc");
+                    service.Client(1000).Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+
+                    //service.CreateClient((serverCallInvokers) =>
+                    //{
+                    //    //TODO 自定义策略，可以根据UserId 进行路由节点等
+                    //    return serverCallInvokers[0];
+
+                    //}).Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+
+                    //var res = client.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+                    //Console.WriteLine(DateTime.Now + " - " + res.Content ?? "abc");
                 }
                 catch (Exception ex)
                 {
+                    var res = service.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+
                     Console.WriteLine($"{DateTime.Now} - 异常");
                 }
 
@@ -64,6 +76,27 @@ namespace Overt.GrpcExample.Client
 
             Console.WriteLine("over");
             Console.ReadLine();
+        }
+    }
+
+    public static class GrpcClientExtensions
+    {
+        public static T Client<T>(this IGrpcClient<T> data, long userId) where T : ClientBase
+        {
+            return data.CreateClient((servercallInvokers) =>
+            {
+                //TODO 根据userId 来选择节点
+                return servercallInvokers[0];
+            });
+        }
+
+        public static Service.Grpc.GrpcExampleService.GrpcExampleServiceClient Client(this IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient> data, long userId) where T : ClientBase
+        {
+             return data.CreateClient((servercallInvokers) =>
+             {
+                 //TODO 根据userId 来选择节点
+                 return servercallInvokers[0];
+             });
         }
     }
 }
