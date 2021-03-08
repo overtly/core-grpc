@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,10 +102,13 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        public ServerCallInvoker GetCallInvoker(string serviceName)
+        public ServerCallInvoker GetCallInvoker(string serviceName, Func<List<ServerCallInvoker>, ServerCallInvoker> function)
         {
             var callInvokers = GetCallInvokers(serviceName);
-            return ServicePollingPolicy.Random(callInvokers);
+            if (function == null)
+                return ServicePollingPolicy.Random(callInvokers);
+
+            return function.Invoke(callInvokers);
         }
 
         /// <summary>

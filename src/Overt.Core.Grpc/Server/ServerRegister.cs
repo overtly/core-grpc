@@ -14,6 +14,7 @@ namespace Overt.Core.Grpc
         private readonly ConsulClient _client;
         private readonly object _locker = new object();
         private readonly Timer _selfCheckTimer;
+        private string _serviceIdSuffix = "";
 
         /// <summary>
         /// 构造函数
@@ -40,8 +41,9 @@ namespace Overt.Core.Grpc
         /// <param name="serviceElement">节点</param>
         /// <param name="registered">注册完回调</param>
         /// <returns></returns>
-        public void Register(Service.ServiceElement serviceElement, Action<Entry> registered)
+        public void Register(Service.ServiceElement serviceElement, Action<Entry> registered, string serviceIdSuffix = "")
         {
+            this._serviceIdSuffix = serviceIdSuffix;
             #region RegisterService
             if (_client == null)
                 throw new ArgumentNullException($"consul client");
@@ -125,6 +127,14 @@ namespace Overt.Core.Grpc
             return $"{serviceName}-{dnsEndPoint.Host}:{dnsEndPoint.Port}";
         }
 
+        private string GenServiceId(string serviceName, DnsEndPoint dnsEndPoint, string serviceIdSuffix = "")
+        {
+            if (string.IsNullOrWhiteSpace(serviceIdSuffix))
+                return GenServiceId(serviceName, dnsEndPoint);
+
+            return $"{serviceName}{serviceIdSuffix}";
+        }
+
         /// <summary>
         /// Generate CheckId
         /// </summary>
@@ -154,9 +164,10 @@ namespace Overt.Core.Grpc
         /// <param name="dnsEndPoint"></param>
         /// <param name="registered">注册成功后执行</param>
         /// <returns></returns>
-        private bool RegisterService(string serviceName, DnsEndPoint dnsEndPoint, Action<Entry> registered = null)
+        private bool RegisterService(string serviceName, DnsEndPoint dnsEndPoint,Action<Entry> registered = null)
         {
-            var serviceId = GenServiceId(serviceName, dnsEndPoint);
+            var serviceId = GenServiceId(serviceName, dnsEndPoint,this._serviceIdSuffix);
+
             var checkId = GenCheckId(serviceName, dnsEndPoint);
             var checkName = GenCheckName(serviceName, dnsEndPoint);
             var acr = new AgentCheckRegistration
@@ -216,7 +227,7 @@ namespace Overt.Core.Grpc
             try
             {
                 var response = _client.Health.Service(serviceName, "", true).Result;
-                var servcieId = GenServiceId(serviceName, dnsEndPoint);
+                var servcieId = GenServiceId(serviceName, dnsEndPoint,this._serviceIdSuffix);
                 var serviceEntry = response?.Response?.FirstOrDefault(oo => oo?.Service?.ID == servcieId);
                 if (serviceEntry == null)
                 {

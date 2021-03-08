@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -20,5 +21,15 @@ namespace Overt.Core.Grpc
 
             return callInvokers[(int)(Interlocked.Increment(ref _times) % callInvokers.Count)];
         }
+
+        //public static ServerCallInvoker GetServerCallInvoker(List<ServerCallInvoker> callInvokers)
+        //{
+        //    if (CustomPolingAction == null)
+        //        return Random(callInvokers);
+
+        //    return CustomPolingAction?.Invoke(callInvokers);
+        //}
+
+        //public static Func<List<ServerCallInvoker>,ServerCallInvoker> CustomPolingAction;
     }
 }

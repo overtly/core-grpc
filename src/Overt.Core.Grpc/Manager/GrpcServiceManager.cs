@@ -31,13 +31,14 @@ namespace Overt.Core.Grpc
             List<Interceptor> interceptors = null,
             List<ChannelOption> channelOptions = null,
             Action<Exception> whenException = null,
-            Action<GrpcOptions> grpcConfigAction = null)
+            Action<GrpcOptions> grpcConfigAction = null,
+            string serviceIdSuffix = "")
         {
             if (service == null)
                 throw new ArgumentNullException("service");
 
             var services = new List<ServerServiceDefinition>() { service };
-            Start(services, tracer, interceptors, channelOptions, whenException, grpcConfigAction);
+            Start(services, tracer, interceptors, channelOptions, whenException, grpcConfigAction, serviceIdSuffix: serviceIdSuffix);
         }
 
         /// <summary>
@@ -55,7 +56,8 @@ namespace Overt.Core.Grpc
             List<Interceptor> interceptors = null,
             List<ChannelOption> channelOptions = null,
             Action<Exception> whenException = null,
-            Action<GrpcOptions> grpcConfigAction = null)
+            Action<GrpcOptions> grpcConfigAction = null,
+            string serviceIdSuffix ="")
         {
             try
             {
@@ -86,7 +88,7 @@ namespace Overt.Core.Grpc
                 if (string.IsNullOrEmpty(address))
                     return;
                 serverRegister = new ServerRegister(address);
-                serverRegister.Register(serviceElement, entry => discoveryEntry = entry);
+                serverRegister.Register(serviceElement, entry => discoveryEntry = entry,serviceIdSuffix: serviceIdSuffix);
                 #endregion
             }
             catch (Exception ex)

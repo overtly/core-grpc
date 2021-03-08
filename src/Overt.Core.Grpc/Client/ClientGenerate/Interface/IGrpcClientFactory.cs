@@ -16,6 +16,8 @@ namespace Overt.Core.Grpc
         /// 获取Client对象
         /// </summary>
         /// <returns></returns>
-        T Get(string configFile = "");
+        T Get(string configFile = "", Func<List<ServerCallInvoker>, ServerCallInvoker> action = null);
+
+
     }
 }
