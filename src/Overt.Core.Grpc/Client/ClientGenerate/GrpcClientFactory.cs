@@ -1,7 +1,9 @@
 ﻿using Grpc.Core;
 using Overt.Core.Grpc.Intercept;
 #if ASP_NET_CORE
+using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Options;
+using System.Linq;
 #endif
 using System;
 
@@ -13,12 +15,15 @@ namespace Overt.Core.Grpc
     public class GrpcClientFactory<T> : IGrpcClientFactory<T> where T : ClientBase
     {
         private readonly IClientTracer _tracer;
+        private readonly GrpcClientFactoryOptions _factoryOptions;
 
 #if ASP_NET_CORE
         private readonly GrpcClientOptions<T> _options;
-        public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null, IClientTracer tracer = null)
+       
+        public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null,IOptions<GrpcClientFactoryOptions> factoryOptions=null, IClientTracer tracer = null)
         {
             _options = options?.Value;
+            _factoryOptions=factoryOptions?.Value;
             _tracer = tracer;
         }
 #else
@@ -36,11 +41,15 @@ namespace Overt.Core.Grpc
         public T Get(string configPath = "")
         {
             var _callInvoker = GetCallInvoker(configPath);
+#if ASP_NET_CORE
+            if(_factoryOptions.Interceptors.Count>0)
+                             _callInvoker.Intercept(_factoryOptions.Interceptors.ToArray());
+#endif
             var client = (T)Activator.CreateInstance(typeof(T), _callInvoker);
             return client;
         }
 
-        #region Private Method
+#region Private Method
         /// <summary>
         /// 获取CallInvoker
         /// </summary>
