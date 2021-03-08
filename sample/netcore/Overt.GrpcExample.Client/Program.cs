@@ -25,7 +25,8 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient<ConsoleTracer>();
-            services.Configure<GrpcClientFactoryOptions>(options => {
+            services.Configure<GrpcClientOptions>(options =>
+            {
                 options.Interceptors.Add(new ClientLoggerInterceptor());
             });
             // 第三方配置，启动可用

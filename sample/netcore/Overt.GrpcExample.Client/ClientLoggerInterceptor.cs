@@ -9,6 +9,11 @@ namespace Overt.GrpcExample.Client
 {
     public class ClientLoggerInterceptor : Interceptor
     {
+        public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
+        {
+            return base.BlockingUnaryCall(request, context, continuation);
+        }
+
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
             TRequest request,
             ClientInterceptorContext<TRequest, TResponse> context,
