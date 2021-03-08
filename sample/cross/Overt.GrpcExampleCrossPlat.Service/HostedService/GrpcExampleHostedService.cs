@@ -23,7 +23,11 @@ namespace Overt.GrpcExampleCrossPlat.Service
         {
             return Task.Factory.StartNew(() =>
             {
-                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase), _tracer);
+                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase), (grpcOptions) =>
+                {
+                    grpcOptions.Tracer = _tracer;
+                    grpcOptions.GenServiceId = null;
+                });
             }, cancellationToken);
         }
 
