@@ -1,6 +1,8 @@
 ﻿using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Overt.Core.Grpc.Intercept;
 using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
@@ -10,58 +12,19 @@ namespace Overt.Core.Grpc
         private readonly string _serviceName;
         private readonly IEndpointStrategy _strategy;
         private readonly IClientTracer _tracer;
-        public ClientCallInvoker(IEndpointStrategy strategy, string serviceName, int maxRetry = 0, IClientTracer tracer = null)
+        private List<Interceptor> _interceptors;
+        public ClientCallInvoker(IEndpointStrategy strategy, string serviceName, int maxRetry = 0, IClientTracer tracer = null, List<Interceptor> interceptors = null)
         {
             _strategy = strategy;
             _serviceName = serviceName;
             _maxRetry = maxRetry;
             _tracer = tracer;
-        }
+            _interceptors = interceptors;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TResponse"></typeparam>
-        /// <param name="call"></param>
-        /// <param name="retryLeft"></param>
-        /// <returns></returns>
-        private TResponse Call<TResponse>(Func<CallInvoker, TResponse> call, int retryLeft)
-        {
-            while (true)
+            if (_tracer != null)
             {
-                var callInvoker = default(ServerCallInvoker);
-                try
-                {
-                    callInvoker = _strategy.Get(_serviceName);
-                    if (callInvoker == null)
-                    {
-                        throw new ArgumentNullException($"{_serviceName}无可用节点");
-                    }
-
-                    var channel = callInvoker.Channel;
-                    if (channel == null || channel.State == ChannelState.TransientFailure)
-                    {
-                        throw new RpcException(new Status(StatusCode.Unavailable, $"Channel Failure"));
-                    }
-
-                    var response = default(TResponse);
-                    if (_tracer != null)
-                        response = call(callInvoker.ClientIntercept(_tracer));
-                    else
-                        response = call(callInvoker);
-                    return response;
-                }
-                catch (RpcException ex)
-                {
-                    // 服务不可用，拉入黑名单
-                    if (ex.Status.StatusCode == StatusCode.Unavailable)
-                        _strategy.Revoke(_serviceName, callInvoker);
-
-                    if (0 > --retryLeft)
-                    {
-                        throw new Exception($"status: {ex.StatusCode.ToString()}, node: {callInvoker?.Channel?.Target}, message: {ex.Message}", ex);
-                    }
-                }
+                _interceptors = _interceptors ?? new List<Interceptor>();
+                _interceptors.Add(new ClientTracerInterceptor(_tracer));
             }
         }
 
@@ -89,5 +52,59 @@ namespace Overt.Core.Grpc
         {
             return Call(ci => ci.AsyncDuplexStreamingCall(method, host, options), _maxRetry);
         }
+
+
+        #region Private Method
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResponse"></typeparam>
+        /// <param name="call"></param>
+        /// <param name="retryLeft"></param>
+        /// <returns></returns>
+        private TResponse Call<TResponse>(Func<CallInvoker, TResponse> call, int retryLeft)
+        {
+            while (true)
+            {
+                var callInvoker = default(ServerCallInvoker);
+                try
+                {
+                    callInvoker = _strategy.GetCallInvoker(_serviceName);
+                    if (callInvoker == null)
+                    {
+                        throw new ArgumentNullException($"{_serviceName}无可用节点");
+                    }
+
+                    var channel = callInvoker.Channel;
+                    if (channel == null || channel.State == ChannelState.TransientFailure)
+                    {
+                        throw new RpcException(new Status(StatusCode.Unavailable, $"Channel Failure"));
+                    }
+
+                    if (_tracer != null)
+                    {
+                        _tracer.CallInvokers = _strategy.GetCallInvokers(_serviceName);
+                    }
+                    if (_interceptors?.Count > 0)
+                    {
+                        return call(callInvoker.Intercept(_interceptors.ToArray()));
+                    }
+
+                    return call(callInvoker);
+                }
+                catch (RpcException ex)
+                {
+                    // 服务不可用，拉入黑名单
+                    if (ex.Status.StatusCode == StatusCode.Unavailable)
+                        _strategy.Revoke(_serviceName, callInvoker);
+
+                    if (0 > --retryLeft)
+                    {
+                        throw new Exception($"status: {ex.StatusCode}, node: {callInvoker?.Channel?.Target}, message: {ex.Message}", ex);
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

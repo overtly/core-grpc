@@ -72,28 +72,39 @@ namespace Overt.Core.Grpc
         }
 
         /// <summary>
-        /// 获取
+        /// 获取所有
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        public ServerCallInvoker Get(string serviceName)
+        public List<ServerCallInvoker> GetCallInvokers(string serviceName)
         {
             if (_invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers) &&
                 callInvokers.Count > 0)
-                return ServicePollingPlicy.Random(callInvokers);
+                return callInvokers;
 
             lock (_lock)
             {
                 if (_invokers.TryGetValue(serviceName, out callInvokers) &&
                     callInvokers.Count > 0)
-                    return ServicePollingPlicy.Random(callInvokers);
+                    return callInvokers;
 
-                callInvokers = SetCallInvokers(serviceName);
-                if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPlicy.Exist(serviceName))
-                    callInvokers = SetCallInvokers(serviceName, false);
+                callInvokers = GetSetCallInvokers(serviceName);
+                if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPolicy.Exist(serviceName))
+                    callInvokers = GetSetCallInvokers(serviceName, false);
 
-                return ServicePollingPlicy.Random(callInvokers);
+                return callInvokers;
             }
+        }
+
+        /// <summary>
+        /// 获取
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        public ServerCallInvoker GetCallInvoker(string serviceName)
+        {
+            var callInvokers = GetCallInvokers(serviceName);
+            return ServicePollingPolicy.Random(callInvokers);
         }
 
         /// <summary>
@@ -122,12 +133,12 @@ namespace Overt.Core.Grpc
                 }
 
                 // add black
-                ServiceBlackPlicy.Add(serviceName, failedChannel.Target);
+                ServiceBlackPolicy.Add(serviceName, failedChannel.Target);
                 failedChannel.ShutdownAsync();
 
                 // if not exist invoker， call init method
                 if (callInvokers.Count <= 0)
-                    SetCallInvokers(serviceName, false);
+                    GetSetCallInvokers(serviceName, false);
             }
         }
 
@@ -143,7 +154,7 @@ namespace Overt.Core.Grpc
                     _timer.Stop();
                     foreach (var item in _invokers)
                     {
-                        SetCallInvokers(item.Key);
+                        GetSetCallInvokers(item.Key);
                     }
                     _timer.Start();
                 }
@@ -159,7 +170,7 @@ namespace Overt.Core.Grpc
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
         /// <returns></returns>
-        private List<ServerCallInvoker> SetCallInvokers(string serviceName, bool filterBlack = true)
+        private List<ServerCallInvoker> GetSetCallInvokers(string serviceName, bool filterBlack = true)
         {
             if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
                 return null;
@@ -168,16 +179,11 @@ namespace Overt.Core.Grpc
             callInvokers = callInvokers ?? new List<ServerCallInvoker>();
 
             var targets = discovery.FindServiceEndpoints(filterBlack);
-            var channelOptions = new List<ChannelOption>()
-            {
-                new ChannelOption(ChannelOptions.MaxReceiveMessageLength, int.MaxValue),
-                new ChannelOption(ChannelOptions.MaxSendMessageLength, int.MaxValue),
-            };
             foreach (var target in targets)
             {
                 if (!_channels.TryGetValue(target, out Channel channel))
                 {
-                    channel = new Channel(target, ChannelCredentials.Insecure, channelOptions);
+                    channel = new Channel(target, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
                     _channels.AddOrUpdate(target, channel, (key, value) => channel);
                 }
                 if (callInvokers.Any(x => ReferenceEquals(x.Channel, channel)))

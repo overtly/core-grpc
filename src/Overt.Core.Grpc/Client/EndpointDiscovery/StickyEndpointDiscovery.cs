@@ -53,7 +53,7 @@ namespace Overt.Core.Grpc
 
                 targets = r.Response
                            .Select(x => $"{x.Service.Address}:{x.Service.Port}")
-                           .Where(target => !ServiceBlackPlicy.In(ServiceName, target) || !filterBlack)
+                           .Where(target => !ServiceBlackPolicy.In(ServiceName, target) || !filterBlack)
                            .ToList();
             }
             catch { }

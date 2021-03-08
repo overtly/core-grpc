@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Overt.Core.Grpc
 {
-    internal class ServicePollingPlicy
+    internal class ServicePollingPolicy
     {
         static private long _times = 0;
 
