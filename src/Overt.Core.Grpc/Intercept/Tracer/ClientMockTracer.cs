@@ -7,8 +7,6 @@ namespace Overt.Core.Grpc.Intercept
 {
     public class ClientMockTracer : IClientTracer
     {
-        public IEnumerable<CallInvoker> CallInvokers { get; set; }
-
         public void Exception<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, Exception exception, TRequest request = null)
             where TRequest : class
             where TResponse : class

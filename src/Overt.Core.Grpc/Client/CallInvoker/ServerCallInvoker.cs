@@ -1,15 +1,15 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Utils;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Overt.Core.Grpc
 {
     public class ServerCallInvoker : CallInvoker
     {
+        public string ServiceId;
         public Channel Channel;
-        public ServerCallInvoker(Channel channel)
+        public ServerCallInvoker(string serviceId, Channel channel)
         {
+            ServiceId = serviceId;
             Channel = GrpcPreconditions.CheckNotNull(channel);
         }
 
@@ -42,11 +42,11 @@ namespace Overt.Core.Grpc
             where TRequest : class
             where TResponse : class
         {
-            if (options.Headers?.Any(oo => oo.Key == Constants.MetadataKey_ChannelTarget) ?? false)
-            {
-                var entry = options.Headers.First(oo => oo.Key == Constants.MetadataKey_ChannelTarget);
-                Channel = new Channel(entry.Value, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
-            }
+            //if (options.Headers?.Any(oo => oo.Key == Constants.MetadataKey_ChannelTarget) ?? false)
+            //{
+            //    var entry = options.Headers.First(oo => oo.Key == Constants.MetadataKey_ChannelTarget);
+            //    Channel = new Channel(entry.Value, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
+            //}
             return new CallInvocationDetails<TRequest, TResponse>(Channel, method, host, options);
         }
     }

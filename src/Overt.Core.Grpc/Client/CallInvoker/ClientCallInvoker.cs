@@ -9,23 +9,16 @@ namespace Overt.Core.Grpc
     internal sealed class ClientCallInvoker : CallInvoker
     {
         private readonly int _maxRetry;
-        private readonly string _serviceName;
         private readonly IEndpointStrategy _strategy;
-        private readonly IClientTracer _tracer;
-        private List<Interceptor> _interceptors;
-        public ClientCallInvoker(IEndpointStrategy strategy, string serviceName, int maxRetry = 0, IClientTracer tracer = null, List<Interceptor> interceptors = null)
+        private readonly GrpcClientOptions _options;
+        public ClientCallInvoker(IEndpointStrategy strategy, GrpcClientOptions options)
         {
-            _strategy = strategy;
-            _serviceName = serviceName;
-            _maxRetry = maxRetry;
-            _tracer = tracer;
-            _interceptors = interceptors;
+            if (strategy == null || options == null)
+                throw new ArgumentNullException($"参数strategy/options不能为空");
 
-            if (_tracer != null)
-            {
-                _interceptors = _interceptors ?? new List<Interceptor>();
-                _interceptors.Add(new ClientTracerInterceptor(_tracer));
-            }
+            _strategy = strategy;
+            _options = options;
+            _maxRetry = _options.MaxRetry;
         }
 
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
@@ -69,34 +62,35 @@ namespace Overt.Core.Grpc
                 var callInvoker = default(ServerCallInvoker);
                 try
                 {
-                    callInvoker = _strategy.GetCallInvoker(_serviceName);
+                    if (_options?.GetInvoker != null)
+                    {
+                        var invokers = _strategy.GetCallInvokers(_options.ServiceName);
+                        callInvoker = _options.GetInvoker(invokers);
+                    }
+                    else
+                        callInvoker = _strategy.GetCallInvoker(_options.ServiceName);
+
+
                     if (callInvoker == null)
                     {
-                        throw new ArgumentNullException($"{_serviceName}无可用节点");
+                        throw new ArgumentNullException($"{_options.ServiceName}无可用节点");
                     }
-
-                    var channel = callInvoker.Channel;
-                    if (channel == null || channel.State == ChannelState.TransientFailure)
+                    if (callInvoker.Channel == null || callInvoker.Channel.State == ChannelState.TransientFailure)
                     {
                         throw new RpcException(new Status(StatusCode.Unavailable, $"Channel Failure"));
                     }
 
-                    if (_tracer != null)
+                    if (_options.Interceptors?.Count > 0)
                     {
-                        _tracer.CallInvokers = _strategy.GetCallInvokers(_serviceName);
+                        return call(callInvoker.Intercept(_options.Interceptors.ToArray()));
                     }
-                    if (_interceptors?.Count > 0)
-                    {
-                        return call(callInvoker.Intercept(_interceptors.ToArray()));
-                    }
-
                     return call(callInvoker);
                 }
                 catch (RpcException ex)
                 {
                     // 服务不可用，拉入黑名单
                     if (ex.Status.StatusCode == StatusCode.Unavailable)
-                        _strategy.Revoke(_serviceName, callInvoker);
+                        _strategy.Revoke(_options.ServiceName, callInvoker);
 
                     if (0 > --retryLeft)
                     {

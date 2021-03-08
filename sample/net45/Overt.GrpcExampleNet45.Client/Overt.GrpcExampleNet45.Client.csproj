@@ -63,9 +63,6 @@
     <Reference Include="Grpc.Core.Api, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Grpc.Core.Api.2.36.0\lib\net45\Grpc.Core.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Overt.Core.Grpc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Overt.Core.Grpc.1.0.5-alpha\lib\net45\Overt.Core.Grpc.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Buffers.4.4.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
@@ -114,6 +111,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Overt.Core.Grpc\Overt.Core.Grpc.csproj">
+      <Project>{90fab530-0847-46e1-bce1-73b8854b58fc}</Project>
+      <Name>Overt.Core.Grpc</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Overt.GrpcExampleNet45.Service.Grpc\Overt.GrpcExampleNet45.Service.Grpc.csproj">
       <Project>{44f0037d-c0b5-432e-be8f-841cde96d40d}</Project>
       <Name>Overt.GrpcExampleNet45.Service.Grpc</Name>
