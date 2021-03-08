@@ -181,20 +181,20 @@ namespace Overt.Core.Grpc
             var targets = discovery.FindServiceEndpoints(filterBlack);
             foreach (var target in targets)
             {
-                if (!_channels.TryGetValue(target, out Channel channel))
+                if (!_channels.TryGetValue(target.Item2, out Channel channel))
                 {
-                    channel = new Channel(target, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
-                    _channels.AddOrUpdate(target, channel, (key, value) => channel);
+                    channel = new Channel(target.Item2, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
+                    _channels.AddOrUpdate(target.Item2, channel, (key, value) => channel);
                 }
                 if (callInvokers.Any(x => ReferenceEquals(x.Channel, channel)))
                     continue;
 
-                var callInvoker = new ServerCallInvoker(channel);
+                var callInvoker = new ServerCallInvoker(target.Item1, channel);
                 callInvokers.Add(callInvoker);
             }
 
             // 移除已经销毁的callInvokers
-            var destroyInvokers = callInvokers.Where(oo => !targets.Contains(oo.Channel.Target)).ToList();
+            var destroyInvokers = callInvokers.Where(oo => !targets.Any(target => target.Item2 == oo.Channel.Target)).ToList();
             foreach (var invoker in destroyInvokers)
             {
                 _channels.TryRemove(invoker.Channel.Target, out Channel channel);

@@ -36,7 +36,7 @@ namespace Overt.Core.Grpc
         /// <summary>
         /// 
         /// </summary>
-        public const string MetadataKey_ChannelTarget = "channel_target";
+        //public const string MetadataKey_ChannelTarget = "channel_target";
 
         /// <summary>
         /// 默认的通道配置

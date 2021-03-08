@@ -1,16 +1,11 @@
-﻿using Grpc.Core;
-using Grpc.Core.Interceptors;
-using Overt.Core.Grpc;
+﻿using Grpc.Core.Interceptors;
 using Overt.Core.Grpc.Intercept;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Overt.GrpcExample.Client.Tracer
 {
     public class ConsoleTracer : IClientTracer
     {
-        public IEnumerable<CallInvoker> CallInvokers { get; set; }
 
         public void Exception<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, Exception exception, TRequest request = null)
             where TRequest : class

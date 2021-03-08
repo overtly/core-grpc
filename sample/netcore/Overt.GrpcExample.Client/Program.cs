@@ -5,6 +5,7 @@ using Overt.Core.Grpc;
 using Overt.GrpcExample.Client.Tracer;
 using System;
 using System.Threading;
+using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
 
 namespace Overt.GrpcExample.Client
 {
@@ -24,9 +25,10 @@ namespace Overt.GrpcExample.Client
             services.AddOptions();
 
             // 注入GrpcClient
-            services.AddGrpcClient<ConsoleTracer>();
+            services.AddGrpcClient();
             services.Configure<GrpcClientOptions>(options =>
             {
+                options.Tracer = new ConsoleTracer();
                 options.Interceptors.Add(new ClientLoggerInterceptor());
             });
             // 第三方配置，启动可用
@@ -52,8 +54,12 @@ namespace Overt.GrpcExample.Client
 
                 try
                 {
-                    var client = provider.GetService<IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient>>();
-                    var res = client.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+                    var service = provider.GetService<IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient>>();
+                    var client = service.CreateClient((invokers) =>
+                    {
+                        return invokers[0];
+                    });
+                    var res = client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
                     Console.WriteLine(DateTime.Now + " - " + res.Content ?? "abc");
                 }
                 catch (Exception ex)
