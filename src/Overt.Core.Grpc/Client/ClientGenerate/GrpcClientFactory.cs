@@ -42,10 +42,7 @@ namespace Overt.Core.Grpc
         public T Get(string configPath = "", Func<List<ServerCallInvoker>, ServerCallInvoker> getInvoker = null)
         {
             var exitus = StrategyFactory.Get<T>(GetConfigPath(configPath));
-            _globalOptions.ServiceName = exitus.ServiceName;
-            _globalOptions.MaxRetry = exitus.MaxRetry;
-            _globalOptions.GetInvoker = getInvoker;
-            var callInvoker = new ClientCallInvoker(exitus.EndpointStrategy, _globalOptions);
+            var callInvoker = new ClientCallInvoker(exitus.EndpointStrategy, exitus.ServiceName, exitus.MaxRetry, _globalOptions.Interceptors, getInvoker);
             var client = (T)Activator.CreateInstance(typeof(T), callInvoker);
             return client;
         }

@@ -22,7 +22,7 @@ namespace Overt.Core.Grpc
         /// 自定义拦截器
         /// default: null
         /// </summary>
-        public List<Interceptor> Interceptors { get; set; }
+        public List<Interceptor> Interceptors { get; } = new List<Interceptor>();
 
         /// <summary>
         /// tracer拦截器

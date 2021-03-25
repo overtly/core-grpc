@@ -20,10 +20,14 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="configPath">配置文件路径</param>
         /// <param name="options">配置信息</param>
+        /// <param name="getInvoker">自定义invoker获取策略</param>
         /// <returns></returns>
-        public static T Get(string configPath = "", GrpcClientOptions options = default)
+        public static T Get(string configPath = "", GrpcClientOptions options = default, Func<List<ServerCallInvoker>, ServerCallInvoker> getInvoker = null)
         {
             var factory = new GrpcClientFactory<T>(options);
+            if (getInvoker != null)
+                return factory.Get(configPath, getInvoker);
+
             return _clientCache.GetOrAdd(typeof(T), key => factory.Get(configPath));
         }
 
@@ -33,16 +37,17 @@ namespace Overt.Core.Grpc
         /// <param name="configPath">配置文件路径</param>
         /// <param name="tracer">tracer拦截器</param>
         /// <param name="interceptors">自定义拦截器</param>
+        /// <param name="getInvoker">自定义invoker获取策略</param>
         /// <returns></returns>
-        public static T Get(string configPath = "", IClientTracer tracer = null, List<Interceptor> interceptors = null)
+        public static T Get(string configPath = "", IClientTracer tracer = null, List<Interceptor> interceptors = null, Func<List<ServerCallInvoker>, ServerCallInvoker> getInvoker = null)
         {
             var options = new GrpcClientOptions()
             {
                 Tracer = tracer,
-                Interceptors = interceptors,
             };
-            var factory = new GrpcClientFactory<T>(options);
-            return _clientCache.GetOrAdd(typeof(T), key => factory.Get(configPath));
+            if (interceptors?.Count > 0)
+                options.Interceptors.AddRange(interceptors);
+            return Get(configPath, options, getInvoker);
         }
     }
 #endif
