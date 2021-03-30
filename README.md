@@ -1,9 +1,11 @@
-# Overt.Core.Grpc
+如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
+
+## Overt.Core.Grpc
 
 ### 项目层次说明
 
 > Overt.Core.Grpc v1.0.5  
-> 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
+> 基于Google的Grpc.Core驱动，适用于Console服务场景，基于TCP长连接实现微服务场景
 
 #### 1. 项目目录
 
@@ -532,12 +534,21 @@ App.config/Web.config
 
 
 
-# Overt.Core.Grpc.H2
+
+
+
+
+
+
+
+
+
+## Overt.Core.Grpc.H2
 
 ### 项目层次说明
 
 > Overt.Core.Grpc.H2 v1.0.1
-> 用于>= netcoreapp3.0版本，用于http2协议，依赖微软的grpc.net
+> 用于>= netcoreapp3.0版本，用于http2协议，依赖微软的grpc.net，适用于Web服务场景，基于http2实现微服务场景
 
 #### 1. 项目目录
 
