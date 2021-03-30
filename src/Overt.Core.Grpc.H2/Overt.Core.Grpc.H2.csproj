@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1;netcoreapp3.0;net5.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-alpha01</Version>
+    <Version>1.0.0-alpha03</Version>
     <Description>基于grpc.net驱动结合consul实现微服务注册与发现</Description>
     <RepositoryUrl>https://github.com/overtly/core-grpc.git</RepositoryUrl>
     <PackageReleaseNotes>第一个版本</PackageReleaseNotes>
@@ -16,7 +16,10 @@
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="1.6.1.1" />
-    <PackageReference Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.36.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.6" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.36.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
