@@ -1,7 +1,7 @@
 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
 
-- [Overt.Core.Grpc](#overtcoregrpc)
-- [Overt.Core.Grpc.H2](#overtcoregrpch2)
+- [Overt.Core.Grpc - Base Grpc.Core 谷歌自带](#overtcoregrpc)
+- [Overt.Core.Grpc.H2 - Base Grpc.Net 微软自带](#overtcoregrpch2)
 
 
 
@@ -552,7 +552,7 @@ App.config/Web.config
 
 ### 项目层次说明
 
-> Overt.Core.Grpc.H2 v1.0.1
+> Overt.Core.Grpc.H2 v1.0.1  
 > 用于>= netcoreapp3.0版本，用于http2协议，依赖微软的grpc.net，适用于Web服务场景，基于http2实现微服务场景
 
 #### 1. 项目目录
