@@ -1,0 +1,19 @@
+﻿{
+  "GrpcClient": {
+    "Service": {
+      "Name": "grpcservice",
+      "Scheme": "http",
+      "Discovery": {
+        "EndPoints": [
+          {
+            "Host": "",
+            "Port": 0
+          }
+        ],
+        "Consul": {
+          "Path": "dllconfigs/consulsettings.json"
+        }
+      }
+    }
+  }
+}
