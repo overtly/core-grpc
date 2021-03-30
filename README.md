@@ -2,7 +2,7 @@
 
 ### 项目层次说明
 
-> Overt.Core.Grpc v1.0.4.1  
+> Overt.Core.Grpc v1.0.5  
 > 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
 
 #### 1. 项目目录
@@ -29,7 +29,7 @@
 
 #### 2. 版本及支持
 
-> - Nuget版本：V 1.0.4.1
+> - Nuget版本：V 1.0.5
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -64,7 +64,7 @@ Grpc 1.21.0
 #### 1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.4.1
+Install-Package Overt.Core.Grpc -Version 1.0.5
 ```
 
 <a name="dhmwfy"></a>
@@ -399,6 +399,15 @@ ClientManager<T>.Instance.[Method]
 ```
 
 #### 5. 更新说明
+
+- 2021-03-30 v 1.0.5
+- 
+> 1. Tracer提供修改Channel Target能力，可供外部自定义选择节点；
+> 2. 升级底层驱动为最新版本
+> 3. 增加自定义Interceptor的注入
+> 4. 调整ServiceStart的参数配置，使用GrpcOptions进行承接
+> 5. 增加invokers的自定义获取，增加ServiceId的获取
+> 6. 支持framework版本的自定义invoker获取策略
 
 
 - 2021-02-25 v 1.0.4.1
