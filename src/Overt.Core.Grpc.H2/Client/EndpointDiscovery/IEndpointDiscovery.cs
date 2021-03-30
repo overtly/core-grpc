@@ -14,6 +14,11 @@ namespace Overt.Core.Grpc.H2
         string ServiceName { get; set; }
 
         /// <summary>
+        /// http / https
+        /// </summary>
+        string Scheme { get; set; }
+
+        /// <summary>
         /// 监听变动的方法
         /// </summary>
         Action Watched { get; set; }

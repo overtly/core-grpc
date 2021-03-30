@@ -15,9 +15,6 @@ namespace Overt.Core.Grpc.H2
         /// <summary>
         /// 注册配置
         /// </summary>
-        public ConsulElement Consul
-        {
-            get; set;
-        }
+        public ConsulElement Consul { get; set; }
     }
 }

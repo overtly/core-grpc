@@ -14,7 +14,7 @@ namespace Overt.Core.Grpc.H2
     {
         #region 构造函数
         private readonly ConsulClient _client;
-        public StickyEndpointDiscovery(string serviceName, string address, bool startWatch = true)
+        public StickyEndpointDiscovery(string serviceName, string address, string scheme = "http", bool startWatch = true)
         {
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException("consul address");
@@ -26,6 +26,7 @@ namespace Overt.Core.Grpc.H2
             });
 
             ServiceName = serviceName;
+            Scheme = scheme;
 
             if (startWatch)
                 StartWatchService();
@@ -34,6 +35,8 @@ namespace Overt.Core.Grpc.H2
 
         #region Public Property
         public string ServiceName { get; set; }
+
+        public string Scheme { get; set; }
 
         public Action Watched { get; set; }
         #endregion

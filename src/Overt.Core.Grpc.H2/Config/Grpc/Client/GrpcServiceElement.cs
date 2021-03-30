@@ -5,25 +5,16 @@
         /// <summary>
         /// 服务名称
         /// </summary>
-        public string Name
-        {
-            get; set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// 服务名称
         /// </summary>
-        public int MaxRetry
-        {
-            get; set;
-        }
+        public string Scheme { get; set; } = "http";
 
         /// <summary>
         /// 服务发现
         /// </summary>
-        public GrpcDiscoveryElement Discovery
-        {
-            get; set;
-        }
+        public GrpcDiscoveryElement Discovery { get; set; }
     }
 }

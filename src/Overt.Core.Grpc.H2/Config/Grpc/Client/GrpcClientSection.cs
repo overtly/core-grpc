@@ -15,9 +15,6 @@
         /// <summary>
         /// grpc配置
         /// </summary>
-        public GrpcServiceElement Service
-        {
-            get; set;
-        }
+        public GrpcServiceElement Service { get; set; }
     }
 }

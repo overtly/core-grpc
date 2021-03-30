@@ -195,7 +195,7 @@ namespace Overt.Core.Grpc.H2
                 if (channelWrappers.Any(oo => oo.Target == target.target))
                     continue;
 
-                var channel = GrpcChannel.ForAddress($"https://{target.target}", Constants.DefaultChannelOptions);
+                var channel = GrpcChannel.ForAddress($"{discovery.Scheme}://{target.target}", Constants.DefaultChannelOptions);
                 var channelWrapper = new ChannelWrapper(target.serviceId, channel);
                 channelWrappers.Add(channelWrapper);
             }

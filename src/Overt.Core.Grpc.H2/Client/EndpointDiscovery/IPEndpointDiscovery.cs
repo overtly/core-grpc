@@ -11,18 +11,22 @@ namespace Overt.Core.Grpc.H2
     {
         #region Constructor
         private readonly List<Tuple<string, int>> _ipEndPoints;
-        public IPEndpointDiscovery(string serviceName, List<Tuple<string, int>> ipEndPoints)
+        public IPEndpointDiscovery(string serviceName, List<Tuple<string, int>> ipEndPoints, string scheme = "http")
         {
             if ((ipEndPoints?.Count ?? 0) <= 0)
                 throw new ArgumentNullException("no ip endpoints availble");
 
             _ipEndPoints = ipEndPoints;
+
             ServiceName = serviceName;
+            Scheme = scheme;
         }
         #endregion
 
         #region Public Property
         public string ServiceName { get; set; }
+
+        public string Scheme { get; set; }
 
         public Action Watched { get; set; }
         #endregion

@@ -48,7 +48,6 @@ namespace Overt.Core.Grpc.H2
         private static Exitus ResolveConfiguration(string configFile)
         {
             var serviceElement = ResolveServiceConfiguration(configFile);
-            var maxRetry = serviceElement.MaxRetry;
             var serviceName = serviceElement.Name;
             var discovery = serviceElement.Discovery;
             IEndpointStrategy endpointStrategy;
@@ -56,7 +55,7 @@ namespace Overt.Core.Grpc.H2
                 endpointStrategy = ResolveStickyConfiguration(serviceElement, address);
             else
                 endpointStrategy = ResolveEndpointConfiguration(serviceElement);
-            return new Exitus(serviceName, maxRetry, endpointStrategy);
+            return new Exitus(serviceName, endpointStrategy);
         }
 
         /// <summary>
@@ -81,9 +80,10 @@ namespace Overt.Core.Grpc.H2
         private static IEndpointStrategy ResolveStickyConfiguration(GrpcServiceElement serviceElement, string address)
         {
             var serviceName = serviceElement.Name;
+            var scheme = serviceElement.Scheme;
 
             // consul
-            var stickyEndpointDiscovery = new StickyEndpointDiscovery(serviceName, address);
+            var stickyEndpointDiscovery = new StickyEndpointDiscovery(serviceName, address, scheme);
             EndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
             return EndpointStrategy.Instance;
         }
@@ -97,9 +97,10 @@ namespace Overt.Core.Grpc.H2
         {
             var serviceName = serviceElement.Name;
             var discovery = serviceElement.Discovery;
+            var scheme = serviceElement.Scheme;
 
             var ipEndPoints = discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
-            var iPEndpointDiscovery = new IPEndpointDiscovery(serviceName, ipEndPoints);
+            var iPEndpointDiscovery = new IPEndpointDiscovery(serviceName, ipEndPoints, scheme);
             EndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
             return EndpointStrategy.Instance;
         }

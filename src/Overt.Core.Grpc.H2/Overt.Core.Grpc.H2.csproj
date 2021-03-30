@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netcoreapp3.0;net5.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.0.1-alpha02</Version>
     <Description>基于grpc.net驱动结合consul实现微服务注册与发现</Description>
     <RepositoryUrl>https://github.com/overtly/core-grpc.git</RepositoryUrl>
-    <PackageReleaseNotes>第一个版本</PackageReleaseNotes>
+    <PackageReleaseNotes>开放Scheme</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
