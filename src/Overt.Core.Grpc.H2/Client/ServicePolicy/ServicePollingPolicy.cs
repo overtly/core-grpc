@@ -14,7 +14,7 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="channels"></param>
         /// <returns></returns>
-        public static GrpcChannel Random(List<GrpcChannel> channels)
+        public static ChannelWrapper Random(List<ChannelWrapper> channels)
         {
             if ((channels?.Count ?? 0) <= 0)
                 return null;

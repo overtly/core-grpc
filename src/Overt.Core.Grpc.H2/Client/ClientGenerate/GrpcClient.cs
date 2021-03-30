@@ -1,6 +1,5 @@
 ﻿using Grpc.Core;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.H2
@@ -11,7 +10,6 @@ namespace Overt.Core.Grpc.H2
     public class GrpcClient<T> : IGrpcClient<T> where T : ClientBase
     {
         readonly IGrpcClientFactory<T> _factory;
-        readonly ConcurrentDictionary<Type, T> _clientCache = new ConcurrentDictionary<Type, T>();
         public GrpcClient(IGrpcClientFactory<T> factory)
         {
             _factory = factory;
@@ -24,7 +22,7 @@ namespace Overt.Core.Grpc.H2
         {
             get
             {
-                return _clientCache.GetOrAdd(typeof(T), key => _factory.Get());
+                return _factory.Get();
             }
         }
 
@@ -33,9 +31,9 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="getInvoker"></param>
         /// <returns></returns>
-        public T CreateClient(Func<List<ChannelWrapper>, ChannelWrapper> getChannel)
+        public T CreateClient(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker)
         {
-            return _factory.Get(getInvoker: getInvoker);
+            return _factory.Get(channelWrapperInvoker: channelWrapperInvoker);
         }
     }
 }

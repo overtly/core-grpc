@@ -1,5 +1,4 @@
-﻿using Grpc.Net.Client;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -19,21 +18,21 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        List<GrpcChannel> GetChannels(string serviceName);
+        List<ChannelWrapper> GetChannelWrappers(string serviceName);
 
         /// <summary>
         /// 获取
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        GrpcChannel GetChannel(string serviceName);
+        ChannelWrapper GetChannelWrapper(string serviceName);
 
         /// <summary>
         /// 移除
         /// </summary>
         /// <param name="serviceName"></param>
         /// <param name="channel"></param>
-        void Revoke(string serviceName, GrpcChannel channel);
+        void Revoke(string serviceName, ChannelWrapper channel);
 
         /// <summary>
         /// 定时检测

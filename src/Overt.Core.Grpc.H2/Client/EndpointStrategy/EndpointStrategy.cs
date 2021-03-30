@@ -6,7 +6,7 @@ using System.Timers;
 
 namespace Overt.Core.Grpc.H2
 {
-    internal class StickyEndpointStrategy : IEndpointStrategy
+    internal class EndpointStrategy : IEndpointStrategy
     {
         #region Constructor
         private readonly object _lock = new object();
@@ -14,7 +14,7 @@ namespace Overt.Core.Grpc.H2
         private readonly ConcurrentDictionary<string, IEndpointDiscovery> _discoveries = new ConcurrentDictionary<string, IEndpointDiscovery>();
         private readonly ConcurrentDictionary<string, List<ChannelWrapper>> _channelWrappers = new ConcurrentDictionary<string, List<ChannelWrapper>>();
 
-        StickyEndpointStrategy()
+        EndpointStrategy()
         {
             _timer = new Timer(ClientTimespan.ResetInterval.TotalSeconds * 1000);
             InitCheckTimer();
@@ -22,7 +22,7 @@ namespace Overt.Core.Grpc.H2
         #endregion
 
         #region Destructor
-        ~StickyEndpointStrategy()
+        ~EndpointStrategy()
         {
             _timer?.Stop();
             _timer?.Dispose();
@@ -40,20 +40,20 @@ namespace Overt.Core.Grpc.H2
 
         #region Instance
         private readonly static object _instanceLocker = new object();
-        private static StickyEndpointStrategy _stickyEndpintStrategy;
-        public static StickyEndpointStrategy Instance
+        private static EndpointStrategy _endpintStrategy;
+        public static EndpointStrategy Instance
         {
             get
             {
-                if (_stickyEndpintStrategy != null)
-                    return _stickyEndpintStrategy;
+                if (_endpintStrategy != null)
+                    return _endpintStrategy;
                 lock (_instanceLocker)
                 {
-                    if (_stickyEndpintStrategy != null)
-                        return _stickyEndpintStrategy;
+                    if (_endpintStrategy != null)
+                        return _endpintStrategy;
 
-                    _stickyEndpintStrategy = new StickyEndpointStrategy();
-                    return _stickyEndpintStrategy;
+                    _endpintStrategy = new EndpointStrategy();
+                    return _endpintStrategy;
                 }
             }
         }

@@ -1,8 +1,4 @@
-﻿#if !ASP_NET_CORE
-using System.Configuration;
-#else
-using Microsoft.Extensions.Configuration;
-#endif
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 
@@ -13,9 +9,7 @@ namespace Overt.Core.Grpc.H2
     /// </summary>
     internal class ConfigBuilder
     {
-#if ASP_NET_CORE
         public static Action<IConfigurationBuilder> ConfigureDelegate;
-#endif
 
         /// <summary>
         /// 获取Server配置对象
@@ -23,30 +17,8 @@ namespace Overt.Core.Grpc.H2
         /// <param name="sectionName">节点名称</param>
         /// <param name="configPath"></param>
         /// <returns></returns>
-        public static T Build<T>(string sectionName, string configPath = "") where T :
-#if !ASP_NET_CORE
-            ConfigurationSection
-#else
-            class, new()
-#endif
+        public static T Build<T>(string sectionName, string configPath = "") where T : class, new()
         {
-            T section = null;
-#if !ASP_NET_CORE
-            if (string.IsNullOrEmpty(configPath))
-                section = ConfigurationManager.GetSection(sectionName) as T;
-
-            else
-            {
-                configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configPath);
-                if (!File.Exists(configPath))
-                    throw new ConfigurationErrorsException($"overt: when resolve configpath, configpath file is not exist...[{configPath}]");
-
-                section = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap
-                {
-                    ExeConfigFilename = configPath
-                }, ConfigurationUserLevel.None).GetSection(sectionName) as T;
-            }
-#else
             if (string.IsNullOrEmpty(configPath) || !configPath.EndsWith(".json"))
                 configPath = "appsettings.json";
 
@@ -54,7 +26,7 @@ namespace Overt.Core.Grpc.H2
             if (!File.Exists(configPath))
                 throw new Exception($"overt: when resolve configpath, configpath file is not exist... [{configPath}]");
 
-            section = new T();
+            var section = new T();
             var builder = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile(configPath)
@@ -62,7 +34,6 @@ namespace Overt.Core.Grpc.H2
             ConfigureDelegate?.Invoke(builder);
             var configuration = builder.Build();
             configuration.GetSection(sectionName).Bind(section);
-#endif
             return section;
         }
     }

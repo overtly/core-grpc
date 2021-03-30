@@ -2,9 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0-alpha01</Version>
+    <Description>基于grpc.net驱动结合consul实现微服务注册与发现</Description>
+    <RepositoryUrl>https://github.com/overtly/core-grpc.git</RepositoryUrl>
+    <PackageReleaseNotes>第一个版本</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Client\EndpointStrategy\IPEndpointStrategy.cs" />
+    <Compile Remove="Client\EndpointStrategy\StickyEndpointStrategy.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Consul" Version="1.6.1.1" />
     <PackageReference Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.36.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />

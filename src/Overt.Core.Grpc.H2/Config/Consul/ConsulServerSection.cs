@@ -1,7 +1,4 @@
-﻿#if !ASP_NET_CORE
-using System.Configuration;
-#endif
-
+﻿
 namespace Overt.Core.Grpc.H2
 {
     /// <summary>
@@ -10,24 +7,13 @@ namespace Overt.Core.Grpc.H2
     ///   </consulSettings>
     /// </summary>
     public class ConsulServerSection
-#if !ASP_NET_CORE
-        : ConfigurationSection
-#endif
     {
         /// <summary>
         /// grpc配置
         /// </summary>
-#if !ASP_NET_CORE
-        [ConfigurationProperty("service", IsRequired = true)]
-#endif
         public ConsulServiceElement Service
         {
-#if !ASP_NET_CORE
-            get { return this["service"] as ConsulServiceElement; }
-#else
             get; set;
-#endif
-
         }
     }
 }

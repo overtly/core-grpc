@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>17ea2037-572e-4759-ac3a-88073b3db458</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="dllconfigs\consulsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="dllconfigs\consulsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.27.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Overt.Core.Grpc.H2\Overt.Core.Grpc.H2.csproj" />
+    <ProjectReference Include="..\Overt.GrpcExample.Service.Grpc\Overt.GrpcExample.Service.Grpc.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -65,7 +64,7 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        private static Client.GrpcServiceElement ResolveServiceConfiguration(string configFile)
+        private static GrpcServiceElement ResolveServiceConfiguration(string configFile)
         {
             var grpcSection = ConfigBuilder.Build<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
             if (grpcSection == null || grpcSection.Service == null)
@@ -79,14 +78,14 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceElement"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveStickyConfiguration(Client.GrpcServiceElement serviceElement, string address)
+        private static IEndpointStrategy ResolveStickyConfiguration(GrpcServiceElement serviceElement, string address)
         {
             var serviceName = serviceElement.Name;
 
             // consul
             var stickyEndpointDiscovery = new StickyEndpointDiscovery(serviceName, address);
-            StickyEndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
-            return StickyEndpointStrategy.Instance;
+            EndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
+            return EndpointStrategy.Instance;
         }
 
         /// <summary>
@@ -94,20 +93,15 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceElement"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveEndpointConfiguration(Client.GrpcServiceElement serviceElement)
+        private static IEndpointStrategy ResolveEndpointConfiguration(GrpcServiceElement serviceElement)
         {
             var serviceName = serviceElement.Name;
             var discovery = serviceElement.Discovery;
 
-            List<Tuple<string, int>> ipEndPoints = null;
-#if !ASP_NET_CORE
-            ipEndPoints = discovery.EndPoints.ToList();
-#else
-            ipEndPoints = discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
-#endif
+            var ipEndPoints = discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
             var iPEndpointDiscovery = new IPEndpointDiscovery(serviceName, ipEndPoints);
-            IPEndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
-            return IPEndpointStrategy.Instance;
+            EndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
+            return EndpointStrategy.Instance;
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
 ﻿using Grpc.Core;
+using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -12,6 +14,6 @@ namespace Overt.Core.Grpc.H2
         /// 获取Client对象
         /// </summary>
         /// <returns></returns>
-        T Get(string configPath = "");
+        T Get(string configPath = "", Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null);
     }
 }

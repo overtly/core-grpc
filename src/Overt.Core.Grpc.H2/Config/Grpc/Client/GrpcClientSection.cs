@@ -1,9 +1,4 @@
-﻿using Overt.Core.Grpc.Client;
-#if !ASP_NET_CORE
-using System.Configuration;
-#endif
-
-namespace Overt.Core.Grpc.H2
+﻿namespace Overt.Core.Grpc.H2
 {
     /// <summary>
     ///   Grpc配置
@@ -16,22 +11,13 @@ namespace Overt.Core.Grpc.H2
     ///   </grpcServer>
     /// </summary>
     public class GrpcClientSection
-#if !ASP_NET_CORE
-        : ConfigurationSection
-#endif
-    {        /// <summary>
-             /// grpc配置
-             /// </summary>
-#if !ASP_NET_CORE
-        [ConfigurationProperty("service", IsRequired = true)]
-#endif
+    {
+        /// <summary>
+        /// grpc配置
+        /// </summary>
         public GrpcServiceElement Service
         {
-#if !ASP_NET_CORE
-            get { return this["service"] as GrpcServiceElement; }
-#else
-        get; set;
-#endif
+            get; set;
         }
     }
 }

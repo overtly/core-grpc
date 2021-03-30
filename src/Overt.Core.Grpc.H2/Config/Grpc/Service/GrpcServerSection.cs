@@ -1,6 +1,4 @@
-﻿using Overt.Core.Grpc.Service;
-
-namespace Overt.Core.Grpc.H2
+﻿namespace Overt.Core.Grpc.H2
 {
     /// <summary>
     ///   Grpc配置

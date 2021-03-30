@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Overt.Core.Grpc.H2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GrpcService1
+namespace Overt.GrpcExample.Service
 {
     public class Startup
     {
@@ -30,18 +30,17 @@ namespace GrpcService1
 
             app.UseRouting();
 
-            var configuration = app.ApplicationServices.GetService<IConfiguration>();
-            var a = configuration.GetValue<string>("ASPNETCORE_URLS");
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<GrpcExampleServiceImpl>();
 
                 endpoints.MapGet("/", async context =>
                 {
                     await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
                 });
             });
+
+            app.UseGrpcRegister();
         }
     }
 }

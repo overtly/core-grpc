@@ -15,7 +15,7 @@ namespace Overt.Core.Grpc.H2
         private readonly object _lock = new object();
         private readonly Timer _timer;
         private readonly ConcurrentDictionary<string, IEndpointDiscovery> _discoveries = new ConcurrentDictionary<string, IEndpointDiscovery>();
-        private readonly ConcurrentDictionary<string, List<GrpcChannel>> _channels = new ConcurrentDictionary<string, List<GrpcChannel>>();
+        private readonly ConcurrentDictionary<string, List<ChannelWrapper>> _channelWrappers = new ConcurrentDictionary<string, List<ChannelWrapper>>();
 
         IPEndpointStrategy()
         {
@@ -30,14 +30,14 @@ namespace Overt.Core.Grpc.H2
             _timer?.Stop();
             _timer?.Dispose();
 
-            foreach (var item in _channels)
+            foreach (var item in _channelWrappers)
             {
                 item.Value?.ForEach(channel =>
                 {
                     channel.ShutdownAsync();
                 });
             }
-            _channels.Clear();
+            _channelWrappers.Clear();
         }
         #endregion
 
@@ -77,15 +77,15 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        public List<GrpcChannel> GetChannels(string serviceName)
+        public List<ChannelWrapper> GetChannelWrappers(string serviceName)
         {
-            if (_channels.TryGetValue(serviceName, out List<GrpcChannel> channels) &&
+            if (_channelWrappers.TryGetValue(serviceName, out List<ChannelWrapper> channels) &&
                 channels.Count > 0)
                 return channels;
 
             lock (_lock)
             {
-                if (_channels.TryGetValue(serviceName, out channels) &&
+                if (_channelWrappers.TryGetValue(serviceName, out channels) &&
                     channels.Count > 0)
                     return channels;
 
@@ -102,9 +102,9 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
-        public GrpcChannel GetChannel(string serviceName)
+        public ChannelWrapper GetChannelWrapper(string serviceName)
         {
-            var channels = GetChannels(serviceName);
+            var channels = GetChannelWrappers(serviceName);
             return ServicePollingPolicy.Random(channels);
         }
 
@@ -113,7 +113,7 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceName"></param>
         /// <param name="failedCallInvoker"></param>
-        public void Revoke(string serviceName, GrpcChannel channel)
+        public void Revoke(string serviceName, ChannelWrapper channel)
         {
             lock (_lock)
             {
@@ -121,15 +121,15 @@ namespace Overt.Core.Grpc.H2
                     return;
 
                 // channels
-                if (_channels.TryGetValue(serviceName, out List<GrpcChannel> channels) &&
+                if (_channelWrappers.TryGetValue(serviceName, out List<ChannelWrapper> channels) &&
                     channels.Any(oo => oo == channel))
                 {
                     channels.Remove(channel);
-                    _channels.AddOrUpdate(serviceName, channels, (k, v) => channels);
+                    _channelWrappers.AddOrUpdate(serviceName, channels, (k, v) => channels);
                 }
 
                 // add black
-                ServiceBlackPolicy.Add(serviceName, channel.Target);
+                ServiceBlackPolicy.Add(serviceName, channel.Channel.Target);
 
                 channel.ShutdownAsync();
 
@@ -151,7 +151,7 @@ namespace Overt.Core.Grpc.H2
                     _timer.Stop();
                     try
                     {
-                        foreach (var item in _channels)
+                        foreach (var item in _channelWrappers)
                         {
                             GetSetChannels(item.Key);
                         }
@@ -171,18 +171,18 @@ namespace Overt.Core.Grpc.H2
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
         /// <returns></returns>
-        private List<GrpcChannel> GetSetChannels(string serviceName, bool filterBlack = true)
+        private List<ChannelWrapper> GetSetChannels(string serviceName, bool filterBlack = true)
         {
             if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
                 return null;
 
-            _channels.TryGetValue(serviceName, out List<GrpcChannel> channels);
-            channels ??= new List<GrpcChannel>();
+            _channelWrappers.TryGetValue(serviceName, out List<ChannelWrapper> channels);
+            channels ??= new List<ChannelWrapper>();
             var targets = discovery.FindServiceEndpoints(filterBlack);
             if ((targets?.Count ?? 0) <= 0)
             {
                 // 如果consul 取不到 暂时直接使用本地缓存的连接（注册中心数据清空的情况--异常）
-                _channels.TryGetValue(serviceName, out channels);
+                _channelWrappers.TryGetValue(serviceName, out channels);
                 return channels;
             }
 
@@ -191,8 +191,9 @@ namespace Overt.Core.Grpc.H2
                 if (channels.Any(oo => oo.Target == target.target))
                     continue;
 
-                var channel = GrpcChannel.ForAddress(target.target, Constants.DefaultChannelOptions);
-                channels.Add(channel);
+                var channel = GrpcChannel.ForAddress($"https://{target.target}", Constants.DefaultChannelOptions);
+                var channelWrapper = new ChannelWrapper(target.serviceId, channel);
+                channels.Add(channelWrapper);
             }
 
             // 移除已经销毁的callInvokers
@@ -203,7 +204,7 @@ namespace Overt.Core.Grpc.H2
                 channel.ShutdownAsync();
             }
 
-            _channels.AddOrUpdate(serviceName, channels, (key, value) => channels);
+            _channelWrappers.AddOrUpdate(serviceName, channels, (key, value) => channels);
             return channels;
         }
         #endregion

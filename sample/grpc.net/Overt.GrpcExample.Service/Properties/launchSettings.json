@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "GrpcService1": {
+    "Overt.GrpcExample.Service": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

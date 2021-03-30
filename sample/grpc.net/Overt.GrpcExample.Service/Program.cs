@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GrpcService1
+namespace Overt.GrpcExample.Service
 {
     public class Program
     {

@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -21,11 +22,17 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Get(string configPath = "")
+        public T Get(string configPath = "", Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
         {
             var exitus = StrategyFactory.Get<T>(GetConfigPath(configPath));
-            var channel = exitus.EndpointStrategy.GetChannel(exitus.ServiceName);
-            var client = (T)Activator.CreateInstance(typeof(T), channel);
+
+            ChannelWrapper channelWrapper;
+            if (channelWrapperInvoker != null)
+                channelWrapper = channelWrapperInvoker(exitus.EndpointStrategy.GetChannelWrappers(exitus.ServiceName));
+            else
+                channelWrapper = exitus.EndpointStrategy.GetChannelWrapper(exitus.ServiceName);
+
+            var client = (T)Activator.CreateInstance(typeof(T), channelWrapper.Channel);
             return client;
         }
 
