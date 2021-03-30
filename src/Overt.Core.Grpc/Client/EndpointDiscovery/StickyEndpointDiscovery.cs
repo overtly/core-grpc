@@ -39,12 +39,12 @@ namespace Overt.Core.Grpc
         #endregion
 
         #region Public Method
-        public List<string> FindServiceEndpoints(bool filterBlack = true)
+        public List<Tuple<string, string>> FindServiceEndpoints(bool filterBlack = true)
         {
             if (_client == null)
                 throw new ArgumentNullException("consul client");
 
-            var targets = new List<string>();
+            var targets = new List<Tuple<string, string>>();
             try
             {
                 var r = _client.Health.Service(ServiceName, "", true).Result;
@@ -52,8 +52,8 @@ namespace Overt.Core.Grpc
                     throw new ApplicationException($"failed to query consul server");
 
                 targets = r.Response
-                           .Select(x => $"{x.Service.Address}:{x.Service.Port}")
-                           .Where(target => !ServiceBlackPlicy.In(ServiceName, target) || !filterBlack)
+                           .Select(x => Tuple.Create(x.Service.ID, $"{x.Service.Address}:{x.Service.Port}"))
+                           .Where(target => !ServiceBlackPolicy.In(ServiceName, target.Item2) || !filterBlack)
                            .ToList();
             }
             catch { }

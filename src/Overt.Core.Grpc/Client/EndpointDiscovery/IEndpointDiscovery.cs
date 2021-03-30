@@ -22,6 +22,6 @@ namespace Overt.Core.Grpc
         /// 获取服务可连接终结点
         /// </summary>
         /// <returns></returns>
-        List<string> FindServiceEndpoints(bool filterBlack = true);
+        List<Tuple<string, string>> FindServiceEndpoints(bool filterBlack = true);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Grpc.Core;
-using Grpc.Core.Interceptors;
+﻿using Grpc.Core.Interceptors;
 using System;
 
 namespace Overt.Core.Grpc.Intercept

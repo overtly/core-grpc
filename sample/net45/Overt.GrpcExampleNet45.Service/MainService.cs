@@ -35,7 +35,11 @@ namespace Overt.GrpcExampleNet45.Service
             // autofac
             var container = AutofacContainer.Register();
             // grpc
-            GrpcServiceManager.Start(GrpcExampleService.BindService(new GrpcExampleServiceImpl(container)), new ConsoleTracer(), whenException: (ex) =>
+            GrpcServiceManager.Start(GrpcExampleService.BindService(new GrpcExampleServiceImpl(container)), (options) =>
+            {
+                options.Tracer = new ConsoleTracer();
+            },
+                whenException: (ex) =>
             {
 
             });

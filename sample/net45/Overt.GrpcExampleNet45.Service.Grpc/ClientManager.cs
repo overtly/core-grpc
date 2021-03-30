@@ -10,7 +10,7 @@ namespace Overt.GrpcExample.Service.Grpc
 #if NET45 || NET46 || NET47
 public class ClientManager {
 public static IClientTracer Tracer { get; set; } = default(IClientTracer);
-        private static string DefaultConfigPath { get; set; } = "dllconfigs/Overt.GrpcExample.Service.Grpc.dll.config";
+private static string DefaultConfigPath { get; set; } = "dllconfigs/Overt.GrpcExample.Service.Grpc.dll.config";
 public static __GrpcService.GrpcExampleServiceClient Instance{get{
 return ClientManager<__GrpcService.GrpcExampleServiceClient>.Instance;
 } }

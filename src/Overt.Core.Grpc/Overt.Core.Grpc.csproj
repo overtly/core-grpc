@@ -6,22 +6,32 @@
     <Authors>yaofeng</Authors>
     <Description>基于Grpc/Consul实现的微服务框架</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>增加第三方配置的支持，比如apollo，可使用services.AddGrpcConfig进行扩展</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Tracer提供修改Channel Target能力，可供外部自定义选择节点；
+2. 升级底层驱动为最新版本
+3. 增加自定义Interceptor的注入
+4. 调整ServiceStart的参数配置，使用GrpcOptions进行承接
+5. 增加invokers的自定义获取，增加ServiceId的获取
+6. 支持framework版本的自定义invoker获取策略</PackageReleaseNotes>
     <Copyright>yaofeng</Copyright>
     <PackageTags></PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.4.1</Version>
+    <Version>1.0.5-alpha07</Version>
     <RepositoryUrl>https://github.com/overtly/core-grpc.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/overtly/core-grpc.git</PackageProjectUrl>
     <Company />
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Client\CallInvoker\InterceptedServerCallInvoker.cs" />
+    <Compile Remove="Intercept\InterceptExtensions.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Consul" Version="0.7.2.6" />
-    <PackageReference Include="Google.Protobuf" Version="3.8.0" />
-    <PackageReference Include="Grpc" Version="1.21.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.3" />
+    <PackageReference Include="Grpc" Version="2.36.0" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

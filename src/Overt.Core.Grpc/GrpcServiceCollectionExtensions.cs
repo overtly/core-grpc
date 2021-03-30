@@ -36,24 +36,6 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddGrpcClient<T>(this IServiceCollection services) where T : IClientTracer
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            services.TryAddTransient(typeof(IClientTracer), typeof(T));
-            services.TryAdd(ServiceDescriptor.Singleton(typeof(IGrpcClient<>), typeof(GrpcClient<>)));
-            services.TryAdd(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
-            return services;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
         public static IServiceCollection AddGrpcTracer<T>(this IServiceCollection services) where T : IServerTracer
         {
             if (services == null)
