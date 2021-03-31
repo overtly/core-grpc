@@ -16,11 +16,19 @@ namespace Overt.GrpcExampleNet45.Client
 
                 try
                 {
-                    //var client = GrpcExample.Service.Grpc.ClientManager.CreateInstance((invokers) => { return invokers[0]; });
+                    var client = GrpcExample.Service.Grpc.ClientManager.CreateInstance((invokers) =>
+                    {
+                        return invokers[0];
+                    });
                     GrpcExample.Service.Grpc.ClientManager.Tracer = new ConsoleTracer();
-                    var client = GrpcExample.Service.Grpc.ClientManager.Instance;
+                    //var client = GrpcExample.Service.Grpc.ClientManager.Instance;
                     var res = client.Ask(new GrpcExample.Service.Grpc.AskRequest() { Key = "abc" });
                     Console.WriteLine("例子：" + res?.Content ?? "abc");
+
+
+                    var client1 = GrpcExample.Service.Grpc.ClientManager<GrpcExample.Service.Grpc.GrpcExampleService1.GrpcExampleService1Client>.Instance;
+                    var res1 = client1.Ask(new GrpcExample.Service.Grpc.AskRequest() { Key = "abc" });
+                    Console.WriteLine("例子：" + res1?.Content ?? "abc");
                 }
                 catch (Exception ex)
                 {

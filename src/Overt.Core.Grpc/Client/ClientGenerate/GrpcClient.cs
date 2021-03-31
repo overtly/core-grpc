@@ -31,11 +31,11 @@ namespace Overt.Core.Grpc
         /// <summary>
         /// 构造一个新的对象
         /// </summary>
-        /// <param name="getInvoker"></param>
+        /// <param name="callInvokers"></param>
         /// <returns></returns>
-        public T CreateClient(Func<List<ServerCallInvoker>, ServerCallInvoker> getInvoker)
+        public T CreateClient(Func<List<ServerCallInvoker>, ServerCallInvoker> callInvokers)
         {
-            return _factory.Get(getInvoker: getInvoker);
+            return _factory.Get(callInvokers);
         }
     }
 }

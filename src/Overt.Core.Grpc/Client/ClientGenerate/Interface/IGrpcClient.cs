@@ -17,8 +17,8 @@ namespace Overt.Core.Grpc
         /// <summary>
         /// 每次构造一个新的对象
         /// </summary>
-        /// <param name="getInvoker"></param>
+        /// <param name="callInvokers"></param>
         /// <returns></returns>
-        T CreateClient(Func<List<ServerCallInvoker>, ServerCallInvoker> getInvoker);
+        T CreateClient(Func<List<ServerCallInvoker>, ServerCallInvoker> callInvokers);
     }
 }

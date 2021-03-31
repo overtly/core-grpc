@@ -26,7 +26,7 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient();
-            services.Configure<GrpcClientOptions>(options =>
+            services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(options =>
             {
                 options.Tracer = new ConsoleTracer();
                 options.Interceptors.Add(new ClientLoggerInterceptor());

@@ -7,48 +7,43 @@ namespace Overt.Core.Grpc
 {
     internal sealed class ClientCallInvoker : CallInvoker
     {
+        private readonly GrpcClientOptions _options;
         private readonly IEndpointStrategy _strategy;
-        private readonly int _maxRetry;
-        private readonly string _serviceName;
-        private readonly List<Interceptor> _interceptors;
-        private readonly Func<List<ServerCallInvoker>, ServerCallInvoker> _getInvoker;
+        private readonly Func<List<ServerCallInvoker>, ServerCallInvoker> _callInvokers;
         public ClientCallInvoker(
+            GrpcClientOptions options,
             IEndpointStrategy strategy,
-            string serviceName, 
-            int maxRetry, 
-            List<Interceptor> interceptors = default, 
-            Func<List<ServerCallInvoker>, ServerCallInvoker> getInvoker = default)
+            Func<List<ServerCallInvoker>, ServerCallInvoker> callInvokers = default)
         {
+            _options = options;
             _strategy = strategy;
-            _serviceName = serviceName;
-            _maxRetry = maxRetry;
-            _interceptors = interceptors;
-            _getInvoker = getInvoker;
+
+            _callInvokers = callInvokers;
         }
 
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
-            return Call(ci => ci.BlockingUnaryCall(method, host, options, request), _maxRetry);
+            return Call(ci => ci.BlockingUnaryCall(method, host, options, request), _options.MaxRetry);
         }
 
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
-            return Call(ci => ci.AsyncUnaryCall(method, host, options, request), _maxRetry);
+            return Call(ci => ci.AsyncUnaryCall(method, host, options, request), _options.MaxRetry);
         }
 
         public override AsyncServerStreamingCall<TResponse> AsyncServerStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
-            return Call(ci => ci.AsyncServerStreamingCall(method, host, options, request), _maxRetry);
+            return Call(ci => ci.AsyncServerStreamingCall(method, host, options, request), _options.MaxRetry);
         }
 
         public override AsyncClientStreamingCall<TRequest, TResponse> AsyncClientStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options)
         {
-            return Call(ci => ci.AsyncClientStreamingCall(method, host, options), _maxRetry);
+            return Call(ci => ci.AsyncClientStreamingCall(method, host, options), _options.MaxRetry);
         }
 
         public override AsyncDuplexStreamingCall<TRequest, TResponse> AsyncDuplexStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options)
         {
-            return Call(ci => ci.AsyncDuplexStreamingCall(method, host, options), _maxRetry);
+            return Call(ci => ci.AsyncDuplexStreamingCall(method, host, options), _options.MaxRetry);
         }
 
 
@@ -67,27 +62,27 @@ namespace Overt.Core.Grpc
                 var callInvoker = default(ServerCallInvoker);
                 try
                 {
-                    if (_getInvoker != null)
+                    if (_callInvokers != null)
                     {
-                        var invokers = _strategy.GetCallInvokers(_serviceName);
-                        callInvoker = _getInvoker(invokers);
+                        var invokers = _strategy.GetCallInvokers(_options.ServiceName);
+                        callInvoker = _callInvokers(invokers);
                     }
                     else
-                        callInvoker = _strategy.GetCallInvoker(_serviceName);
+                        callInvoker = _strategy.GetCallInvoker(_options.ServiceName);
 
 
                     if (callInvoker == null)
                     {
-                        throw new ArgumentNullException($"{_serviceName}无可用节点");
+                        throw new ArgumentNullException($"{_options.ServiceName}无可用节点");
                     }
                     if (callInvoker.Channel == null || callInvoker.Channel.State == ChannelState.TransientFailure)
                     {
                         throw new RpcException(new Status(StatusCode.Unavailable, $"Channel Failure"));
                     }
 
-                    if (_interceptors?.Count > 0)
+                    if (_options.Interceptors?.Count > 0)
                     {
-                        return call(callInvoker.Intercept(_interceptors.ToArray()));
+                        return call(callInvoker.Intercept(_options.Interceptors.ToArray()));
                     }
                     return call(callInvoker);
                 }
@@ -95,7 +90,7 @@ namespace Overt.Core.Grpc
                 {
                     // 服务不可用，拉入黑名单
                     if (ex.Status.StatusCode == StatusCode.Unavailable)
-                        _strategy.Revoke(_serviceName, callInvoker);
+                        _strategy.Revoke(_options.ServiceName, callInvoker);
 
                     if (0 > --retryLeft)
                     {

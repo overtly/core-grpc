@@ -19,10 +19,9 @@ namespace Overt.Core.Grpc
         /// 获取EndpointStrategy
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="configFile"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        public static Exitus Get<T>(string configFile)
-            where T : ClientBase
+        public static Exitus Get<T>(GrpcClientOptions options) where T : ClientBase
         {
             if (_exitusMap.TryGetValue(typeof(T), out Exitus exitus) &&
                 exitus?.EndpointStrategy != null)
@@ -34,7 +33,7 @@ namespace Overt.Core.Grpc
                     exitus?.EndpointStrategy != null)
                     return exitus;
 
-                exitus = ResolveConfiguration(configFile);
+                exitus = ResolveConfiguration(options);
                 _exitusMap.AddOrUpdate(typeof(T), exitus, (k, v) => exitus);
                 return exitus;
             }
@@ -46,18 +45,21 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        private static Exitus ResolveConfiguration(string configFile)
+        private static Exitus ResolveConfiguration(GrpcClientOptions options)
         {
-            var serviceElement = ResolveServiceConfiguration(configFile);
-            var maxRetry = serviceElement.MaxRetry;
-            var serviceName = serviceElement.Name;
-            var discovery = serviceElement.Discovery;
+            var service = ResolveServiceConfiguration(options.ConfigPath);
+            if (string.IsNullOrWhiteSpace(options.ServiceName))
+                options.ServiceName = service.Name;
+            if (options.MaxRetry <= 0)
+                options.MaxRetry = service.MaxRetry;
+            options.ChannelOptions = options.ChannelOptions ?? Constants.DefaultChannelOptions;
+
             IEndpointStrategy endpointStrategy;
-            if (EnableConsul(discovery, out string address))
-                endpointStrategy = ResolveStickyConfiguration(serviceElement, address);
+            if (EnableConsul(service.Discovery, out string address))
+                endpointStrategy = ResolveStickyConfiguration(address, options);
             else
-                endpointStrategy = ResolveEndpointConfiguration(serviceElement);
-            return new Exitus(serviceName, maxRetry, endpointStrategy);
+                endpointStrategy = ResolveEndpointConfiguration(service, options);
+            return new Exitus(options.ServiceName, endpointStrategy);
         }
 
         /// <summary>
@@ -79,25 +81,22 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="serviceElement"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveStickyConfiguration(Client.GrpcServiceElement serviceElement, string address)
+        private static IEndpointStrategy ResolveStickyConfiguration(string address, GrpcClientOptions options)
         {
-            var serviceName = serviceElement.Name;
-
             // consul
-            var stickyEndpointDiscovery = new StickyEndpointDiscovery(serviceName, address);
-            StickyEndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
-            return StickyEndpointStrategy.Instance;
+            var stickyEndpointDiscovery = new StickyEndpointDiscovery(options, address);
+            EndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
+            return EndpointStrategy.Instance;
         }
 
         /// <summary>
         /// 解析Endpoint配置
         /// </summary>
-        /// <param name="serviceElement"></param>
+        /// <param name="service"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveEndpointConfiguration(Client.GrpcServiceElement serviceElement)
+        private static IEndpointStrategy ResolveEndpointConfiguration(Client.GrpcServiceElement service, GrpcClientOptions options)
         {
-            var serviceName = serviceElement.Name;
-            var discovery = serviceElement.Discovery;
+            var discovery = service.Discovery;
 
             List<Tuple<string, int>> ipEndPoints = null;
 #if !ASP_NET_CORE
@@ -105,9 +104,9 @@ namespace Overt.Core.Grpc
 #else
             ipEndPoints = discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
 #endif
-            var iPEndpointDiscovery = new IPEndpointDiscovery(serviceName, ipEndPoints);
-            IPEndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
-            return IPEndpointStrategy.Instance;
+            var iPEndpointDiscovery = new IPEndpointDiscovery(options, ipEndPoints);
+            EndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
+            return EndpointStrategy.Instance;
         }
 
         /// <summary>

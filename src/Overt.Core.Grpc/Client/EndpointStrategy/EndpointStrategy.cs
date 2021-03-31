@@ -6,10 +6,7 @@ using System.Timers;
 
 namespace Overt.Core.Grpc
 {
-    /// <summary>
-    /// IPEndPoint
-    /// </summary>
-    internal class IPEndpointStrategy : IEndpointStrategy
+    internal class EndpointStrategy : IEndpointStrategy
     {
         #region Constructor
         private readonly object _lock = new object();
@@ -18,7 +15,7 @@ namespace Overt.Core.Grpc
         private readonly ConcurrentDictionary<string, List<ServerCallInvoker>> _invokers = new ConcurrentDictionary<string, List<ServerCallInvoker>>();
         private readonly ConcurrentDictionary<string, Channel> _channels = new ConcurrentDictionary<string, Channel>();
 
-        IPEndpointStrategy()
+        EndpointStrategy()
         {
             _timer = new Timer(ClientTimespan.ResetInterval.TotalSeconds * 1000);
             InitCheckTimer();
@@ -26,7 +23,7 @@ namespace Overt.Core.Grpc
         #endregion
 
         #region Destructor
-        ~IPEndpointStrategy()
+        ~EndpointStrategy()
         {
             _timer?.Stop();
             _timer?.Dispose();
@@ -42,20 +39,20 @@ namespace Overt.Core.Grpc
 
         #region Instance
         private readonly static object _instanceLocker = new object();
-        private static IPEndpointStrategy _ipEndpintStrategy;
-        public static IPEndpointStrategy Instance
+        private static EndpointStrategy _stickyEndpintStrategy;
+        public static EndpointStrategy Instance
         {
             get
             {
-                if (_ipEndpintStrategy != null)
-                    return _ipEndpintStrategy;
+                if (_stickyEndpintStrategy != null)
+                    return _stickyEndpintStrategy;
                 lock (_instanceLocker)
                 {
-                    if (_ipEndpintStrategy != null)
-                        return _ipEndpintStrategy;
+                    if (_stickyEndpintStrategy != null)
+                        return _stickyEndpintStrategy;
 
-                    _ipEndpintStrategy = new IPEndpointStrategy();
-                    return _ipEndpintStrategy;
+                    _stickyEndpintStrategy = new EndpointStrategy();
+                    return _stickyEndpintStrategy;
                 }
             }
         }
@@ -65,10 +62,14 @@ namespace Overt.Core.Grpc
         /// <summary>
         /// 添加ServiceDiscovery
         /// </summary>
-        /// <param name="discovery"></param>
-        public void AddServiceDiscovery(IEndpointDiscovery discovery)
+        /// <param name="serviceDiscovery"></param>
+        public void AddServiceDiscovery(IEndpointDiscovery serviceDiscovery)
         {
-            _discoveries.AddOrUpdate(discovery.ServiceName, discovery, (k, v) => discovery);
+            if (serviceDiscovery == null)
+                return;
+
+            serviceDiscovery.Watched = () => GetSetCallInvokers(serviceDiscovery.Options.ServiceName, false);
+            _discoveries.AddOrUpdate(serviceDiscovery.Options.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
         }
 
         /// <summary>
@@ -97,7 +98,8 @@ namespace Overt.Core.Grpc
         }
 
         /// <summary>
-        /// 获取
+        /// 获取callinvoker
+        /// 随机获取
         /// </summary>
         /// <param name="serviceName"></param>
         /// <returns></returns>
@@ -116,6 +118,9 @@ namespace Overt.Core.Grpc
         {
             lock (_lock)
             {
+                if (failedCallInvoker == null)
+                    return;
+
                 // invokers
                 var failedChannel = failedCallInvoker.Channel;
                 if (!_invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers) ||
@@ -134,16 +139,17 @@ namespace Overt.Core.Grpc
 
                 // add black
                 ServiceBlackPolicy.Add(serviceName, failedChannel.Target);
+
                 failedChannel.ShutdownAsync();
 
-                // if not exist invoker， call init method
+                // reinit callinvoker
                 if (callInvokers.Count <= 0)
                     GetSetCallInvokers(serviceName, false);
             }
         }
 
         /// <summary>
-        /// 初始化检查Timer
+        /// 初始化Timer
         /// </summary>
         public void InitCheckTimer()
         {
@@ -152,10 +158,16 @@ namespace Overt.Core.Grpc
                 lock (_lock)
                 {
                     _timer.Stop();
-                    foreach (var item in _invokers)
+
+                    try
                     {
-                        GetSetCallInvokers(item.Key);
+                        foreach (var item in _invokers)
+                        {
+                            GetSetCallInvokers(item.Key);
+                        }
                     }
+                    catch { }
+
                     _timer.Start();
                 }
             };
@@ -165,7 +177,7 @@ namespace Overt.Core.Grpc
 
         #region Private Method
         /// <summary>
-        /// SetCallInvokers
+        /// 初始化callinvoker
         /// </summary>
         /// <param name="serviceName"></param>
         /// <param name="filterBlack">过滤黑名单 default true</param>
@@ -177,13 +189,19 @@ namespace Overt.Core.Grpc
 
             _invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers);
             callInvokers = callInvokers ?? new List<ServerCallInvoker>();
-
             var targets = discovery.FindServiceEndpoints(filterBlack);
+            if ((targets?.Count ?? 0) <= 0)
+            {
+                // 如果consul 取不到 暂时直接使用本地缓存的连接（注册中心数据清空的情况--异常）
+                _invokers.TryGetValue(serviceName, out callInvokers);
+                return callInvokers;
+            }
+
             foreach (var target in targets)
             {
                 if (!_channels.TryGetValue(target.Item2, out Channel channel))
                 {
-                    channel = new Channel(target.Item2, ChannelCredentials.Insecure, Constants.DefaultChannelOptions);
+                    channel = new Channel(target.Item2, ChannelCredentials.Insecure, discovery.Options.ChannelOptions);
                     _channels.AddOrUpdate(target.Item2, channel, (key, value) => channel);
                 }
                 if (callInvokers.Any(x => ReferenceEquals(x.Channel, channel)))

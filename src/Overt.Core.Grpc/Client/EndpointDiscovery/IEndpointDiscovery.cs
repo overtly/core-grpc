@@ -9,9 +9,9 @@ namespace Overt.Core.Grpc
     public interface IEndpointDiscovery
     {
         /// <summary>
-        /// 服务名称
+        /// 配置信息
         /// </summary>
-        string ServiceName { get; set; }
+        GrpcClientOptions Options { get; set; }
 
         /// <summary>
         /// 监听变动的方法

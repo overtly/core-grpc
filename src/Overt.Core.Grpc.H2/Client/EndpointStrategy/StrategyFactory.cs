@@ -59,7 +59,7 @@ namespace Overt.Core.Grpc.H2
                 endpointStrategy = ResolveStickyConfiguration(address, options);
             else
                 endpointStrategy = ResolveEndpointConfiguration(service, options);
-            return new Exitus(service.Name, endpointStrategy);
+            return new Exitus(options.ServiceName, endpointStrategy);
         }
 
         /// <summary>
