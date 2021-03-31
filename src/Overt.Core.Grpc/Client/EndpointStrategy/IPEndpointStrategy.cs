@@ -199,6 +199,8 @@ namespace Overt.Core.Grpc
             {
                 _channels.TryRemove(invoker.Channel.Target, out Channel channel);
                 callInvokers.Remove(invoker);
+                channel.ShutdownAsync();
+                channel = null;
             }
 
             _invokers.AddOrUpdate(serviceName, callInvokers, (key, value) => callInvokers);

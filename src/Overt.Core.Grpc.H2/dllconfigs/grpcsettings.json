@@ -1,0 +1,13 @@
+﻿{
+  "GrpcServer": {
+    "Service": {
+      "Name": "grpcservice",
+      "HostEnv": "serviceaddress", // HostEnv > Host:Port > InternetHost:Port
+      "Host": "",
+      "Port": 10001,
+      "Consul": {
+        "Path": "dllconfigs/consulsettings.json"
+      }
+    }
+  }
+}

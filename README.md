@@ -1,9 +1,16 @@
+如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
+
+- [Overt.Core.Grpc - Base Grpc.Core 谷歌自带](#overtcoregrpc)
+- [Overt.Core.Grpc.H2 - Base Grpc.Net 微软自带](#overtcoregrpch2)
+
+
+
 # Overt.Core.Grpc
 
 ### 项目层次说明
 
-> Overt.Core.Grpc v1.0.4.1  
-> 如有疑问可直接加QQ：2292709323，微信：yaofengv，联系
+> Overt.Core.Grpc v1.0.5  
+> 基于Google的Grpc.Core驱动，适用于Console服务场景，基于TCP长连接实现微服务场景
 
 #### 1. 项目目录
 
@@ -29,7 +36,7 @@
 
 #### 2. 版本及支持
 
-> - Nuget版本：V 1.0.4.1
+> - Nuget版本：V 1.0.5
 
 > - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
 
@@ -64,7 +71,7 @@ Grpc 1.21.0
 #### 1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.4.1
+Install-Package Overt.Core.Grpc -Version 1.0.5
 ```
 
 <a name="dhmwfy"></a>
@@ -400,6 +407,15 @@ ClientManager<T>.Instance.[Method]
 
 #### 5. 更新说明
 
+- 2021-03-30 v 1.0.5
+- 
+> 1. Tracer提供修改Channel Target能力，可供外部自定义选择节点；
+> 2. 升级底层驱动为最新版本
+> 3. 增加自定义Interceptor的注入
+> 4. 调整ServiceStart的参数配置，使用GrpcOptions进行承接
+> 5. 增加invokers的自定义获取，增加ServiceId的获取
+> 6. 支持framework版本的自定义invoker获取策略
+
 
 - 2021-02-25 v 1.0.4.1
 - 
@@ -520,5 +536,189 @@ App.config/Web.config
 ```
 
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+# Overt.Core.Grpc.H2
+
+### 项目层次说明
+
+> Overt.Core.Grpc.H2 v1.0.1  
+> 用于>= netcoreapp3.0版本，用于http2协议，依赖微软的grpc.net，适用于Web服务场景，基于http2实现微服务场景
+
+#### 1. 项目目录
+
+```
+|-Config                                        配置模型
+|
+|-Client                                        客户端功能实现，服务发现
+|
+|-dllconfigs                                    配置文件保存
+|
+|-Service                                       服务端
+|
+|-GrpcServiceCollectionExtensions.cs            netcore注入
+```
+
+#### 2. 版本及支持
+
+> - Nuget版本：V 1.0.1
+
+> - 框架支持： netstandard2.1 / netcoreapp3.0 / net5.0
+
+
+
+#### 3. 项目依赖
+
+```csharp
+Consul 1.6.1.1
+Google.Protobuf 3.15.6
+Grpc.Net.Client 2.36.0
+Microsoft.Extensions.Configuration.Json 2.0.0
+Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
+```
+
+### 使用
+
+#### 1. Nuget包引用
+
+```csharp
+Install-Package Overt.Core.Grpc.H2 -Version 1.0.1
+```
+
+<a name="dhmwfy"></a>
+#### 2. 配置信息
+
+优先级：{第三方配置中心} > 环境变量 >  Host内部配置 > 自动取IP+启动端口**内网**
+
+##### （1）服务端配置信息
+
+> - 支持默认配置文件appsettings.json [Consul节点可不要，如无则不是集群]
+
+
+```json
+{
+  "GrpcServer": {
+    "Service": {
+      "Name": "OvertGrpcServiceApp",                    // 服务名称使用服务名称去除点：OvertGrpcServiceApp
+      "Host": "service.g.lan",                          // 专用注册的域名 （可选）格式：ip[:port=default]
+      "HostEnv": "serviceaddress",                      // 获取注册地址的环境变量名字（可选，优先）环境变量值格式：ip[:port=default]
+      "Port": 10001,                                    // 端口自定义
+      "Consul": {
+        "Path": "dllconfigs/consulsettings.json"        // Consul路径
+      }
+    }
+  }
+}
+```
+
+##### （2）客户端配置信息
+
+> - 命名：[命名空间].dll.json 文件夹(dllconfigs)
+
+```json
+{
+  "GrpcClient": {
+    "Service": {
+      "Name": "grpcservice",                        // 服务名称与服务端保持一致
+      "Scheme":  "http",                            // foraddress 协议 http/https
+      "Discovery": {
+        "EndPoints": [                              // 单点模式
+          {
+            "Host": "127.0.0.1",
+            "Port": 10001
+          }
+        ],
+        "Consul": {                                 // Consul集群,集群优先原则
+          "Path": "dllconfigs/consulsettings.json"
+        }
+      }
+    }
+  }
+}
+```
+
+
+##### （3）Consul配置文件
+
+> - 命名：consulsettings.json 不要改动
+
+```json
+{
+  "ConsulServer": {
+    "Service": {
+      "Address": "http://consul.g.lan"     // 默认8500端口
+    }
+  }
+}
+```
+
+
+#### 3. 服务端的使用
+
+> - 注册Consul
+
+```csharp
+app.UseGrpcRegister();
+
+// 使用第三方配置
+services.AddGrpcConfig(config => 
+{
+    // 以配置中心apollo为例
+    config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+});
+```
+
+#### 4. 客户端使用
+> - 强制依赖注入模式
+> - 配置文件默认使用    [命名空间].dll.json     可通过vs.menu工具生成nuget包
+> - 注入中直接调用如下
+
+
+```csharp
+// 注入Grpc客户端
+services.AddGrpcClient();
+
+// 自定义配置文件 / 默认使用命名空间.dll.json
+services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>((cfg) =>
+{
+    cfg.ConfigPath = "dllconfig/Overt.GrpcExample.Service.Grpc.dll.json";  // 可不传递
+});
+
+// 使用第三方配置
+services.AddGrpcConfig(config => 
+{
+    // 以配置中心apollo为例
+    config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+});
+
+
+// 获取注入的对象
+IGrpcClient<GrpcExampleServiceClient> _grpcClient;
+public IndexModel(IGrpcClient<GrpcExampleServiceClient> grpcClient)
+{
+    _grpcClient = grpcClient;
+}
+
+
+var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+```
+
+
+#### 5. 更新说明
+
+- 2021-03-30 v 1.0.1
+- 
+> 1. 第一个版本，依赖微软的驱动grpc.net，适应net5.0
+
 
 
