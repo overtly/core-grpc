@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using Grpc.Net.Client;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -19,10 +18,9 @@ namespace Overt.Core.Grpc.H2
         /// 获取EndpointStrategy
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="configFile"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        public static Exitus Get<T>(string configFile,GrpcChannelOptions grpcChannelOptions = null)
-            where T : ClientBase
+        public static Exitus Get<T>(GrpcClientOptions options) where T : ClientBase
         {
             if (_exitusMap.TryGetValue(typeof(T), out Exitus exitus) &&
                 exitus?.EndpointStrategy != null)
@@ -34,7 +32,7 @@ namespace Overt.Core.Grpc.H2
                     exitus?.EndpointStrategy != null)
                     return exitus;
 
-                exitus = ResolveConfiguration(configFile,grpcChannelOptions);
+                exitus = ResolveConfiguration(options);
                 _exitusMap.AddOrUpdate(typeof(T), exitus, (k, v) => exitus);
                 return exitus;
             }
@@ -46,17 +44,22 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        private static Exitus ResolveConfiguration(string configFile,GrpcChannelOptions grpcChannelOptions = null)
+        private static Exitus ResolveConfiguration(GrpcClientOptions options)
         {
-            var serviceElement = ResolveServiceConfiguration(configFile);
-            var serviceName = serviceElement.Name;
-            var discovery = serviceElement.Discovery;
+            var service = ResolveServiceConfiguration(options.ConfigPath);
+            if(string.IsNullOrWhiteSpace(options.ServiceName))
+                options.ServiceName = service.Name;
+            if (string.IsNullOrWhiteSpace(options.Scheme))
+                options.Scheme = service.Scheme;
+
+            options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
+
             IEndpointStrategy endpointStrategy;
-            if (EnableConsul(discovery, out string address))
-                endpointStrategy = ResolveStickyConfiguration(serviceElement, address);
+            if (EnableConsul(service.Discovery, out string address))
+                endpointStrategy = ResolveStickyConfiguration(address, options);
             else
-                endpointStrategy = ResolveEndpointConfiguration(serviceElement,grpcChannelOptions);
-            return new Exitus(serviceName, endpointStrategy);
+                endpointStrategy = ResolveEndpointConfiguration(service, options);
+            return new Exitus(service.Name, endpointStrategy);
         }
 
         /// <summary>
@@ -76,33 +79,27 @@ namespace Overt.Core.Grpc.H2
         /// <summary>
         /// 解析Consul配置
         /// </summary>
-        /// <param name="serviceElement"></param>
+        /// <param name="address"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveStickyConfiguration(GrpcServiceElement serviceElement, string address, GrpcChannelOptions grpcChannelOptions = null)
+        private static IEndpointStrategy ResolveStickyConfiguration(string address, GrpcClientOptions options)
         {
-            var serviceName = serviceElement.Name;
-            var scheme = serviceElement.Scheme;
-
-            // consul
-            var stickyEndpointDiscovery = new StickyEndpointDiscovery(serviceName, address, scheme);
-            EndpointStrategy.Instance.SetGrpcChannelOptions(grpcChannelOptions).AddServiceDiscovery(stickyEndpointDiscovery);
+            var stickyEndpointDiscovery = new StickyEndpointDiscovery(options, address);
+            EndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
             return EndpointStrategy.Instance;
         }
 
         /// <summary>
         /// 解析Endpoint配置
         /// </summary>
-        /// <param name="serviceElement"></param>
+        /// <param name="service"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveEndpointConfiguration(GrpcServiceElement serviceElement,GrpcChannelOptions grpcChannelOptions = null)
+        private static IEndpointStrategy ResolveEndpointConfiguration(GrpcServiceElement service, GrpcClientOptions options)
         {
-            var serviceName = serviceElement.Name;
-            var discovery = serviceElement.Discovery;
-            var scheme = serviceElement.Scheme;
-
-            var ipEndPoints = discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
-            var iPEndpointDiscovery = new IPEndpointDiscovery(serviceName, ipEndPoints, scheme);
-            EndpointStrategy.Instance.SetGrpcChannelOptions(grpcChannelOptions).AddServiceDiscovery(iPEndpointDiscovery);
+            var ipEndPoints = service.Discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
+            var iPEndpointDiscovery = new IPEndpointDiscovery(options, ipEndPoints);
+            EndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
             return EndpointStrategy.Instance;
         }
 
@@ -115,17 +112,17 @@ namespace Overt.Core.Grpc.H2
         {
             address = string.Empty;
             var configPath = discovery?.Consul?.Path;
-            if (string.IsNullOrEmpty(configPath))
+            if (string.IsNullOrWhiteSpace(configPath))
                 return false;
 
             if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, discovery.Consul.Path)))
                 throw new Exception($"[{discovery.Consul.Path}] not exist at [{AppDomain.CurrentDomain.BaseDirectory}]");
 
             var consulSection = ConfigBuilder.Build<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
-            address = consulSection?.Service?.Address;
-            if (string.IsNullOrEmpty(address))
+            if (string.IsNullOrWhiteSpace(consulSection?.Service?.Address))
                 return false;
 
+            address = consulSection?.Service?.Address;
             return true;
         }
         #endregion

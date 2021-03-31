@@ -26,7 +26,7 @@ namespace Overt.Core.Grpc.H2
 
                 #region 注册服务
                 var address = ResolveConsulConfiguration(serviceElement);
-                if (string.IsNullOrEmpty(address))
+                if (string.IsNullOrWhiteSpace(address))
                     return;
                 serverRegister = new ConsulRegister(address, grpcOptions.GenServiceId);
                 serverRegister.Register(serviceElement, entry => discoveryEntry = entry);
@@ -75,7 +75,7 @@ namespace Overt.Core.Grpc.H2
             if (service == null)
                 throw new ArgumentNullException($"service");
 
-            if (string.IsNullOrEmpty(service.Name))
+            if (string.IsNullOrWhiteSpace(service.Name))
                 throw new ArgumentNullException("serviceName");
 
             if (service.Port <= 0)
@@ -100,7 +100,7 @@ namespace Overt.Core.Grpc.H2
         private static string ResolveConsulConfiguration(ServiceElement service)
         {
             var configPath = service.Consul?.Path;
-            if (string.IsNullOrEmpty(configPath))
+            if (string.IsNullOrWhiteSpace(configPath))
                 return string.Empty;
 
             var consulSection = ConfigBuilder.Build<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);

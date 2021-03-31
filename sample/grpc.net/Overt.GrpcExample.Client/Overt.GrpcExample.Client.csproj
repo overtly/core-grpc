@@ -13,10 +13,14 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Overt.Core.Grpc.H2\Overt.Core.Grpc.H2.csproj" />
     <ProjectReference Include="..\Overt.GrpcExample.Service.Grpc\Overt.GrpcExample.Service.Grpc.csproj" />
+    <ProjectReference Include="..\Overt.GrpcExample1.Service.Grpc\Overt.GrpcExample1.Service.Grpc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="dllconfigs\consulsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="dllconfigs\Overt.GrpcExample1.Service.Grpc.dll.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="dllconfigs\Overt.GrpcExample.Service.Grpc.dll.json">

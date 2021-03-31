@@ -1,0 +1,19 @@
+{
+  "GrpcClient": {
+    "Service": {
+      "Name": "OvertGrpcExampleService",
+      "Scheme": "https", // –≠“È
+      "Discovery": {
+        "Consul": {
+          "Path": "dllconfigs/consulsettings.json"
+        }
+        //"EndPoints": [
+        //  {
+        //    "Host": "192.168.10.66",
+        //    "Port": 10004
+        //  }
+        //]
+      }
+    }
+  }
+}

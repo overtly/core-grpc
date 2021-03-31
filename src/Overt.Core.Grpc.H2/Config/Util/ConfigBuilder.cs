@@ -19,7 +19,7 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public static T Build<T>(string sectionName, string configPath = "") where T : class, new()
         {
-            if (string.IsNullOrEmpty(configPath) || !configPath.EndsWith(".json"))
+            if (string.IsNullOrWhiteSpace(configPath) || !configPath.EndsWith(".json"))
                 configPath = "appsettings.json";
 
             configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configPath);

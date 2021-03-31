@@ -11,10 +11,10 @@ namespace Overt.Core.Grpc.H2
     public class GrpcClientFactory<T> : IGrpcClientFactory<T> where T : ClientBase
     {
         private readonly GrpcClientOptions<T> _options;
-
         public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null)
         {
-            _options = options?.Value;
+            _options = options?.Value ?? new GrpcClientOptions<T>();
+            _options.ConfigPath = GetConfigPath(_options.ConfigPath);
         }
 
         /// <summary>
@@ -22,9 +22,9 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Get(string configPath = "", Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
+        public T Get(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
         {
-            var exitus = StrategyFactory.Get<T>(GetConfigPath(configPath),_options.GrpcChannelOptions);
+            var exitus = StrategyFactory.Get<T>(_options);
 
             ChannelWrapper channelWrapper;
             if (channelWrapperInvoker != null)
@@ -42,12 +42,9 @@ namespace Overt.Core.Grpc.H2
         /// 获取命名空间
         /// </summary>
         /// <returns></returns>
-        private string GetConfigPath(string configPath = "")
+        private string GetConfigPath(string configPath)
         {
-            if (string.IsNullOrEmpty(configPath))
-                configPath = _options?.ConfigPath;
-
-            if (string.IsNullOrEmpty(configPath))
+            if (string.IsNullOrWhiteSpace(configPath))
                 configPath = $"dllconfigs/{typeof(T).Namespace}.dll.json";
 
             return configPath;

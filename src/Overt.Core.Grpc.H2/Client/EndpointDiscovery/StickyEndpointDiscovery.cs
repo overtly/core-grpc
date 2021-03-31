@@ -14,9 +14,9 @@ namespace Overt.Core.Grpc.H2
     {
         #region 构造函数
         private readonly ConsulClient _client;
-        public StickyEndpointDiscovery(string serviceName, string address, string scheme = "http", bool startWatch = true)
+        public StickyEndpointDiscovery(GrpcClientOptions options, string address, bool startWatch = true)
         {
-            if (string.IsNullOrEmpty(address))
+            if (string.IsNullOrWhiteSpace(address))
                 throw new ArgumentNullException("consul address");
 
             _client = new ConsulClient((cfg) =>
@@ -25,8 +25,7 @@ namespace Overt.Core.Grpc.H2
                 cfg.Address = uriBuilder.Uri;
             });
 
-            ServiceName = serviceName;
-            Scheme = scheme;
+            Options = options;
 
             if (startWatch)
                 StartWatchService();
@@ -34,9 +33,7 @@ namespace Overt.Core.Grpc.H2
         #endregion
 
         #region Public Property
-        public string ServiceName { get; set; }
-
-        public string Scheme { get; set; }
+        public GrpcClientOptions Options { get; set; }
 
         public Action Watched { get; set; }
         #endregion
@@ -50,13 +47,13 @@ namespace Overt.Core.Grpc.H2
             var targets = new List<(string, string)>();
             try
             {
-                var r = _client.Health.Service(ServiceName, "", true).Result;
+                var r = _client.Health.Service(Options.ServiceName, "", true).Result;
                 if (r.StatusCode != HttpStatusCode.OK)
                     throw new ApplicationException($"failed to query consul server");
 
                 targets = r.Response
                            .Select(x => (x.Service.ID, $"{x.Service.Address}:{x.Service.Port}"))
-                           .Where(target => !ServiceBlackPolicy.In(ServiceName, target.Item2) || !filterBlack)
+                           .Where(target => !ServiceBlackPolicy.In(Options.ServiceName, target.Item2) || !filterBlack)
                            .ToList();
             }
             catch { }
@@ -77,7 +74,7 @@ namespace Overt.Core.Grpc.H2
                 {
                     try
                     {
-                        var serviceQueryResult = await _client.Catalog.Service(ServiceName, "", new QueryOptions()
+                        var serviceQueryResult = await _client.Catalog.Service(Options.ServiceName, "", new QueryOptions()
                         {
                             WaitTime = TimeSpan.FromSeconds(30),
                             WaitIndex = lastWaitIndex

@@ -11,22 +11,19 @@ namespace Overt.Core.Grpc.H2
     {
         #region Constructor
         private readonly List<Tuple<string, int>> _ipEndPoints;
-        public IPEndpointDiscovery(string serviceName, List<Tuple<string, int>> ipEndPoints, string scheme = "http")
+        public IPEndpointDiscovery(GrpcClientOptions options, List<Tuple<string, int>> ipEndPoints)
         {
             if ((ipEndPoints?.Count ?? 0) <= 0)
                 throw new ArgumentNullException("no ip endpoints availble");
 
             _ipEndPoints = ipEndPoints;
 
-            ServiceName = serviceName;
-            Scheme = scheme;
+            Options = options;
         }
         #endregion
 
         #region Public Property
-        public string ServiceName { get; set; }
-
-        public string Scheme { get; set; }
+        public GrpcClientOptions Options { get; set; }
 
         public Action Watched { get; set; }
         #endregion
@@ -38,7 +35,7 @@ namespace Overt.Core.Grpc.H2
                 throw new ArgumentOutOfRangeException("endpoint not provide");
 
             var targets = _ipEndPoints.Select(x => ("", $"{x.Item1}:{x.Item2}"))
-                                      .Where(target => !ServiceBlackPolicy.In(ServiceName, target.Item2) || !filterBlack)
+                                      .Where(target => !ServiceBlackPolicy.In(Options.ServiceName, target.Item2) || !filterBlack)
                                       .ToList();
             return targets;
         }

@@ -57,16 +57,6 @@ namespace Overt.Core.Grpc.H2
                 }
             }
         }
-
-        public EndpointStrategy SetGrpcChannelOptions(GrpcChannelOptions grpcChannelOptions)
-        {
-            this.GrpcChannelOptions = grpcChannelOptions ?? new GrpcChannelOptions();
-            this.GrpcChannelOptions.MaxReceiveMessageSize = int.MaxValue;
-            this.GrpcChannelOptions.MaxSendMessageSize = int.MaxValue;
-            return this;
-        }
-
-        public GrpcChannelOptions GrpcChannelOptions { set; get; }
         #endregion
 
         #region Public Method
@@ -79,8 +69,8 @@ namespace Overt.Core.Grpc.H2
             if (serviceDiscovery == null)
                 return;
 
-            serviceDiscovery.Watched = () => GetSetChannels(serviceDiscovery.ServiceName, false);
-            _discoveries.AddOrUpdate(serviceDiscovery.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
+            serviceDiscovery.Watched = () => GetSetChannels(serviceDiscovery.Options.ServiceName, false);
+            _discoveries.AddOrUpdate(serviceDiscovery.Options.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
         }
 
         /// <summary>
@@ -205,7 +195,7 @@ namespace Overt.Core.Grpc.H2
                 if (channelWrappers.Any(oo => oo.Target == target.target))
                     continue;
 
-                var channel = GrpcChannel.ForAddress($"{discovery.Scheme}://{target.target}",this.GrpcChannelOptions);
+                var channel = GrpcChannel.ForAddress($"{discovery.Options.Scheme}://{target.target}", discovery.Options.GrpcChannelOptions);
                 var channelWrapper = new ChannelWrapper(target.serviceId, channel);
                 channelWrappers.Add(channelWrapper);
             }

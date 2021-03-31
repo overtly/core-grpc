@@ -6,6 +6,7 @@ using System.Threading;
 using Grpc.Net.Client;
 using System.Net.Http;
 using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
+using static Overt.GrpcExample.Service.Grpc.GrpcExampleService1;
 
 namespace Overt.GrpcExample.Client
 {
@@ -34,14 +35,23 @@ namespace Overt.GrpcExample.Client
             //});
             services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
             {
-                cfg.ConfigPath = "";
+                var httpClientHandler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
                 cfg.GrpcChannelOptions = new GrpcChannelOptions()
                 {
-                    HttpHandler = new SocketsHttpHandler()
-                    {
-                        EnableMultipleHttp2Connections = true,
-                    }
+                    HttpClient = new HttpClient(httpClientHandler),
+                    //HttpHandler = new SocketsHttpHandler()
+                    //{
+                    //    EnableMultipleHttp2Connections = true,
+                    //}
                 };
+            });
+
+            services.Configure<GrpcClientOptions<GrpcExampleService1Client>>(cfg =>
+            {
+                cfg.Scheme = "http";
             });
 
             provider = services.BuildServiceProvider();
@@ -56,19 +66,16 @@ namespace Overt.GrpcExample.Client
                 if (key.Key == ConsoleKey.A)
                     break;
 
-                //var httpClientHandler = new HttpClientHandler();
-                //httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                //var httpClient = new HttpClient(httpClientHandler);
-                //Constants.DefaultChannelOptions.HttpClient = httpClient;
+
                 try
                 {
-                    var service = provider.GetService<IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient>>();
-                    var client = service.CreateClient((channelWrappers) =>
-                    {
-                        return channelWrappers[0];
-                    });
-                    var res = client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+                    var service = provider.GetService<IGrpcClient<GrpcExampleServiceClient>>();
+                    var res = service.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
                     Console.WriteLine(DateTime.Now + " - " + res.Content ?? "abc");
+
+                    var service1 = provider.GetService<IGrpcClient<GrpcExampleService1Client>>();
+                    var res1 = service1.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+                    Console.WriteLine(DateTime.Now + " - " + res1.Content ?? "abc");
                 }
                 catch (Exception ex)
                 {

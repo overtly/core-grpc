@@ -9,14 +9,9 @@ namespace Overt.Core.Grpc.H2
     public interface IEndpointDiscovery
     {
         /// <summary>
-        /// 服务名称
+        /// 
         /// </summary>
-        string ServiceName { get; set; }
-
-        /// <summary>
-        /// http / https
-        /// </summary>
-        string Scheme { get; set; }
+        GrpcClientOptions Options { get; set; }
 
         /// <summary>
         /// 监听变动的方法

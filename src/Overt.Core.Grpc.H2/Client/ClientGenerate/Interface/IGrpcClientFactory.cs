@@ -14,6 +14,6 @@ namespace Overt.Core.Grpc.H2
         /// 获取Client对象
         /// </summary>
         /// <returns></returns>
-        T Get(string configPath = "", Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null);
+        T Get(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null);
     }
 }

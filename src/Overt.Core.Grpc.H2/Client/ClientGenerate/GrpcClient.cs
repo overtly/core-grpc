@@ -33,7 +33,7 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public T CreateClient(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker)
         {
-            return _factory.Get(channelWrapperInvoker: channelWrapperInvoker);
+            return _factory.Get(channelWrapperInvoker);
         }
     }
 }

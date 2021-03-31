@@ -9,13 +9,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C1AC594B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{3E8FD522-8885-4956-B7F7-F8406CBB59A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overt.GrpcExample.Client", "sample\grpc.net\Overt.GrpcExample.Client\Overt.GrpcExample.Client.csproj", "{46C09876-E6A6-4EB5-B6B1-4CB8DA692B85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Client", "sample\grpc.net\Overt.GrpcExample.Client\Overt.GrpcExample.Client.csproj", "{46C09876-E6A6-4EB5-B6B1-4CB8DA692B85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overt.GrpcExample.Service.Grpc", "sample\grpc.net\Overt.GrpcExample.Service.Grpc\Overt.GrpcExample.Service.Grpc.csproj", "{64B742DE-CB91-42FC-89BC-79B645BBE52C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Service.Grpc", "sample\grpc.net\Overt.GrpcExample.Service.Grpc\Overt.GrpcExample.Service.Grpc.csproj", "{64B742DE-CB91-42FC-89BC-79B645BBE52C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "service", "service", "{438C16DB-9A1F-4ADA-B39F-2C071DB7DB80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overt.GrpcExample.Service", "sample\grpc.net\Overt.GrpcExample.Service\Overt.GrpcExample.Service.csproj", "{1BDE6957-289A-4956-8CFF-C73DFC1E9F22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Overt.GrpcExample.Service", "sample\grpc.net\Overt.GrpcExample.Service\Overt.GrpcExample.Service.csproj", "{1BDE6957-289A-4956-8CFF-C73DFC1E9F22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overt.GrpcExample1.Service.Grpc", "sample\grpc.net\Overt.GrpcExample1.Service.Grpc\Overt.GrpcExample1.Service.Grpc.csproj", "{AEA4481B-EE8E-4723-86CC-40C6D226B29A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{1BDE6957-289A-4956-8CFF-C73DFC1E9F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BDE6957-289A-4956-8CFF-C73DFC1E9F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BDE6957-289A-4956-8CFF-C73DFC1E9F22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEA4481B-EE8E-4723-86CC-40C6D226B29A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEA4481B-EE8E-4723-86CC-40C6D226B29A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEA4481B-EE8E-4723-86CC-40C6D226B29A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEA4481B-EE8E-4723-86CC-40C6D226B29A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{64B742DE-CB91-42FC-89BC-79B645BBE52C} = {C1AC594B-401E-42C6-8448-AE6B5DE30424}
 		{438C16DB-9A1F-4ADA-B39F-2C071DB7DB80} = {C1AC594B-401E-42C6-8448-AE6B5DE30424}
 		{1BDE6957-289A-4956-8CFF-C73DFC1E9F22} = {438C16DB-9A1F-4ADA-B39F-2C071DB7DB80}
+		{AEA4481B-EE8E-4723-86CC-40C6D226B29A} = {C1AC594B-401E-42C6-8448-AE6B5DE30424}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22BF4BD5-974D-46B8-A87F-D8E36F31569A}

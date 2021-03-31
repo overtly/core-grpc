@@ -22,7 +22,7 @@ namespace Overt.Core.Grpc.H2
         /// <param name="address"></param>
         public ConsulRegister(string address, Func<string, DnsEndPoint, string> genServiceId = null)
         {
-            if (string.IsNullOrEmpty(address))
+            if (string.IsNullOrWhiteSpace(address))
                 throw new ArgumentNullException($"consul address");
 
             _genServiceId = genServiceId ?? GenServiceId;
@@ -82,15 +82,15 @@ namespace Overt.Core.Grpc.H2
             #region 获取ServiceAddress
             // 环境变量优先
             var serviceAddress = string.Empty;
-            if (!string.IsNullOrEmpty(service.HostEnv))
+            if (!string.IsNullOrWhiteSpace(service.HostEnv))
                 serviceAddress = GetEnvironmentValue(service.HostEnv);
 
             // 读取本地配置
-            if (string.IsNullOrEmpty(serviceAddress))
+            if (string.IsNullOrWhiteSpace(serviceAddress))
                 serviceAddress = service.Host;
 
             //读取内网地址
-            if (string.IsNullOrEmpty(serviceAddress))
+            if (string.IsNullOrWhiteSpace(serviceAddress))
                 serviceAddress = IPHelper.GetLocalIntranetIP().ToString();
             #endregion
 
@@ -124,7 +124,7 @@ namespace Overt.Core.Grpc.H2
             foreach (EnvironmentVariableTarget item in envVariableTarget)
             {
                 value = Environment.GetEnvironmentVariable(key, item);
-                if (!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrWhiteSpace(value))
                     break;
             }
             return value;
