@@ -5,6 +5,7 @@ using Overt.Core.Grpc.H2;
 using System.Threading;
 using Grpc.Net.Client;
 using System.Net.Http;
+using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
 
 namespace Overt.GrpcExample.Client
 {
@@ -31,10 +32,17 @@ namespace Overt.GrpcExample.Client
             //{
             //    config.AddApollo(configuration.GetSection("apollo")).AddDefault();
             //});
-            //services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
-            //{
-            //    cfg.ConfigPath = "";
-            //});
+            services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
+            {
+                cfg.ConfigPath = "";
+                cfg.GrpcChannelOptions = new GrpcChannelOptions()
+                {
+                    HttpHandler = new SocketsHttpHandler()
+                    {
+                        EnableMultipleHttp2Connections = true,
+                    }
+                };
+            });
 
             provider = services.BuildServiceProvider();
         }
@@ -48,10 +56,10 @@ namespace Overt.GrpcExample.Client
                 if (key.Key == ConsoleKey.A)
                     break;
 
-                var httpClientHandler = new HttpClientHandler();
-                httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                var httpClient = new HttpClient(httpClientHandler);
-                Constants.DefaultChannelOptions.HttpClient = httpClient;
+                //var httpClientHandler = new HttpClientHandler();
+                //httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                //var httpClient = new HttpClient(httpClientHandler);
+                //Constants.DefaultChannelOptions.HttpClient = httpClient;
                 try
                 {
                     var service = provider.GetService<IGrpcClient<Service.Grpc.GrpcExampleService.GrpcExampleServiceClient>>();
