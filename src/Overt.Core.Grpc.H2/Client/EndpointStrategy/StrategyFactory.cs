@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Grpc.Net.Client;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -20,7 +21,7 @@ namespace Overt.Core.Grpc.H2
         /// <typeparam name="T"></typeparam>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        public static Exitus Get<T>(string configFile)
+        public static Exitus Get<T>(string configFile,GrpcChannelOptions grpcChannelOptions = null)
             where T : ClientBase
         {
             if (_exitusMap.TryGetValue(typeof(T), out Exitus exitus) &&
@@ -33,7 +34,7 @@ namespace Overt.Core.Grpc.H2
                     exitus?.EndpointStrategy != null)
                     return exitus;
 
-                exitus = ResolveConfiguration(configFile);
+                exitus = ResolveConfiguration(configFile,grpcChannelOptions);
                 _exitusMap.AddOrUpdate(typeof(T), exitus, (k, v) => exitus);
                 return exitus;
             }
@@ -45,7 +46,7 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        private static Exitus ResolveConfiguration(string configFile)
+        private static Exitus ResolveConfiguration(string configFile,GrpcChannelOptions grpcChannelOptions = null)
         {
             var serviceElement = ResolveServiceConfiguration(configFile);
             var serviceName = serviceElement.Name;
@@ -54,7 +55,7 @@ namespace Overt.Core.Grpc.H2
             if (EnableConsul(discovery, out string address))
                 endpointStrategy = ResolveStickyConfiguration(serviceElement, address);
             else
-                endpointStrategy = ResolveEndpointConfiguration(serviceElement);
+                endpointStrategy = ResolveEndpointConfiguration(serviceElement,grpcChannelOptions);
             return new Exitus(serviceName, endpointStrategy);
         }
 
@@ -77,14 +78,14 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceElement"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveStickyConfiguration(GrpcServiceElement serviceElement, string address)
+        private static IEndpointStrategy ResolveStickyConfiguration(GrpcServiceElement serviceElement, string address, GrpcChannelOptions grpcChannelOptions = null)
         {
             var serviceName = serviceElement.Name;
             var scheme = serviceElement.Scheme;
 
             // consul
             var stickyEndpointDiscovery = new StickyEndpointDiscovery(serviceName, address, scheme);
-            EndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
+            EndpointStrategy.Instance.SetGrpcChannelOptions(grpcChannelOptions).AddServiceDiscovery(stickyEndpointDiscovery);
             return EndpointStrategy.Instance;
         }
 
@@ -93,7 +94,7 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="serviceElement"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveEndpointConfiguration(GrpcServiceElement serviceElement)
+        private static IEndpointStrategy ResolveEndpointConfiguration(GrpcServiceElement serviceElement,GrpcChannelOptions grpcChannelOptions = null)
         {
             var serviceName = serviceElement.Name;
             var discovery = serviceElement.Discovery;
@@ -101,7 +102,7 @@ namespace Overt.Core.Grpc.H2
 
             var ipEndPoints = discovery.EndPoints.Select(oo => Tuple.Create(oo.Host, oo.Port)).ToList();
             var iPEndpointDiscovery = new IPEndpointDiscovery(serviceName, ipEndPoints, scheme);
-            EndpointStrategy.Instance.AddServiceDiscovery(iPEndpointDiscovery);
+            EndpointStrategy.Instance.SetGrpcChannelOptions(grpcChannelOptions).AddServiceDiscovery(iPEndpointDiscovery);
             return EndpointStrategy.Instance;
         }
 

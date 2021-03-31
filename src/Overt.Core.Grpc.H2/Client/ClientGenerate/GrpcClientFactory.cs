@@ -24,13 +24,14 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public T Get(string configPath = "", Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
         {
-            var exitus = StrategyFactory.Get<T>(GetConfigPath(configPath));
+            var exitus = StrategyFactory.Get<T>(GetConfigPath(configPath),_options.GrpcChannelOptions);
 
             ChannelWrapper channelWrapper;
             if (channelWrapperInvoker != null)
                 channelWrapper = channelWrapperInvoker(exitus.EndpointStrategy.GetChannelWrappers(exitus.ServiceName));
             else
                 channelWrapper = exitus.EndpointStrategy.GetChannelWrapper(exitus.ServiceName);
+
 
             var client = (T)Activator.CreateInstance(typeof(T), channelWrapper.Channel);
             return client;

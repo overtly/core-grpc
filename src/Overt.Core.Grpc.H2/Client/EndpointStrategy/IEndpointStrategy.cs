@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Grpc.Net.Client;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -7,6 +8,8 @@ namespace Overt.Core.Grpc.H2
     /// </summary>
     public interface IEndpointStrategy
     {
+        GrpcChannelOptions GrpcChannelOptions { set; get; }
+
         /// <summary>
         /// 添加服务发现
         /// </summary>

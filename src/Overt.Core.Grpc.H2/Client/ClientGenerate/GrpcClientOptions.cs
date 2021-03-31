@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Grpc.Net.Client;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -12,5 +13,10 @@ namespace Overt.Core.Grpc.H2
         /// defaultValue: dllconfigs/clientsettings.json 
         /// </summary>
         public string ConfigPath { get; set; }
+
+        /// <summary>
+        /// 配置GrpcChannelOptions 
+        /// </summary>
+        public GrpcChannelOptions GrpcChannelOptions { set; get; }
     }
 }
