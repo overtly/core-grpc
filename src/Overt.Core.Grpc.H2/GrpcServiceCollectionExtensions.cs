@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
 
@@ -13,6 +14,7 @@ namespace Overt.Core.Grpc.H2
     /// </summary>
     public static class GrpcServiceCollectionExtensions
     {
+        #region 客户端
         /// <summary>
         /// 
         /// </summary>
@@ -38,6 +40,19 @@ namespace Overt.Core.Grpc.H2
             ConfigBuilder.ConfigureDelegate = configureDelegate;
             return services;
         }
+        #endregion
+
+        #region 服务端
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddGrpcService(this IServiceCollection services)
+        {
+            services.AddSingleton<IHostedService, GrpcHostedService>();
+            return services;
+        }
 
         /// <summary>
         /// 服务注册
@@ -56,5 +71,6 @@ namespace Overt.Core.Grpc.H2
             RegisterFactory.WithConsul(grpcOptions);
             return app;
         }
+        #endregion
     }
 }

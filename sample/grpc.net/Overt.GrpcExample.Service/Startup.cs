@@ -19,7 +19,7 @@ namespace Overt.GrpcExample.Service
         {
             services.AddGrpc();
 
-            services.AddSingleton<IHostedService, HostedService>();
+            services.AddGrpcService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
