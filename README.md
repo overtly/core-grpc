@@ -450,7 +450,7 @@ ClientManager<T>.Instance.[Method]
 
 ### 项目层次说明
 
-> Overt.Core.Grpc.H2 v1.0.3  
+> Overt.Core.Grpc.H2 v1.0.4  
 > 用于>= netcoreapp3.0版本，用于http2协议，依赖微软的grpc.net，适用于Web服务场景，基于http2实现微服务场景
 
 #### 1. 项目目录
@@ -469,7 +469,7 @@ ClientManager<T>.Instance.[Method]
 
 #### 2. 版本及支持
 
-> - Nuget版本：V 1.0.3
+> - Nuget版本：V 1.0.4
 
 > - 框架支持： netstandard2.1 / netcoreapp3.0 / net5.0
 
@@ -490,7 +490,7 @@ Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
 #### 1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc.H2 -Version 1.0.3
+Install-Package Overt.Core.Grpc.H2 -Version 1.0.4
 ```
 
 <a name="dhmwfy"></a>
@@ -566,14 +566,32 @@ Install-Package Overt.Core.Grpc.H2 -Version 1.0.3
 > - 注册Consul
 
 ```csharp
-app.UseGrpcRegister();
-
-// 使用第三方配置
-services.AddGrpcConfig(config => 
+public void ConfigureServices(IServiceCollection services)
 {
-    // 以配置中心apollo为例
-    config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
-});
+  ...
+  // 其他
+  ...
+  
+  services.AddGrpcService(); // 应用关闭时，节点可自动移除
+  // 按需使用第三方配置
+  services.AddGrpcConfig(config => 
+  {
+      // 以配置中心apollo为例
+      config.AddApollo(context.Configuration.GetSection("apollo")).AddDefault();
+  });
+  
+}
+
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+  ...
+  // 其他
+  ...
+  
+  app.UseGrpcRegister();
+}
+
+
 ```
 
 #### 4. 客户端使用
@@ -614,8 +632,9 @@ var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 
 #### 5. 更新说明
 
-- 2021-03-31 v1.0.3
+- 2021-03-31 v1.0.4
 > 1. 支持代码更改文件配置
+> 2. 增加HostedService
 
 
 - 2021-03-30 v1.0.1
