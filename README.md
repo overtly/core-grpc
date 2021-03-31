@@ -9,7 +9,7 @@
 
 ### 项目层次说明
 
-> Overt.Core.Grpc v1.0.5  
+> Overt.Core.Grpc v1.0.6  
 > 基于Google的Grpc.Core驱动，适用于Console服务场景，基于TCP长连接实现微服务场景
 
 #### 1. 项目目录
@@ -29,23 +29,21 @@
 |-|-GrpcServiceManager.cs                       服务端启动类
 |-|-GrpcClientManager.cs                        客户端获取Client类
 |
-|-Server                                        服务端
+|-Service                                       服务端
 |
 |-GrpcServiceCollectionExtensions.cs            netcore注入
 ```
 
 #### 2. 版本及支持
 
-> - Nuget版本：V 1.0.5
-
-> - 框架支持： Framewok 4.5 - 4.7 / NetStandard 2.0
+> - Nuget版本：v1.0.6
+> - 框架支持： Framewok 4.5 - 4.6 / NetStandard 2.0
 
 
 
 #### 3. 项目依赖
 
 > - NetStandard 2.0
-
 
 
 ```csharp
@@ -58,8 +56,6 @@ Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
 
 > - Framwork 4.5 - 4.7
 
-
-
 ```csharp
 Consul 0.7.2.6  
 Google.Protobuf 3.8.0
@@ -71,7 +67,7 @@ Grpc 1.21.0
 #### 1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc -Version 1.0.5
+Install-Package Overt.Core.Grpc -Version 1.0.6
 ```
 
 <a name="dhmwfy"></a>
@@ -267,10 +263,7 @@ using(var scope = _provider.CreateSocpe())
 ```
 
 #### （2）Framework 4.6
-
 > - 直接调用GrpcServiceManager来启动
-
-
 
 ```csharp
 using Grpc.Core;
@@ -311,9 +304,7 @@ namespace Overt.GrpcService
 #### （1）NetCore
 
 > - 强制依赖注入模式
-
 > - 配置文件默认使用    [命名空间].dll.json     可通过vs.menu工具生成nuget包
-
 > - 注入中直接调用如下
 
 
@@ -393,8 +384,6 @@ namespace Overt.GrpcExample.Service.Grpc
 ```
 
 > - 使用代理类执行
-
-
 ```
 // 自定义配置文件 / 默认使用命名空间.dll.json / 在主进程入口进行配置T为服务Client
 ClientManger.Configure<T>("dllconfig/abc.config");
@@ -407,8 +396,12 @@ ClientManager<T>.Instance.[Method]
 
 #### 5. 更新说明
 
-- 2021-03-30 v 1.0.5
-- 
+- 2021-03-31 v1.0.6
+> 1. 重构GrpcClientOptions
+> 2. 升级驱动为最新版本
+
+
+- 2021-03-30 v1.0.5
 > 1. Tracer提供修改Channel Target能力，可供外部自定义选择节点；
 > 2. 升级底层驱动为最新版本
 > 3. 增加自定义Interceptor的注入
@@ -417,127 +410,32 @@ ClientManager<T>.Instance.[Method]
 > 6. 支持framework版本的自定义invoker获取策略
 
 
-- 2021-02-25 v 1.0.4.1
-- 
+- 2021-02-25 v1.0.4.1
 > 1. 增加第三方配置的支持，比如apollo，可使用services.AddGrpcConfig进行扩展(目前仅支持dotnetcore)
 
 
-- 2019-11-28 v 1.0.3.1
-- 
+- 2019-11-28 v1.0.3.1
 > 1. 优化对Consul新版本的支持
 
 
-
-- 2019-11-28 v 1.0.3
-- 
+- 2019-11-28 v1.0.3 
 > 1. 注册中心监听到变动后，忽略黑名单，本地连接全部重置
 
 
-
-- 2019-09-29 v 1.0.2
+- 2019-09-29 v1.0.2
 > 1. 客户端使用Consul注册中心，支持单服务变动监听，新注册服务或者服务挂掉，更加实时
 
 
-
-- 2019-08-16 v 1.0.1
-- 
+- 2019-08-16 v1.0.1
 > 1. 支持多服务模式
 
 
-
-- 2019-08-01 v 1.0.0
-- 
+- 2019-08-01 v1.0.0
 > 1. 修改命名空间，更新nuget包为Overt.Core.Grpc 更新默认版本为1.0.0
 
 
-
-- 2019-06-05 v 1.0.10.2
-- 
+- 2019-06-05 v1.0.10.2
 > 1. 客户端优化连接服务失败的情况下，拉入黑名单，导致节点不存在的问题
-
-
-
-- 2019-06-05 v 1.0.10
-- 
-> 1. 升级Grpc版本为 1.21.0
-> 2. 升级Google.Protobuf版本为3.8.0
-
-
-
-- 2019-03-06 v 1.0.9
-
-> 1. 升级Grpc版本为 1.19.0
-> 2. Consul节点默认Passing
-> 3. ConsulSettings添加环境变量支持
-
-
-
-- 2019-01-29 v 1.0.8
-
-> 1. 升级Grpc版本为 1.18.0
-> 2. 其他一系列升级以及Bug修复
-
-
-
-- 2018-11-13 v 1.0.6.10 (****)
-
-> 1. 添加IServerTracer作为服务端拦截器接口，实现即可拦截
-> 2. 添加IClientTracer作为客户端拦截器接口，实现即可拦截
-> 3. 升级Google.Protobuf v 3.6.1
-> 4. **重要**[下载地址](http://10.0.60.89:8082/)
-
-```csharp
-Overt.Core.Grpc.dll
-Consul.dll
-Grpc.Core.dll
-Google.Protobuf.dll
-runtime/*
-libgrpc_*
-grpc_csharp_*
-App.config/Web.config
-```
-
-
-
-- 2018-11-10 v 1.0.6.9
-
-> 1. 升级Grpc v1.16.0 支持Intercept
-
-
-
-- 2018-09-07 v 1.0.6.6
-
-> 1. 影响服务端驱动
-> 2. 更改ServciceHost获取以环境变量优先
-
-
-
-- 2018-08-24 v 1.0.6.5
-
-> 1. 影响客户端驱动
-> 2. 修复发布过程中异常加入黑名单后，连接全部丢失问题
-
-
-
-- 2018-08-21 v 1.0.6.4
-
-> 1. 添加服务与Consul自检功能，升级Consul v0.7.2.6 / Grpc v1.14.1.0
-> 2. 升级该版本需要同时发布**以下内容**
-
-```csharp
-Overt.Core.Grpc.dll
-Consul.dll
-Grpc.Core.dll
-Google.Protobuf.dll
-runtime/*
-libgrpc_*
-grpc_csharp_*
-App.config/Web.config
-```
-
----
-
-
 
 
 
@@ -552,7 +450,7 @@ App.config/Web.config
 
 ### 项目层次说明
 
-> Overt.Core.Grpc.H2 v1.0.1  
+> Overt.Core.Grpc.H2 v1.0.3  
 > 用于>= netcoreapp3.0版本，用于http2协议，依赖微软的grpc.net，适用于Web服务场景，基于http2实现微服务场景
 
 #### 1. 项目目录
@@ -571,7 +469,7 @@ App.config/Web.config
 
 #### 2. 版本及支持
 
-> - Nuget版本：V 1.0.1
+> - Nuget版本：V 1.0.3
 
 > - 框架支持： netstandard2.1 / netcoreapp3.0 / net5.0
 
@@ -582,7 +480,7 @@ App.config/Web.config
 ```csharp
 Consul 1.6.1.1
 Google.Protobuf 3.15.6
-Grpc.Net.Client 2.36.0
+Grpc.Net.Client 2.36.4
 Microsoft.Extensions.Configuration.Json 2.0.0
 Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
 ```
@@ -592,7 +490,7 @@ Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
 #### 1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc.H2 -Version 1.0.1
+Install-Package Overt.Core.Grpc.H2 -Version 1.0.3
 ```
 
 <a name="dhmwfy"></a>
@@ -716,8 +614,11 @@ var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 
 #### 5. 更新说明
 
-- 2021-03-30 v 1.0.1
-- 
+- 2021-03-31 v1.0.3
+> 1. 支持代码更改文件配置
+
+
+- 2021-03-30 v1.0.1
 > 1. 第一个版本，依赖微软的驱动grpc.net，适应net5.0
 
 
