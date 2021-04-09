@@ -10,7 +10,7 @@ namespace Overt.Core.Grpc.H2
     {
         /// <summary>
         /// Json文件
-        /// defaultValue: dllconfigs/clientsettings.json 
+        /// defaultValue: dllconfigs/{namespace}.dll.json 
         /// </summary>
         public string ConfigPath { get; set; }
 

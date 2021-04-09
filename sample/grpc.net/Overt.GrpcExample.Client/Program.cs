@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Grpc.Net.Client;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using Overt.Core.Grpc.H2;
-using System.Threading;
-using Grpc.Net.Client;
+using System;
 using System.Net.Http;
+using System.Threading;
 using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
 using static Overt.GrpcExample.Service.Grpc.GrpcExampleService1;
 
@@ -33,6 +33,8 @@ namespace Overt.GrpcExample.Client
             //{
             //    config.AddApollo(configuration.GetSection("apollo")).AddDefault();
             //});
+
+            // 单服务配置
             services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
             {
                 var httpClientHandler = new HttpClientHandler
@@ -49,8 +51,10 @@ namespace Overt.GrpcExample.Client
                 };
             });
 
+            // 单服务配置
             services.Configure<GrpcClientOptions<GrpcExampleService1Client>>(cfg =>
             {
+                cfg.ConfigPath = "";
                 cfg.Scheme = "http";
             });
 
