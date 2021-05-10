@@ -52,11 +52,11 @@ namespace Overt.GrpcExample.Client
             });
 
             // 单服务配置
-            services.Configure<GrpcClientOptions<GrpcExampleService1Client>>(cfg =>
-            {
-                cfg.ConfigPath = "";
-                cfg.Scheme = "http";
-            });
+            //services.Configure<GrpcClientOptions<GrpcExampleService1Client>>(cfg =>
+            //{
+            //    cfg.ConfigPath = "";
+            //    cfg.Scheme = "http";
+            //});
 
             provider = services.BuildServiceProvider();
         }
@@ -77,9 +77,9 @@ namespace Overt.GrpcExample.Client
                     var res = service.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
                     Console.WriteLine(DateTime.Now + " - " + res.Content ?? "abc");
 
-                    var service1 = provider.GetService<IGrpcClient<GrpcExampleService1Client>>();
-                    var res1 = service1.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
-                    Console.WriteLine(DateTime.Now + " - " + res1.Content ?? "abc");
+                    //var service1 = provider.GetService<IGrpcClient<GrpcExampleService1Client>>();
+                    //var res1 = service1.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
+                    //Console.WriteLine(DateTime.Now + " - " + res1.Content ?? "abc");
                 }
                 catch (Exception ex)
                 {
