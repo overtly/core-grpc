@@ -52,7 +52,7 @@ namespace Overt.Core.Grpc
                 options.ServiceName = service.Name;
             if (options.MaxRetry <= 0)
                 options.MaxRetry = service.MaxRetry;
-            options.ChannelOptions = options.ChannelOptions ?? Constants.DefaultChannelOptions;
+            options.ChannelOptions = options.ChannelOptions ?? GrpcConstants.DefaultChannelOptions;
 
             IEndpointStrategy endpointStrategy;
             if (EnableConsul(service.Discovery, out string address))
@@ -69,7 +69,7 @@ namespace Overt.Core.Grpc
         /// <returns></returns>
         private static Client.GrpcServiceElement ResolveServiceConfiguration(string configFile)
         {
-            var grpcSection = ConfigBuilder.Build<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
+            var grpcSection = ConfigBuilder.Build<GrpcClientSection>(GrpcConstants.GrpcClientSectionName, configFile);
             if (grpcSection == null || grpcSection.Service == null)
                 throw new ArgumentNullException($"service config error");
 
@@ -124,7 +124,7 @@ namespace Overt.Core.Grpc
             if (!File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, discovery.Consul.Path)))
                 throw new Exception($"[{discovery.Consul.Path}] not exist at [{AppDomain.CurrentDomain.BaseDirectory}]");
 
-            var consulSection = ConfigBuilder.Build<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
+            var consulSection = ConfigBuilder.Build<ConsulServerSection>(GrpcConstants.ConsulServerSectionName, configPath);
             address = consulSection?.Service?.Address;
             if (string.IsNullOrEmpty(address))
                 return false;

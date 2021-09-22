@@ -110,7 +110,7 @@ namespace Overt.Core.Grpc
         /// <param name="configPath"></param>
         private static Service.ServiceElement ResolveServiceConfiguration(GrpcOptions grpcOptions = null)
         {
-            var sectionName = Constants.GrpcServerSectionName;
+            var sectionName = GrpcConstants.GrpcServerSectionName;
             var grpcSection = ConfigBuilder.Build<GrpcServerSection>(sectionName, grpcOptions?.ConfigPath);
             if (grpcSection == null)
                 throw new ArgumentNullException(sectionName);
@@ -143,7 +143,7 @@ namespace Overt.Core.Grpc
             if (string.IsNullOrEmpty(configPath))
                 return string.Empty;
 
-            var consulSection = ConfigBuilder.Build<ConsulServerSection>(Constants.ConsulServerSectionName, configPath);
+            var consulSection = ConfigBuilder.Build<ConsulServerSection>(GrpcConstants.ConsulServerSectionName, configPath);
             return consulSection?.Service?.Address;
         }
 

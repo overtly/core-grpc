@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Overt.Core.Grpc
 {
-    public class Constants
+    public class GrpcConstants
     {
 #if !ASP_NET_CORE
         /// <summary>
