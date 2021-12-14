@@ -26,7 +26,6 @@ namespace Overt.GrpcExample.Client
 
             // 注入GrpcClient
             services.AddGrpcClient();
-
             // 第三方配置，启动可用
             //services.AddGrpcConfig(config =>
             //{

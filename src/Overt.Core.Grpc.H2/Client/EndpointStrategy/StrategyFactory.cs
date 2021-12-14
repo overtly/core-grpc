@@ -53,7 +53,7 @@ namespace Overt.Core.Grpc.H2
             var discovery = serviceElement.Discovery;
             IEndpointStrategy endpointStrategy;
             if (EnableConsul(discovery, out string address))
-                endpointStrategy = ResolveStickyConfiguration(serviceElement, address);
+                endpointStrategy = ResolveStickyConfiguration(serviceElement, address,grpcChannelOptions);
             else
                 endpointStrategy = ResolveEndpointConfiguration(serviceElement,grpcChannelOptions);
             return new Exitus(serviceName, endpointStrategy);

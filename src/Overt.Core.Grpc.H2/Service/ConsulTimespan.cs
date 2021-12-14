@@ -18,5 +18,10 @@ namespace Overt.Core.Grpc.H2
         /// 移除服务的时效 15s
         /// </summary>
         public static readonly TimeSpan CriticalInterval = TimeSpan.FromSeconds(20);
+
+        /// <summary>
+        /// 健康检查默认超时时间
+        /// </summary>
+        public static readonly TimeSpan TimeOut = TimeSpan.FromSeconds(10);
     }
 }

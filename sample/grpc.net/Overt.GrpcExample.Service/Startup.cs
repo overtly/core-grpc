@@ -40,7 +40,9 @@ namespace Overt.GrpcExample.Service
                 });
             });
 
-            app.UseGrpcRegister();
+            app.UseGrpcRegister((ops)=> {
+                //ops.CheckTimeOut = TimeSpan.FromSeconds(10);
+            });
         }
     }
 }

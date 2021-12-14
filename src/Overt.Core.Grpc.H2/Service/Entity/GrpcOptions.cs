@@ -23,5 +23,10 @@ namespace Overt.Core.Grpc.H2
         /// ServiceId生成
         /// </summary>
         public Func<string, DnsEndPoint, string> GenServiceId { get; set; }
+
+        /// <summary>
+        /// 健康检查超时时间,默认
+        /// </summary>
+        public TimeSpan? CheckTimeOut { set; get; }
     }
 }

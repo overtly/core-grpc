@@ -15,12 +15,13 @@ namespace Overt.Core.Grpc.H2
         private readonly object _locker = new object();
         private readonly Timer _selfCheckTimer;
         private readonly Func<string, DnsEndPoint, string> _genServiceId;
+        private readonly TimeSpan? _checkTimeOut;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="address"></param>
-        public ConsulRegister(string address, Func<string, DnsEndPoint, string> genServiceId = null)
+        public ConsulRegister(string address, TimeSpan? CheckTimeout, Func<string, DnsEndPoint, string> genServiceId = null)
         {
             if (string.IsNullOrEmpty(address))
                 throw new ArgumentNullException($"consul address");
@@ -32,6 +33,7 @@ namespace Overt.Core.Grpc.H2
                 cfg.Address = uriBuilder.Uri;
             });
 
+            _checkTimeOut = CheckTimeout;
             _selfCheckTimer = new Timer(ConsulTimespan.SelfCheckInterval.TotalSeconds * 1000);
         }
 
@@ -185,6 +187,7 @@ namespace Overt.Core.Grpc.H2
                 Status = HealthStatus.Passing,
                 DeregisterCriticalServiceAfter = ConsulTimespan.CriticalInterval,
                 ServiceID = serviceId,
+                Timeout =_checkTimeOut
             };
             var asr = new AgentServiceRegistration
             {

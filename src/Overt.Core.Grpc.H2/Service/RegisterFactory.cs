@@ -28,7 +28,7 @@ namespace Overt.Core.Grpc.H2
                 var address = ResolveConsulConfiguration(serviceElement);
                 if (string.IsNullOrEmpty(address))
                     return;
-                serverRegister = new ConsulRegister(address, grpcOptions.GenServiceId);
+                serverRegister = new ConsulRegister(address,grpcOptions.CheckTimeOut, grpcOptions.GenServiceId);
                 serverRegister.Register(serviceElement, entry => discoveryEntry = entry);
                 #endregion
             }
