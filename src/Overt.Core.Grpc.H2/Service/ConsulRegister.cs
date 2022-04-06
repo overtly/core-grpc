@@ -67,8 +67,8 @@ namespace Overt.Core.Grpc.H2
         /// <param name="serviceId"></param>
         public void Deregister(string serviceId)
         {
+            DoStopSelfCheck();
             _client?.Agent?.ServiceDeregister(serviceId).GetAwaiter().GetResult();
-            StopSelfCheck();
         }
         #endregion
 
@@ -243,20 +243,26 @@ namespace Overt.Core.Grpc.H2
             }
             catch
             {
-                //异常忽略
+                // 异常忽略
             }
         }
 
-        private void StopSelfCheck()
+        /// <summary>
+        /// 停止反向检查任务
+        /// </summary>
+        private void DoStopSelfCheck()
         {
+            if (_selfCheckTimer == null)
+                return;
+
             try
             {
-                _selfCheckTimer?.Stop();
-                _selfCheckTimer?.Dispose();
+                _selfCheckTimer.Stop();
+                _selfCheckTimer.Dispose();
             }
             catch
             {
-                //异常忽略
+                // 异常忽略
             }
         }
         #endregion
