@@ -68,6 +68,7 @@ namespace Overt.Core.Grpc.H2
         public void Deregister(string serviceId)
         {
             _client?.Agent?.ServiceDeregister(serviceId).GetAwaiter().GetResult();
+            StopSelfCheck();
         }
         #endregion
 
@@ -239,6 +240,19 @@ namespace Overt.Core.Grpc.H2
                 {
                     RegisterService(serviceName, dnsEndPoint);
                 }
+            }
+            catch
+            {
+                //异常忽略
+            }
+        }
+
+        private void StopSelfCheck()
+        {
+            try
+            {
+                _selfCheckTimer?.Stop();
+                _selfCheckTimer?.Dispose();
             }
             catch
             {
