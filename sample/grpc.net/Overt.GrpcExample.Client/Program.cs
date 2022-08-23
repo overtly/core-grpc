@@ -35,23 +35,23 @@ namespace Overt.GrpcExample.Client
             //});
 
             // 单服务配置
-            services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
-            {
-                //var httpClientHandler = new HttpClientHandler
-                //{
-                //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-                //};
-                cfg.GrpcChannelOptions = new GrpcChannelOptions()
-                {
-                    //HttpClient = new HttpClient(httpClientHandler),
-                    ServiceProvider = services.BuildServiceProvider(),
-                    Credentials = Grpc.Core.ChannelCredentials.Insecure,
-                    //HttpHandler = new SocketsHttpHandler()
-                    //{
-                    //    EnableMultipleHttp2Connections = true,
-                    //}
-                };
-            });
+            //services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
+            //{
+            //    //var httpClientHandler = new HttpClientHandler
+            //    //{
+            //    //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            //    //};
+            //    cfg.GrpcChannelOptions = new GrpcChannelOptions()
+            //    {
+            //        //HttpClient = new HttpClient(httpClientHandler),
+            //        ServiceProvider = services.BuildServiceProvider(),
+            //        Credentials = Grpc.Core.ChannelCredentials.Insecure,
+            //        //HttpHandler = new SocketsHttpHandler()
+            //        //{
+            //        //    EnableMultipleHttp2Connections = true,
+            //        //}
+            //    };
+            //});
 
             // 单服务配置
             //services.Configure<GrpcClientOptions<GrpcExampleService1Client>>(cfg =>

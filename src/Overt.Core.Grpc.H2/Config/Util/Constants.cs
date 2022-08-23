@@ -1,4 +1,5 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -22,6 +23,7 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         public static GrpcChannelOptions DefaultChannelOptions = new GrpcChannelOptions()
         {
+            Credentials = ChannelCredentials.Insecure,
             MaxReceiveMessageSize = int.MaxValue,
             MaxSendMessageSize = int.MaxValue,
         };

@@ -33,6 +33,8 @@ namespace Overt.Core.Grpc.H2
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClient<>), typeof(GrpcClient<>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
 
+            services.AddSingleton<StrategyFactory>();
+
             services.AddSingleton<ResolverFactory, InternalResolverFactory>();
             services.AddSingleton<LoadBalancerFactory, RandomBalancerFactory>();
             return services;
@@ -51,6 +53,9 @@ namespace Overt.Core.Grpc.H2
 
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClient<>), typeof(GrpcClient<>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
+
+            services.AddSingleton<StrategyFactory>();
+
             return services;
         }
 #endif

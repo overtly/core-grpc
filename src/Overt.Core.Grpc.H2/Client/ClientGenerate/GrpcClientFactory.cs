@@ -11,10 +11,13 @@ namespace Overt.Core.Grpc.H2
     public class GrpcClientFactory<T> : IGrpcClientFactory<T> where T : ClientBase
     {
         private readonly GrpcClientOptions<T> _options;
-        public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options = null)
+        private readonly StrategyFactory _strategyFactory;
+        public GrpcClientFactory(IOptions<GrpcClientOptions<T>> options,
+            StrategyFactory strategyFactory)
         {
             _options = options?.Value ?? new GrpcClientOptions<T>();
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
+            _strategyFactory = strategyFactory;
         }
 
 #if NET5_0_OR_GREATER
@@ -25,7 +28,7 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public T Get()
         {
-            var channel = StrategyFactory.Get<T>(_options);
+            var channel = _strategyFactory.Get<T>(_options);
             var client = (T)Activator.CreateInstance(typeof(T), channel);
             return client;
         }
@@ -37,7 +40,7 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public T Get(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
         {
-            var exitus = StrategyFactory.Get<T>(_options);
+            var exitus = _strategyFactory.Get<T>(_options);
 
             ChannelWrapper channelWrapper;
             if (channelWrapperInvoker != null)

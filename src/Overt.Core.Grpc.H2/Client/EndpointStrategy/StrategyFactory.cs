@@ -3,23 +3,26 @@ using Grpc.Net.Client;
 using Grpc.Net.Client.Configuration;
 using System;
 using System.Collections.Concurrent;
-using System.IO;
-using System.Linq;
 
 namespace Overt.Core.Grpc.H2
 {
     /// <summary>
     /// Endpoint 策略工厂
     /// </summary>
-    internal class StrategyFactory
+    public class StrategyFactory
     {
+        private readonly IServiceProvider _provider;
         private readonly static object _lockHelper = new object();
-        private readonly static ConcurrentDictionary<Type, Exitus> _exitusMap = new ConcurrentDictionary<Type, Exitus>();
+
+        public StrategyFactory(IServiceProvider provider)
+        {
+            _provider = provider;
+        }
 
 #if NET5_0_OR_GREATER
         private readonly static ConcurrentDictionary<Type, ChannelBase> _channelMap = new ConcurrentDictionary<Type, ChannelBase>();
 
-        public static ChannelBase Get<T>(GrpcClientOptions options)
+        public ChannelBase Get<T>(GrpcClientOptions options)
         {
             if (_channelMap.TryGetValue(typeof(T), out ChannelBase channel))
                 return channel;
@@ -41,15 +44,16 @@ namespace Overt.Core.Grpc.H2
         /// </summary>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        private static ChannelBase ResolveConfiguration(GrpcClientOptions options)
+        private ChannelBase ResolveConfiguration(GrpcClientOptions options)
         {
-            var service = ResolveServiceConfiguration(options.ConfigPath);
+            var service = ClientUtil.ResolveServiceConfiguration(options.ConfigPath);
             if (string.IsNullOrWhiteSpace(options.ServiceName))
                 options.ServiceName = service.Name;
             if (string.IsNullOrWhiteSpace(options.Scheme))
                 options.Scheme = service.Scheme;
 
             options.GrpcChannelOptions ??= Constants.DefaultChannelOptions;
+            options.GrpcChannelOptions.ServiceProvider = _provider;
 
             // 使用默认的
             if ((options.GrpcChannelOptions.ServiceConfig?.LoadBalancingConfigs?.Count ?? 0) <= 0)
@@ -73,29 +77,16 @@ namespace Overt.Core.Grpc.H2
             channel = GrpcChannel.ForAddress($"internal:///{options.ServiceName}", options.GrpcChannelOptions);
             return channel;
         }
-
-        /// <summary>
-        /// 解析服务配置
-        /// </summary>
-        /// <param name="configFile"></param>
-        /// <returns></returns>
-        private static GrpcServiceElement ResolveServiceConfiguration(string configFile)
-        {
-            var grpcSection = ConfigBuilder.Build<GrpcClientSection>(Constants.GrpcClientSectionName, configFile);
-            if (grpcSection == null || grpcSection.Service == null)
-                throw new ArgumentNullException($"service config error");
-
-            return grpcSection.Service;
-        }
 #else
 
+        private readonly static ConcurrentDictionary<Type, Exitus> _exitusMap = new ConcurrentDictionary<Type, Exitus>();
         /// <summary>
         /// 获取EndpointStrategy
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static Exitus Get<T>(GrpcClientOptions options) where T : ClientBase
+        public Exitus Get<T>(GrpcClientOptions options) where T : ClientBase
         {
             if (_exitusMap.TryGetValue(typeof(T), out Exitus exitus) &&
                 exitus?.EndpointStrategy != null)
