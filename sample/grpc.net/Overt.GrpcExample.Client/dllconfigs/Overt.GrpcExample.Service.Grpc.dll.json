@@ -2,17 +2,17 @@
   "GrpcClient": {
     "Service": {
       "Name": "OvertGrpcExampleService",
-      "Scheme": "http", // 协议
+      "Scheme": "", // 协议
       "Discovery": {
-        //"Consul": {
-        //  "Path": "dllconfigs/consulsettings.json"
-        //}
-        "EndPoints": [
-          {
-            "Host": "127.0.0.1",
-            "Port": 5001
-          }
-        ]
+        "Consul": {
+          "Path": "dllconfigs/consulsettings.json"
+        }
+        //"EndPoints": [
+        //  {
+        //    "Host": "127.0.0.1",
+        //    "Port": 5002
+        //  }
+        //]
       }
     }
   }

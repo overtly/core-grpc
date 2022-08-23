@@ -54,8 +54,11 @@ namespace Overt.Core.Grpc.H2
             // 使用默认的
             if ((options.GrpcChannelOptions.ServiceConfig?.LoadBalancingConfigs?.Count ?? 0) <= 0)
             {
+                options.GrpcChannelOptions.ServiceConfig = new ServiceConfig();
                 options.GrpcChannelOptions.ServiceConfig.LoadBalancingConfigs.Add(new LoadBalancingConfig("random"));
             }
+
+            ClientUtil.AddCache(options);
 
             ChannelBase channel;
             // 判断当前使用的
@@ -67,7 +70,7 @@ namespace Overt.Core.Grpc.H2
 
 
             // 内置的
-            channel = GrpcChannel.ForAddress($"internal:///{Newtonsoft.Json.JsonConvert.SerializeObject(options)}", options.GrpcChannelOptions);
+            channel = GrpcChannel.ForAddress($"internal:///{options.ServiceName}", options.GrpcChannelOptions);
             return channel;
         }
 

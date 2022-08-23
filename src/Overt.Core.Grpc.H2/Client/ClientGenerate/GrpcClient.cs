@@ -26,6 +26,8 @@ namespace Overt.Core.Grpc.H2
             }
         }
 
+#if NET5_0_OR_GREATER
+#else
         /// <summary>
         /// 构造一个新的对象
         /// </summary>
@@ -35,5 +37,6 @@ namespace Overt.Core.Grpc.H2
         {
             return _factory.Get(channelWrapperInvoker);
         }
+#endif
     }
 }

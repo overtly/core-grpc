@@ -6,28 +6,48 @@ using System.Linq;
 namespace Overt.Core.Grpc.H2
 {
     /// <summary>
-    /// 静态注入
+    /// 静态
     /// </summary>
     public class ClientUtil
     {
         private readonly static object _lockHelper = new object();
         private readonly static ConcurrentDictionary<string, Exitus> _exitusMap = new ConcurrentDictionary<string, Exitus>();
+        private readonly static ConcurrentDictionary<string, GrpcClientOptions> _options = new ConcurrentDictionary<string, GrpcClientOptions>();
 
-        public static Exitus GetExitus(string localPath)
+        /// <summary>
+        /// 加入缓存
+        /// </summary>
+        /// <param name="options"></param>
+        public static void AddCache(GrpcClientOptions options)
         {
-            if (_exitusMap.TryGetValue(localPath, out Exitus exitus) &&
+            if (options == null)
+                return;
+
+            _options.AddOrUpdate(options.ServiceName, options, (k, v) => options);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        public static Exitus GetExitus(string serviceName)
+        {
+            if (_exitusMap.TryGetValue(serviceName, out Exitus exitus) &&
                 exitus?.EndpointStrategy != null)
                 return exitus;
 
             lock (_lockHelper)
             {
-                if (_exitusMap.TryGetValue(localPath, out exitus) &&
+                if (_exitusMap.TryGetValue(serviceName, out exitus) &&
                     exitus?.EndpointStrategy != null)
                     return exitus;
 
-                var options = Newtonsoft.Json.JsonConvert.DeserializeObject<GrpcClientOptions>(localPath);
+                if (!_options.TryGetValue(serviceName, out GrpcClientOptions options))
+                    throw new Exception($"配置异常");
+
                 exitus = ResolveConfiguration(options);
-                _exitusMap.AddOrUpdate(localPath, exitus, (k, v) => exitus);
+                _exitusMap.AddOrUpdate(serviceName, exitus, (k, v) => exitus);
                 return exitus;
             }
         }

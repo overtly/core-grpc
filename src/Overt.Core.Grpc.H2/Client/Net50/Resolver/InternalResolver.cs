@@ -21,7 +21,8 @@ namespace Overt.Core.Grpc.H2
 
         protected override Task ResolveAsync(CancellationToken cancellationToken)
         {
-            var exitus = ClientUtil.GetExitus(_address.LocalPath);
+            var options = _address.LocalPath.Replace("/", "");
+            var exitus = ClientUtil.GetExitus(options);
             var targets = exitus.EndpointStrategy.GetTargets(exitus.ServiceName);
             var addresses = new List<BalancerAddress>();
             foreach (var target in targets)
