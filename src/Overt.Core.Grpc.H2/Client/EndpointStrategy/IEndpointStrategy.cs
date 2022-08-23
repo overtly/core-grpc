@@ -1,5 +1,4 @@
-﻿using Grpc.Net.Client;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -20,6 +19,13 @@ namespace Overt.Core.Grpc.H2
         /// <param name="serviceName"></param>
         /// <returns></returns>
         List<ChannelWrapper> GetChannelWrappers(string serviceName);
+
+        /// <summary>
+        /// 获取所有可用节点
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        List<string> GetTargets(string serviceName);
 
         /// <summary>
         /// 获取

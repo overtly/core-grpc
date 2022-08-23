@@ -1,4 +1,6 @@
-﻿using Grpc.Net.Client;
+﻿#if NET5_0_OR_GREATER
+using Grpc.Net.Client.Balancer;
+#endif
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +17,28 @@ namespace Overt.Core.Grpc.H2
     public static class GrpcServiceCollectionExtensions
     {
         #region 客户端
+
+#if NET5_0_OR_GREATER
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddGrpcClient(this IServiceCollection services)
+        {
+            if (services == null)
+                throw new ArgumentNullException(nameof(services));
+
+            services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClient<>), typeof(GrpcClient<>)));
+            services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
+
+            services.AddSingleton<ResolverFactory, InternalResolverFactory>();
+            services.AddSingleton<LoadBalancerFactory, RandomBalancerFactory>();
+            return services;
+        }
+#else
+
         /// <summary>
         /// 
         /// </summary>
@@ -29,6 +53,9 @@ namespace Overt.Core.Grpc.H2
             services.Add(ServiceDescriptor.Singleton(typeof(IGrpcClientFactory<>), typeof(GrpcClientFactory<>)));
             return services;
         }
+#endif
+
+
 
         /// <summary>
         /// 配置 可用于第三方配置

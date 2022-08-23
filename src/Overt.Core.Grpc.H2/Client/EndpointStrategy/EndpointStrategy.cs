@@ -13,6 +13,7 @@ namespace Overt.Core.Grpc.H2
         private readonly Timer _timer;
         private readonly ConcurrentDictionary<string, IEndpointDiscovery> _discoveries = new ConcurrentDictionary<string, IEndpointDiscovery>();
         private readonly ConcurrentDictionary<string, List<ChannelWrapper>> _channelWrappers = new ConcurrentDictionary<string, List<ChannelWrapper>>();
+        private readonly ConcurrentDictionary<string, List<string>> _targets = new ConcurrentDictionary<string, List<string>>();
 
         EndpointStrategy()
         {
@@ -97,6 +98,33 @@ namespace Overt.Core.Grpc.H2
                 return channels;
             }
         }
+
+        /// <summary>
+        /// 获取所有
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <returns></returns>
+        public List<string> GetTargets(string serviceName)
+        {
+            if (_targets.TryGetValue(serviceName, out List<string> targets) &&
+                targets.Count > 0)
+                return targets;
+
+            lock (_lock)
+            {
+                if (_targets.TryGetValue(serviceName, out targets) &&
+                    targets.Count > 0)
+                    return targets;
+
+                targets = GetSetTargets(serviceName);
+                if ((targets?.Count ?? 0) <= 0 && ServiceBlackPolicy.Exist(serviceName))
+                    targets = GetSetTargets(serviceName, false);
+
+                return targets;
+            }
+        }
+
+
 
         /// <summary>
         /// 获取callinvoker
@@ -209,7 +237,34 @@ namespace Overt.Core.Grpc.H2
             }
 
             _channelWrappers.AddOrUpdate(serviceName, channelWrappers, (key, value) => channelWrappers);
+
+            var newTargets = channelWrappers.Select(oo => oo.Target).ToList();
+            _targets.AddOrUpdate(serviceName, newTargets, (key, value) => newTargets);
             return channelWrappers;
+        }
+
+        /// <summary>
+        /// 初始化callinvoker
+        /// </summary>
+        /// <param name="serviceName"></param>
+        /// <param name="filterBlack">过滤黑名单 default true</param>
+        /// <returns></returns>
+        private List<string> GetSetTargets(string serviceName, bool filterBlack = true)
+        {
+            if (!_discoveries.TryGetValue(serviceName, out IEndpointDiscovery discovery))
+                return null;
+
+            var targets = discovery.FindServiceEndpoints(filterBlack);
+            if ((targets?.Count ?? 0) <= 0)
+            {
+                // 如果consul 取不到 暂时直接使用本地缓存的连接（注册中心数据清空的情况--异常）
+                _targets.TryGetValue(serviceName, out List<string> existTargets);
+                return existTargets;
+            }
+
+            var newTargets = targets.Select(oo => oo.target).ToList();
+            _targets.AddOrUpdate(serviceName, newTargets, (key, value) => newTargets);
+            return newTargets;
         }
         #endregion
     }

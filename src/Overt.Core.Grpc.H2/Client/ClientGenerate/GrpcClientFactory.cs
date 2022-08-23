@@ -24,7 +24,7 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public T Get(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
         {
-            var exitus = StrategyFactory.Get<T>(_options);
+            var exitus = ClientUtil.GetExitus(_options.ConfigPath);
 
             ChannelWrapper channelWrapper;
             if (channelWrapperInvoker != null)
