@@ -17,6 +17,19 @@ namespace Overt.Core.Grpc.H2
             _options.ConfigPath = GetConfigPath(_options.ConfigPath);
         }
 
+#if NET5_0_OR_GREATER
+        /// <summary>
+        /// 构造实例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T Get()
+        {
+            var channel = StrategyFactory.Get<T>(_options);
+            var client = (T)Activator.CreateInstance(typeof(T), channel);
+            return client;
+        }
+#else
         /// <summary>
         /// 构造实例
         /// </summary>
@@ -24,7 +37,7 @@ namespace Overt.Core.Grpc.H2
         /// <returns></returns>
         public T Get(Func<List<ChannelWrapper>, ChannelWrapper> channelWrapperInvoker = null)
         {
-            var exitus = ClientUtil.GetExitus(_options.ConfigPath);
+            var exitus = StrategyFactory.Get<T>(_options);
 
             ChannelWrapper channelWrapper;
             if (channelWrapperInvoker != null)
@@ -36,6 +49,7 @@ namespace Overt.Core.Grpc.H2
             var client = (T)Activator.CreateInstance(typeof(T), channelWrapper.Channel);
             return client;
         }
+#endif
 
         #region Private Method
         /// <summary>
@@ -49,6 +63,6 @@ namespace Overt.Core.Grpc.H2
 
             return configPath;
         }
-        #endregion
+#endregion
     }
 }
