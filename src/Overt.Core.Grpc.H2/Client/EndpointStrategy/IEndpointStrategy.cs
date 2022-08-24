@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Overt.Core.Grpc.H2
 {
@@ -45,5 +46,10 @@ namespace Overt.Core.Grpc.H2
         /// 定时检测
         /// </summary>
         void InitCheckTimer();
+
+        /// <summary>
+        /// 节点有变动
+        /// </summary>
+        Action NodeChanged { get; set; }
     }
 }

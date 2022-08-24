@@ -3,10 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Overt.Core.Grpc.H2;
 using System;
-using System.Net.Http;
 using System.Threading;
 using static Overt.GrpcExample.Service.Grpc.GrpcExampleService;
-using static Overt.GrpcExample.Service.Grpc.GrpcExampleService1;
 
 namespace Overt.GrpcExample.Client
 {
@@ -35,23 +33,28 @@ namespace Overt.GrpcExample.Client
             //});
 
             // 单服务配置
-            //services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
-            //{
-            //    //var httpClientHandler = new HttpClientHandler
-            //    //{
-            //    //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            //    //};
-            //    cfg.GrpcChannelOptions = new GrpcChannelOptions()
-            //    {
-            //        //HttpClient = new HttpClient(httpClientHandler),
-            //        ServiceProvider = services.BuildServiceProvider(),
-            //        Credentials = Grpc.Core.ChannelCredentials.Insecure,
-            //        //HttpHandler = new SocketsHttpHandler()
-            //        //{
-            //        //    EnableMultipleHttp2Connections = true,
-            //        //}
-            //    };
-            //});
+            services.Configure<GrpcClientOptions<GrpcExampleServiceClient>>(cfg =>
+            {
+                //var httpClientHandler = new HttpClientHandler
+                //{
+                //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                //};
+                cfg.GrpcChannelOptions = new GrpcChannelOptions()
+                {
+                    //HttpClient = new HttpClient(httpClientHandler),
+                    ServiceProvider = services.BuildServiceProvider(),
+                    Credentials = Grpc.Core.ChannelCredentials.Insecure,
+                    //HttpHandler = new SocketsHttpHandler()
+                    //{
+                    //    EnableMultipleHttp2Connections = true,
+                    //}
+                };
+            });
+
+            // 如果需要自行配置Resolve
+            // 设置一个自定义Scheme，然后自定义实现Resove即可，address.LocalPath = /{ServiceName}
+            // 如果需要自行配置LoadBalance
+            // 自定义实现LoadBalance，传入ServiceConfig即可
 
             // 单服务配置
             //services.Configure<GrpcClientOptions<GrpcExampleService1Client>>(cfg =>

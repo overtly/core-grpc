@@ -1,4 +1,5 @@
 ﻿using Grpc.Net.Client;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +61,13 @@ namespace Overt.Core.Grpc.H2
         }
         #endregion
 
+        #region Public Property
+        /// <summary>
+        /// 节点有变动
+        /// </summary>
+        public Action NodeChanged { get; set; }
+        #endregion
+
         #region Public Method
         /// <summary>
         /// 添加ServiceDiscovery
@@ -70,7 +78,16 @@ namespace Overt.Core.Grpc.H2
             if (serviceDiscovery == null)
                 return;
 
-            serviceDiscovery.Watched = () => GetSetChannels(serviceDiscovery.Options.ServiceName, false);
+            serviceDiscovery.Watched = () =>
+            {
+#if NET5_0_OR_GREATER
+                GetSetTargets(serviceDiscovery.Options.ServiceName, false);
+#else
+                GetSetChannels(serviceDiscovery.Options.ServiceName, false);
+#endif
+                if (NodeChanged != null)
+                    NodeChanged();
+            };
             _discoveries.AddOrUpdate(serviceDiscovery.Options.ServiceName, serviceDiscovery, (k, v) => serviceDiscovery);
         }
 
@@ -194,9 +211,9 @@ namespace Overt.Core.Grpc.H2
             };
             _timer.Start();
         }
-        #endregion
+#endregion
 
-        #region Private Method
+#region Private Method
         /// <summary>
         /// 初始化callinvoker
         /// </summary>
@@ -223,7 +240,10 @@ namespace Overt.Core.Grpc.H2
                 if (channelWrappers.Any(oo => oo.Target == target.target))
                     continue;
 
-                var channel = GrpcChannel.ForAddress($"{discovery.Options.Scheme}://{target.target}", discovery.Options.GrpcChannelOptions);
+                var scheme = "http";
+                if (!string.IsNullOrWhiteSpace(discovery.Options.Scheme))
+                    scheme = discovery.Options.Scheme;
+                var channel = GrpcChannel.ForAddress($"{scheme}://{target.target}", discovery.Options.GrpcChannelOptions);
                 var channelWrapper = new ChannelWrapper(target.serviceId, channel);
                 channelWrappers.Add(channelWrapper);
             }
@@ -266,6 +286,6 @@ namespace Overt.Core.Grpc.H2
             _targets.AddOrUpdate(serviceName, newTargets, (key, value) => newTargets);
             return newTargets;
         }
-        #endregion
+#endregion
     }
 }

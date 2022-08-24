@@ -7,6 +7,7 @@
     <Description>基于grpc.net驱动结合consul实现微服务注册与发现</Description>
     <RepositoryUrl>https://github.com/overtly/core-grpc.git</RepositoryUrl>
     <PackageReleaseNotes>增加停止服务的HostedService</PackageReleaseNotes>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
