@@ -14,24 +14,30 @@ namespace Overt.Core.Grpc.H2
     public class InternalResolver : PollingResolver
     {
         private readonly Uri _address;
+        private readonly Exitus _exitus;
         private readonly StrategyFactory _strategyFactory;
+        
         public InternalResolver(Uri address, ILoggerFactory loggerFactory, StrategyFactory strategyFactory) : base(loggerFactory)
         {
             _address = address;
             _strategyFactory = strategyFactory;
+
+            var serviceName = _address.LocalPath.Replace("/", "");
+            _exitus = _strategyFactory.GetExitus(serviceName);
+            if (_exitus == null)
+                throw new Exception($"{serviceName} 配置异常");
+
+            _exitus.EndpointStrategy.NodeChanged = () =>
+            {
+                Refresh();
+            };
         }
 
         protected override Task ResolveAsync(CancellationToken cancellationToken)
         {
-            var options = _address.LocalPath.Replace("/", "");
-            var exitus = _strategyFactory.GetExitus(options);
-            var targets = exitus.EndpointStrategy.GetTargets(exitus.ServiceName);
+            var targets = _exitus.EndpointStrategy.GetTargets(_exitus.ServiceName);
             if ((targets?.Count ?? 0) <= 0)
             {
-                exitus.EndpointStrategy.NodeChanged = () =>
-                {
-                    Refresh();
-                };
                 Listener(ResolverResult.ForResult(null));
                 return Task.CompletedTask;
             }
