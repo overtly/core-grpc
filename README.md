@@ -633,7 +633,11 @@ var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 #### 5. 更新说明
 
 - 2022-08-24 v2.0.1
-> 1. >=Net5支持subchannel，支持Resolver以及LoadBalancer，支持自定义
+> 1.NET5_0_OR_GREATER支持subchannel，支持Resolver以及LoadBalancer，支持自定义
+
+
+- 2021-12-30 v1.0.5
+> 1. 支持apollo等外部配置中心
 
 
 - 2021-03-31 v1.0.4
