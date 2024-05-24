@@ -450,7 +450,7 @@ ClientManager<T>.Instance.[Method]
 
 ### 项目层次说明
 
-> Overt.Core.Grpc.H2 v1.0.4  
+> Overt.Core.Grpc.H2 v2.0.1  
 > 用于>= netcoreapp3.0版本，用于http2协议，依赖微软的grpc.net，适用于Web服务场景，基于http2实现微服务场景
 
 #### 1. 项目目录
@@ -469,20 +469,20 @@ ClientManager<T>.Instance.[Method]
 
 #### 2. 版本及支持
 
-> - Nuget版本：V 1.0.4
+> - Nuget版本：V 2.0.1
 
-> - 框架支持： netstandard2.1 / netcoreapp3.0 / net5.0
+> - 框架支持： netstandard2.1 / netcoreapp3.0 / net5.0 / net6.0
 
 
 
 #### 3. 项目依赖
 
 ```csharp
-Consul 1.6.1.1
-Google.Protobuf 3.15.6
-Grpc.Net.Client 2.36.4
-Microsoft.Extensions.Configuration.Json 2.0.0
-Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
+Consul 1.6.10.7
+Google.Protobuf 3.21.5
+Grpc.Net.Client 2.47.0
+Microsoft.Extensions.Configuration.Json 5.0.0
+Microsoft.Extensions.Options.ConfigurationExtensions 5.0.0
 ```
 
 ### 使用
@@ -490,7 +490,7 @@ Microsoft.Extensions.Options.ConfigurationExtensions 2.0.0
 #### 1. Nuget包引用
 
 ```csharp
-Install-Package Overt.Core.Grpc.H2 -Version 1.0.4
+Install-Package Overt.Core.Grpc.H2 -Version 2.1.0
 ```
 
 <a name="dhmwfy"></a>
@@ -631,6 +631,14 @@ var res = _grpcClient.Client.Ask(new Service.Grpc.AskRequest() { Key = "abc" });
 
 
 #### 5. 更新说明
+
+- 2022-08-24 v2.0.1
+> 1.NET5_0_OR_GREATER支持subchannel，支持Resolver以及LoadBalancer，支持自定义
+
+
+- 2021-12-30 v1.0.5
+> 1. 支持apollo等外部配置中心
+
 
 - 2021-03-31 v1.0.4
 > 1. 支持代码更改文件配置
