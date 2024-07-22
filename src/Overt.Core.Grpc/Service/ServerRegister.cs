@@ -20,16 +20,17 @@ namespace Overt.Core.Grpc
         /// 构造函数
         /// </summary>
         /// <param name="address"></param>
-        public ServerRegister(string address, Func<string, DnsEndPoint, string> genServiceId = null)
+        public ServerRegister(ConsulServiceElement consulOption, Func<string, DnsEndPoint, string> genServiceId = null)
         {
-            if (string.IsNullOrEmpty(address))
+            if (string.IsNullOrEmpty(consulOption?.Address))
                 throw new ArgumentNullException($"consul address");
 
             _genServiceId = genServiceId ?? GenServiceId;
             _client = new ConsulClient((cfg) =>
             {
-                var uriBuilder = new UriBuilder(address);
+                var uriBuilder = new UriBuilder(consulOption.Address);
                 cfg.Address = uriBuilder.Uri;
+                cfg.Token = consulOption.Token;
             });
 
             _selfCheckTimer = new Timer(ConsulTimespan.SelfCheckInterval.TotalSeconds * 1000);

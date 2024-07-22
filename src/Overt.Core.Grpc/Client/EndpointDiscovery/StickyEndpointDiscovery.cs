@@ -14,15 +14,17 @@ namespace Overt.Core.Grpc
     {
         #region 构造函数
         private readonly ConsulClient _client;
-        public StickyEndpointDiscovery(GrpcClientOptions options, string address, bool startWatch = true)
+        public StickyEndpointDiscovery(GrpcClientOptions options, ConsulServiceElement consulOption, bool startWatch = true)
         {
-            if (string.IsNullOrEmpty(address))
+            if (string.IsNullOrEmpty(consulOption?.Address))
                 throw new ArgumentNullException("consul address");
 
             _client = new ConsulClient((cfg) =>
             {
-                var uriBuilder = new UriBuilder(address);
+                var uriBuilder = new UriBuilder(consulOption.Address);
+
                 cfg.Address = uriBuilder.Uri;
+                cfg.Token = consulOption.Token;
             });
 
             Options = options;

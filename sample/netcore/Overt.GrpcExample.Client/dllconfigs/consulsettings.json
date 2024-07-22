@@ -1,7 +1,8 @@
 ﻿{
   "ConsulServer": {
     "Service": {
-      "Address": "http://127.0.0.1:8500"
+      "Address": "http://127.0.0.1:8500",
+      "Token": "123123123"
     }
   }
 }

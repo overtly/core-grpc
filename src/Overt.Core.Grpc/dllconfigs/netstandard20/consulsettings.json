@@ -1,7 +1,8 @@
 ﻿{
   "ConsulServer": {
     "Service": {
-      "Address": "http://consul.g.lan"
+      "Address": "http://consul.g.lan",
+      "Token": ""
     }
   }
 }

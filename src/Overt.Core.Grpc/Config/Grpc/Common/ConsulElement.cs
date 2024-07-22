@@ -13,7 +13,7 @@ namespace Overt.Core.Grpc
 #endif
     {
         /// <summary>
-        /// 路径
+        /// 服务地址
         /// </summary>
 #if !ASP_NET_CORE
         [ConfigurationProperty("path", IsRequired = false)]

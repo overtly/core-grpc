@@ -26,5 +26,19 @@ namespace Overt.Core.Grpc
             get;set;
 #endif
         }
+        /// <summary>
+        /// consul token
+        /// </summary>
+#if !ASP_NET_CORE
+        [ConfigurationProperty("token", IsRequired = false)]
+#endif
+        public string Token
+        {
+#if !ASP_NET_CORE
+            get { return (string)this["token"]; }
+#else
+            get;set;
+#endif
+        }
     }
 }

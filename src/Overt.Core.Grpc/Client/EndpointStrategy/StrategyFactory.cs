@@ -55,8 +55,8 @@ namespace Overt.Core.Grpc
             options.ChannelOptions = options.ChannelOptions ?? GrpcConstants.DefaultChannelOptions;
 
             IEndpointStrategy endpointStrategy;
-            if (EnableConsul(service.Discovery, out string address))
-                endpointStrategy = ResolveStickyConfiguration(address, options);
+            if (EnableConsul(service.Discovery, out ConsulServiceElement consulOption))
+                endpointStrategy = ResolveStickyConfiguration(consulOption, options);
             else
                 endpointStrategy = ResolveEndpointConfiguration(service, options);
             return new Exitus(options.ServiceName, endpointStrategy);
@@ -81,10 +81,10 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="serviceElement"></param>
         /// <returns></returns>
-        private static IEndpointStrategy ResolveStickyConfiguration(string address, GrpcClientOptions options)
+        private static IEndpointStrategy ResolveStickyConfiguration(ConsulServiceElement consulOption, GrpcClientOptions options)
         {
             // consul
-            var stickyEndpointDiscovery = new StickyEndpointDiscovery(options, address);
+            var stickyEndpointDiscovery = new StickyEndpointDiscovery(options, consulOption);
             EndpointStrategy.Instance.AddServiceDiscovery(stickyEndpointDiscovery);
             return EndpointStrategy.Instance;
         }
@@ -114,9 +114,9 @@ namespace Overt.Core.Grpc
         /// </summary>
         /// <param name="discovery"></param>
         /// <returns></returns>
-        private static bool EnableConsul(GrpcDiscoveryElement discovery, out string address)
+        private static bool EnableConsul(GrpcDiscoveryElement discovery, out ConsulServiceElement consulOption)
         {
-            address = string.Empty;
+            consulOption = new ConsulServiceElement();
             var configPath = discovery?.Consul?.Path;
             if (string.IsNullOrEmpty(configPath))
                 return false;
@@ -125,9 +125,10 @@ namespace Overt.Core.Grpc
                 throw new Exception($"[{discovery.Consul.Path}] not exist at [{AppDomain.CurrentDomain.BaseDirectory}]");
 
             var consulSection = ConfigBuilder.Build<ConsulServerSection>(GrpcConstants.ConsulServerSectionName, configPath);
-            address = consulSection?.Service?.Address;
-            if (string.IsNullOrEmpty(address))
+            if (string.IsNullOrEmpty(consulSection?.Service?.Address))
                 return false;
+
+            consulOption = consulSection.Service;
 
             return true;
         }

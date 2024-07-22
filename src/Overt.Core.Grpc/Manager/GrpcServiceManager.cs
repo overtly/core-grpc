@@ -71,10 +71,10 @@ namespace Overt.Core.Grpc
                 #endregion
 
                 #region 注册服务
-                var address = ResolveConsulConfiguration(serviceElement);
-                if (string.IsNullOrEmpty(address))
+                var consulOption = ResolveConsulConfiguration(serviceElement);
+                if (string.IsNullOrEmpty(consulOption?.Address))
                     return;
-                serverRegister = new ServerRegister(address, grpcOptions.GenServiceId);
+                serverRegister = new ServerRegister(consulOption, grpcOptions.GenServiceId);
                 serverRegister.Register(serviceElement, entry => discoveryEntry = entry);
                 #endregion
             }
@@ -132,7 +132,7 @@ namespace Overt.Core.Grpc
         /// 解析Consul配置
         /// </summary>
         /// <returns></returns>
-        private static string ResolveConsulConfiguration(Service.ServiceElement service)
+        private static ConsulServiceElement ResolveConsulConfiguration(Service.ServiceElement service)
         {
             var configPath = string.Empty;
 #if !ASP_NET_CORE
@@ -141,10 +141,10 @@ namespace Overt.Core.Grpc
             configPath = service.Consul?.Path;
 #endif
             if (string.IsNullOrEmpty(configPath))
-                return string.Empty;
+                return default;
 
             var consulSection = ConfigBuilder.Build<ConsulServerSection>(GrpcConstants.ConsulServerSectionName, configPath);
-            return consulSection?.Service?.Address;
+            return consulSection?.Service;
         }
 
         /// <summary>
