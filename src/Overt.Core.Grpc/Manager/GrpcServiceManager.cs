@@ -20,6 +20,39 @@ namespace Overt.Core.Grpc
         /// Grpc服务启动
         /// </summary>
         /// <param name="service">grpc service definition</param>
+        /// <param name="tracer">拦截器记录</param>
+        /// <param name="interceptors">其他拦截器</param>
+        /// <param name="channelOptions">Channel配置</param>
+        /// <param name="whenException">==null => throw</param>
+        /// <param name="configPath">配置文件路径 default: dllconfig/{namespace}.dll.[config/json]</param>
+        [Obsolete("pls use Start(ServerServiceDefinition service, Action<GrpcOptions> grpcOptionBuilder = null, Action<Exception> whenException = null)")]
+        public static void Start(
+            ServerServiceDefinition service,
+            IServerTracer tracer = null,
+            List<Interceptor> interceptors = null,
+            List<ChannelOption> channelOptions = null,
+            Action<Exception> whenException = null,
+            string configPath = default)
+        {
+            if (service == null)
+                throw new ArgumentNullException("service");
+
+            Start(service, (options) =>
+            {
+                options.ChannelOptions = channelOptions;
+                options.Tracer = tracer;
+                options.ConfigPath = configPath;
+
+                if (interceptors?.Count > 0)
+                    options.Interceptors.AddRange(interceptors);
+
+            }, whenException);
+        }
+
+        /// <summary>
+        /// Grpc服务启动
+        /// </summary>
+        /// <param name="service">grpc service definition</param>
         /// <param name="grpcOptionBuilder">配置信息</param>
         /// <param name="whenException">==null => throw</param>
         public static void Start(
