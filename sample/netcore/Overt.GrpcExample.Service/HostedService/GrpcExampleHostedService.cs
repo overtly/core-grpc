@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Grpc.Core;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Overt.Core.Grpc;
 using Overt.Core.Grpc.Intercept;
 using Overt.GrpcExample.Service.Grpc;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,7 +29,10 @@ namespace Overt.GrpcExample.Service
         {
             return Task.Factory.StartNew(() =>
             {
-                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase));
+                GrpcServiceManager.Start(GrpcExampleService.BindService(_grpcServiceBase), (options) =>
+                {
+                    options.ChannelOptions = new List<ChannelOption>();
+                });
             }, cancellationToken);
         }
 
